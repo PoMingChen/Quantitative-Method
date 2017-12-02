@@ -1696,132 +1696,532 @@ $(document).ready(function () {
 
 
 <!-- rnb-text-begin -->
+<p>109 112 why a=b 好像公式表達有一點點沒有全懂</p>
+<p>147 why that is tss. not ess. we have sample than population? 這個是y，那迴歸式上面的才是y hat 是不論是已知x帶入求得的迴歸線上的y 或者是用在未知的y（沒有收集到的population內的情況）prediction上面。（不要搞錯y yhat(迴歸式線上的)</p>
+<section class="level1">
+<h1>引入資料</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5kYXRhc2V0IDwtIHJlYWQuY3N2KFwiQzovVXNlcnMvL0Rlc2t0b3AvZGF0YV9mb3JfY2xhc3MuY3N2XCIsaGVhZGVyPVRSVUUpXG5cbnN0cihkYXRhc2V0KVxuXG5kYXQgPC0gZGF0YXNldFxuXG5taWxlcyA8LSBkYXQkTUlMRVNcbmluY29tZSA8LSBkYXQkSU5DT01FXG5hZ2UgPC0gZGF0JEFHRVxua2lkcyA8LSBkYXQkS0lEU1xuYGBgIn0= -->
-<pre class="r"><code>
-dataset &lt;- read.csv(&quot;C:/Users//Desktop/data_for_class.csv&quot;,header=TRUE)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+imgeS/ruaUuei3r+W+kVxuZGF0YXNldCA8LSByZWFkLmNzdihcIi9Vc2Vycy9jaGVucG9taW5nL0RvY3VtZW50cy9HaXRIdWIvUXVhbnRpdGF0aXZlIE1ldGhvZC9RdWFudGl0YXRpdmUgTWV0aG9kL2RhdGFfZm9yX2NsYXNzLmNzdlwiLGhlYWRlcj1UUlVFKVxuIyBoZWFkZXIg5Y+D5pW4IOaYr+imgeioreWumuS7lueahOacgOS4iumdoueahHJvd+acieaykuacieimgeWRiOePvuiuiuaVuOWQjeeoseOAgijkuI3nhLbmnIPorormiJBWMSBWMiBWMyDlsLHmmK/orormlbjnmoTmhI/mgJ3vvIzlnovmhYvkuZ/mnIPorormiJBmYWN0b3IpXG4j6YCZ5piv5LiA5YCL6KeA5a+f5a625bqt5peF6YGK5Y+X5Yiw5ZOq5Lqb5Zug57Sg5b2x6Z+/55qE55qE6L+05q245byPXG4jIG1pbGVzIOaXheeoi+i3nembolxuIyBpbmNvbWUg5a625bqt5pS25YWlXG4jIGFnZSDlrrbplbflubTpvaFcbiMga2lkcyDlsI/lranlgIvmlbhcbiMg5qij5pysMjAwXG5cbmRhdGFzZXRcbmBgYCJ9 -->
+<pre class="r"><code>#要修改路徑
+dataset &lt;- read.csv(&quot;/Users/chenpoming/Documents/GitHub/Quantitative Method/Quantitative Method/data_for_class.csv&quot;,header=TRUE)
+# header 參數 是要設定他的最上面的row有沒有要呈現變數名稱。(不然會變成V1 V2 V3 就是變數的意思，型態也會變成factor)
+#這是一個觀察家庭旅遊受到哪些因素影響的的迴歸式
+# miles 旅程距離
+# income 家庭收入
+# age 家長年齡
+# kids 小孩個數
+# 樣本200
 
-str(dataset)
+dataset</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>#str struture的意思</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKGRhdGFzZXQpXG5cbiMg5pS55Y+m5a2Y54mp5Lu25ZCN56ix77yM5pa55L6/5LiA5LqbXG5kYXQgPC0gZGF0YXNldFxuXG4jcGlja+WHuuino+mHi+iuiuaVuOWSjOiiq+ino+mHi+iuiuaVuFxubWlsZXMgPC0gZGF0JE1JTEVTXG5pbmNvbWUgPC0gZGF0JElOQ09NRVxuYWdlIDwtIGRhdCRBR0VcbmtpZHMgPC0gZGF0JEtJRFNcblxuY2xhc3MobWlsZXMpICNpbnRlZ2VyXG5cbmBgYCJ9 -->
+<pre class="r"><code>str(dataset)
 
+# 改另存物件名稱，方便一些
 dat &lt;- dataset
 
+#pick出解釋變數和被解釋變數
 miles &lt;- dat$MILES
 income &lt;- dat$INCOME
 age &lt;- dat$AGE
-kids &lt;- dat$KIDS</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubHNlIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcylcbnN1bW1hcnkobHNlKVxuXG55IDwtIGFzLm1hdHJpeChtaWxlcylcbnlcbmRpbSh5KVxuXG5YIDwtIGNiaW5kKDEsaW5jb21lLGFnZSxraWRzKVxuWFxuZGltKFgpXG5cbmIgPC0gY3Jvc3Nwcm9kKHNvbHZlKGNyb3NzcHJvZChYLFgpKSxjcm9zc3Byb2QoWCx5KSlcbmJcbmRpbShiKVxuXG5lIDwtIHktWCUqJWJcbmVcbnN1bW1hcnkoZSlcblxubiA8LSBucm93KFgpXG5pIDwtIGFzLm1hdHJpeChYWywxXSlcbm0wIDwtIGRpYWcobiktaSUqJXNvbHZlKGNyb3NzcHJvZChpLGkpKSUqJXQoaSlcbmBgYCJ9 -->
-<pre class="r"><code>lse &lt;- lm(miles~income+age+kids)
-summary(lse)
+kids &lt;- dat$KIDS
 
-y &lt;- as.matrix(miles)
-y
-dim(y)
-
-X &lt;- cbind(1,income,age,kids)
-X
-dim(X)
-
-b &lt;- crossprod(solve(crossprod(X,X)),crossprod(X,y))
-b
-dim(b)
-
-e &lt;- y-X%*%b
-e
-summary(e)
-
-n &lt;- nrow(X)
-i &lt;- as.matrix(X[,1])
-m0 &lt;- diag(n)-i%*%solve(crossprod(i,i))%*%t(i)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHNzIDwtIHQoeSklKiVtMCUqJXlcbnJzcyA8LSBjcm9zc3Byb2QoZSxlKVxuZXNzIDwtIHRzcy1yc3NcblxuUjIgIDwtIGVzcy90c3NcblIyXG5cbmsgPC0gbmNvbChYKVxubm1rIDwtIG4ta1xubm1rXG5cbmFkalIyIDwtICgxLWspL25taysobi0xKS9ubWsqUjJcbmFkalIyXG5cbnMyIDwtIGFzLm51bWVyaWMocnNzL25taylcbnMyXG5cbnMgPC0gczJeMC41XG5zXG5cblZDT1YgPC0gczIqc29sdmUoY3Jvc3Nwcm9kKFgsWCkpXG5WQ09WXG5cbnZhciA8LSBkaWFnKFZDT1YpXG52YXJcblxuc2UgPC0gdmFyXjAuNVxuc2VcblxudHJhdCA8LSBiL3NlXG50cmF0XG5cbnB2dCA8LSAyKnB0KC1hYnModHJhdCksZGY9bm1rKVxucHZ0XG5cbmBgYCJ9 -->
-<pre class="r"><code>tss &lt;- t(y)%*%m0%*%y
-rss &lt;- crossprod(e,e)
-ess &lt;- tss-rss
-
-R2  &lt;- ess/tss
-R2
-
-k &lt;- ncol(X)
-nmk &lt;- n-k
-nmk
-
-adjR2 &lt;- (1-k)/nmk+(n-1)/nmk*R2
-adjR2
-
-s2 &lt;- as.numeric(rss/nmk)
-s2
-
-s &lt;- s2^0.5
-s
-
-VCOV &lt;- s2*solve(crossprod(X,X))
-VCOV
-
-var &lt;- diag(VCOV)
-var
-
-se &lt;- var^0.5
-se
-
-trat &lt;- b/se
-trat
-
-pvt &lt;- 2*pt(-abs(trat),df=nmk)
-pvt
+class(miles) #integer
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<pre><code>#到code 55 是用lm function 那以下code43是用拆解方式去建立。
+#Std. Error 是variance covariance matrix的對角線，Variance beta 1 2 3 4 hat 開根號 : 
+
+Var(beta hat1)開根號 
+Var(beta hat2)開根號 
+Var(beta hat3)開根號
+Var(beta hat4)開根號
+
+#t-value to check if income is significantly differnet from zero, then we will have 14.201-0/1.800=7.889.
+Also, as t-value is 7.889 the degree of freedom ＝200-4，we will check the sheet to know the p-value = 2.10e-13(非常右端）we will absolutely reject. 
+## 或者你可以對7.889進行查表。
+
+#*的多寡，是指在多少比例下你會選擇拒絕嗎？ 
+
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+三科***表示在p-value &lt; 0.001的條件下，會拒絕(因為在他右邊的機率只有2.1*10^-13，也就是會顯著不＝0
+
+#Residual standard error(y-y hat): 452.3 on 196 degrees of freedom 是指誤差項的標準差為452.3
+
+#Multiple R-squared:  0.3406,   Adjusted R-squared:  0.3305 
+配適度有0.3 以此條件來看算理想的模型。
+
+#F-statistic: 33.75 on 3 and 196 DF,  p-value: &lt; 2.2e-16
+若是以F分配進行檢定，這邊的限制條件是q=3，假設檢定是H0 : beta1 = beta2 = beta3 = 0 
+本身F分配是右篇。p-value: &lt; 2.2e-16 也很小，一樣會拒絕。
+
+### 程式內要如何設定單雙尾？</code></pre>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0cyA8LSBjYmluZChiLHNlLHRyYXQscHZ0KVxuY29sbmFtZXMocmVzdWx0cykgPC0gYyhcIkVzdGltYXRlXCIsXCJTdGQuIEVycm9yXCIsXCJ0IHZhbHVlXCIsXCJQcig+fHR8KVwiKVxucm93bmFtZXMocmVzdWx0cykgPC0gYyhcImludGVyY2VwdFwiLFwiaW5jb21lXCIsXCJhZ2VcIixcImtpZHNcIilcbnJvdW5kKHJlc3VsdHMsZGlnaXRzPTQpXG5cbnEgPC0gbmNvbChYKS0xXG5xXG5cbm51bGwgPC0gbWF0cml4KDA6MCxxKVxuaWttMSA8LSBkaWFnKHEpXG5SIDwtIGNiaW5kKG51bGwsaWttMSlcblJcblxuciA8LSBtYXRyaXgoMDowLHEpXG5yXG5cblJiZXRhbXIgPC0gUiUqJWItclxuUmJldGFtclxuXG5GIDwtIHQoUmJldGFtciklKiVzb2x2ZShSJSolIFZDT1YgJSoldChSKSklKiVSYmV0YW1yL3FcbkZcblxucHZGIDwtIDEtcGYoRixkZjE9cSxkZjI9bm1rKVxucHZGXG5cbnZjb3YobHNlKVxuY29lZmZpY2llbnRzKGxzZSlcbnJlc2lkdWFscyhsc2UpXG5maXR0ZWQudmFsdWVzKGxzZSlcbnktZVxuXG5cblxuYGBgIn0= -->
-<pre class="r"><code>results &lt;- cbind(b,se,trat,pvt)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2xtIOaYr1Llhaflu7rnmoTlh73mlbjjgILkuI3nlKjpoY3lpJbkuIvovIlcbiPnm67liY3mmK/pu5joqo3mnInmiKrmk5rpoIXnmoRcbiPoi6XkuI3opoHmiKrmk5rpoIXvvIzmnInlhannqK7mlrnlvI/lj6/ku6XooajnpLrjgIJcbiNsc2UgPC0gbG0oMCttaWxlc35pbmNvbWUrYWdlK2tpZHMpXG4jbHNlIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcy0xKVxubHNlIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcylcbmNsYXNzKGxzZSlcbnN1bW1hcnkobHNlKVxuXG5gYGAifQ== -->
+<pre class="r"><code>#lm 是R內建的函數。不用額外下載
+#目前是默認有截據項的
+#若不要截據項，有兩種方式可以表示。
+#lse &lt;- lm(0+miles~income+age+kids)
+#lse &lt;- lm(miles~income+age+kids-1)
+lse &lt;- lm(miles~income+age+kids)
+class(lse)
+summary(lse)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</section>
+<section id="structure" class="level1">
+<h1>現在要用手寫程式，因為你的論文可能是有創新的，只好寫程式做出你想要做的結果。或是用了比較進階的函數，開發者的參數設定，你比較不了解，有時候結果不太認同就比較難糾正，手寫的structure也比較穩定好修正。那實務上最多是搭配用，下一週會介紹。</h1>
+<p>#如果要用程式碼創造的話，那就要盡可能地想像筆記流程。</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+aVuOaWueacieW+iOWkmuefqemZo++8jOaJgOS7peimgei9ieaIkOefqemZo+eahOizh+aWmeWei+aFi1xueSA8LSBhcy5tYXRyaXgobWlsZXMpXG5jbGFzcyh5KVxueVxuI2RpbTpkaW1lbnNpb24o57at5bqmKe+8jOeci+eci+aYryDlpJrlsJFieeWkmuWwkSDlpoLmnpzkvaDkuI3ovYnmiJDnn6npmaPvvIzkvaDnmoRkaW3lsLHmnIPmmK9OdWxs77yM5pys6LqrbWlsZXPorormlbjlsLHlj6rmmK9pbnRlZ2VyXG5cbmRpbSh5KVxuZGltKG1pbGVzKSAjIE51bGxcblxuI2NiaW5kIGNvbHVtbiBiaW5kXG4j6KaB5aSa5LiA6KGMY29sdW1u55qE5Y6f5Zug5piv5LuA6bq877yfKGZvciB0aGUgaW50ZXJjZXB0KVxuWCA8LSBjYmluZCgxLGluY29tZSxhZ2Usa2lkcylcblhcbmNsYXNzKGluY29tZSlcbmNsYXNzKFgpXG5kaW0oWClcbmBgYCJ9 -->
+<pre class="r"><code>#數方有很多矩陣，所以要轉成矩陣的資料型態
+y &lt;- as.matrix(miles)
+class(y)
+y
+#dim:dimension(維度)，看看是 多少by多少 如果你不轉成矩陣，你的dim就會是Null，本身miles變數就只是integer
+
+dim(y)
+dim(miles) # Null
+
+#cbind column bind
+#要多一行column的原因是什麼？(for the intercept)
+X &lt;- cbind(1,income,age,kids)
+X
+class(income)
+class(X)
+dim(X)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</section>
+<section id="estimatorestimate1beta-hat-u-hat" class="level1">
+<h1>已經建立好樣本的矩陣，包含解釋變數與非解釋變數，接下來要計算出Estimator＆Estimate。段落1目標，求得beta hat/ u hat</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2Nyb3NzcHJvZChYLHkpIOWwseaYr1h0cmFuc3BvcnQgKiB5XG4jY3Jvc3Nwcm9kKFgsWCkg5bCx5pivWHRyYW5zcG9ydCAqIFhcbiNzb2x2ZeaYr+WPjeWHveaVuOeahOaEj+aAnVxuI+acgOW+jOacgOWklumdouWGjeS4gOWAi2Nyb3NzcHJvZFxuI3RoaXMgaXMgdGhlIGZvcm11bGEgb2YgYGJldGEgaGF0YCBqdXN0IHdlIG1lbnRpb24gYSBsb3QgaW4gY2xhc3MgYmVmb3JlXG5cbiMjIyB3aHkgd2Ugc3RpbGwgbmVlZCBhIGNyb3NzcHJvZCBhdCB0aGUgZnJvbnQgb2YgdGhpcyBjb2RlPyAoYSA9IGIpXG5hIDwtIHNvbHZlKGNyb3NzcHJvZChYLFgpKSAlKiUgY3Jvc3Nwcm9kKFgseSkgXG5hXG5iIDwtIGNyb3NzcHJvZChzb2x2ZShjcm9zc3Byb2QoWCxYKSksY3Jvc3Nwcm9kKFgseSkpXG5iXG5kaW0oYikgIzQgYnkgMShrIGJ5IDEpXG5cbiMq5piv5Zau57SU55u45LmYICUqJeaYr+efqemZo+ebuOS5mFxuI2Ug5bCx5pivZGlzdHVyYmFuY2UgdGVybSBoYXQgKHUgaGF0KVxuI2RpbSh5KT0yMDB4MSBkaW0oWCk9MjAwKjQgZGltKGIpPTQqMVxuZSA8LSB5LVglKiViXG5lXG5zdW1tYXJ5KGUpXG5zdW1tYXJ5KGxzZSlcbiNtZWFuKGUpPTAg6Kqk5beu6aCF55qE5Yqg57i95pivMO+8jOiHqueEtuW5s+Wdh+S5n+aYrzDjgILnhLblvozpgJnmrrXlkoxsc2XkuIDplovlp4vnmoRSZXNpZHVhbHPmmK/kuIDmqKPnmoTjgIJcbmBgYCJ9 -->
+<pre class="r"><code>#crossprod(X,y) 就是Xtransport * y
+#crossprod(X,X) 就是Xtransport * X
+#solve是反函數的意思
+#最後最外面再一個crossprod
+#this is the formula of `beta hat` just we mention a lot in class before
+
+### why we still need a crossprod at the front of this code? (a = b)
+a &lt;- solve(crossprod(X,X)) %*% crossprod(X,y) 
+a
+b &lt;- crossprod(solve(crossprod(X,X)),crossprod(X,y))
+b
+dim(b) #4 by 1(k by 1)
+
+#*是單純相乘 %*%是矩陣相乘
+#e 就是disturbance term hat (u hat)
+#dim(y)=200x1 dim(X)=200*4 dim(b)=4*1
+e &lt;- y-X%*%b
+e
+summary(e)
+summary(lse)
+#mean(e)=0 誤差項的加總是0，自然平均也是0。然後這段和lse一開始的Residuals是一樣的。</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</section>
+<section id="2r2920" class="level1">
+<h1>段落2目的求出配適度R^2（筆記9/20，順序相同)</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI25yb3c6bnVtYmVyIG9mIHJvdyBvZiB4XG4jWFssMV3mmK/mjIfnrKzkuIDlgItjb2x1bW7lhajpg6jvvIxmb3Ig5oiq5pOa6aCF44CC6YKj5LuW6YO95pivMVxubiA8LSBucm93KFgpXG5pIDwtIGFzLm1hdHJpeChYWywxXSlcbm5cbmlcbmRpbShpKSAjMjAwIHggMVxuI+aIkeWAkeimgeWOu+WJtemAoGRldmlhdGlvbiBmcm9tIG1lYW4g5LiK6Kqy5pyJ5pWZ6YGO77yM6YKj5YCLbTDvvIzorormiJB5LXliYXLnmoTmpoLlv7XjgIJcbiNkaWFnKG4p5Ym16YCgMjAwKjIwMOeahEluIHVuaXQgdmVjdG9y77yM5YmN6Z2ibuebrueahOWwseaYr+aKveWHuuS4gOWAizIwMFxuI3QoaSkg5bCx5pivaSB0cmFuc3BvcnRcbm0wIDwtIGRpYWcobiktaSUqJXNvbHZlKGNyb3NzcHJvZChpLGkpKSUqJXQoaSlcbmBgYCJ9 -->
+<pre class="r"><code>#nrow:number of row of x
+#X[,1]是指第一個column全部，for 截據項。那他都是1
+n &lt;- nrow(X)
+i &lt;- as.matrix(X[,1])
+n
+i
+dim(i) #200 x 1
+#我們要去創造deviation from mean 上課有教過，那個m0，變成y-ybar的概念。
+#diag(n)創造200*200的In unit vector，前面n目的就是抽出一個200
+#t(i) 就是i transport
+m0 &lt;- diag(n)-i%*%solve(crossprod(i,i))%*%t(i)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<section id="920" class="level3">
+<h3>接下來算是探討配適度的部分（筆記9/20)</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubTBcbmRpbShtMCkgIzIwMCB4IDIwMCBtMCBpcyBzeW1tZXRyaWMgYW5kIGlkZW1wb3RlbnQgXG50c3MgPC0gdCh5KSUqJW0wJSoleSBcbnJzcyA8LSBjcm9zc3Byb2QoZSxlKVxuZXNzIDwtIHRzcy1yc3NcblxuUnNxdWFyZSA8LSBlc3MvdHNzXG5Sc3F1YXJlXG4jc3VtbWFyeShsc2UpIE11bHRpcGxlIFItc3F1YXJlZDogIDAuMzQwNiB0aGV5IGFyZSB0aGUgc2FtZVxuXG5rIDwtIG5jb2woWCkgIzRcbm5tayA8LSBuLWtcbm5tayAjMTk2XG5cbiPkuIrpnaLnmoRubWvmmK/ngrrkuobmsYJhZGp1c3RlZCBSc3F1YXJlKOS4gOaoo+aYrzkvMjDnrYboqJgpXG5hZGpSc3F1YXJlIDwtICgxLWspL25taysobi0xKS9ubWsqUnNxdWFyZVxuYWRqUnNxdWFyZVxuI3N1bW1hcnkobHNlKSBBZGp1c3RlZCBSLXNxdWFyZWQ6ICAwLjMzMDUgXG5gYGAifQ== -->
+<pre class="r"><code>m0
+dim(m0) #200 x 200 m0 is symmetric and idempotent 
+tss &lt;- t(y)%*%m0%*%y 
+rss &lt;- crossprod(e,e)
+ess &lt;- tss-rss
+
+Rsquare &lt;- ess/tss
+Rsquare
+#summary(lse) Multiple R-squared:  0.3406 they are the same
+
+k &lt;- ncol(X) #4
+nmk &lt;- n-k
+nmk #196
+
+#上面的nmk是為了求adjusted Rsquare(一樣是9/20筆記)
+adjRsquare &lt;- (1-k)/nmk+(n-1)/nmk*Rsquare
+adjRsquare
+#summary(lse) Adjusted R-squared:  0.3305 </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</section>
+</section>
+<section id="3" class="level1">
+<h1>段落3是要手動去創造各個檢定中的東西</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3MyIO+8nSBjcm9zc3Byb2QoZSwgZSkvbi1rID0gcnNzL25ta1xuI3MgOiBSZXNpZHVhbCBzdGFuZGFyZCBlcnJvclxuI3ZhciA6IFZhcihiZXRhIGhhdClcbiNzZSA6IGJldGEgaGF0IOeahHNlLihzdGFuZGFyZCBlcnJvcinvvIzmnInpgJnlgIvmiY3og73lgZrmqqLlrppcbiN0cmF0IDog5YGadOaqouWumuOAgnQtcmF0aeS4pumAsuihjOafpeihqOW+l+WIsHAtdmFsdWVcbiNwdnQgOiBwLXZhbHVlIHVudGVyIHRoZSB0cmF0XG5cbiPmsYLlvpdzXjLvvIzlsIdWYXIoYmV0YWhhdO+8ie+8nXNlZ21hXjIqc29sdmUoY3Jvc3Nwb25kKFgsWCkp77yM6L2J5o+b5oiQ5Y+v5L2/55So55qEZXN0aW1hdG9yXG5cbnMzIDwtIGNyb3NzcHJvZChlLCBlKS9ubWtcbmNsYXNzKHMzKVxuYXMubnVtZXJpYyhzMylcbnMyIDwtIGFzLm51bWVyaWMocnNzL25taylcbnMyXG5cbiPplovmoLnomZ8gIHMgPSBSZXNpZHVhbCBzdGFuZGFyZCBlcnJvclxucyA8LSBzMl4wLjVcbnNcblxuI+Wwjeinkue3muaYr1ZhcmlhbmNlIOmdnuWwjeinkue3muaYr0NvdmFyaWFuY2VcblZDT1YgPC0gczIqc29sdmUoY3Jvc3Nwcm9kKFgsWCkpXG5WQ09WXG5kaW0oVkNPVilcblxuI+WPquaIquWPluWHulZhcmlhbmNlIOWwseaYr2JldGEgaGF0IOeahFZhcmlhbmNl77yM5Y2zVmFyKGJldGEgaGF0KVxudmFyIDwtIGRpYWcoVkNPVilcbnZhclxuXG4j5YaN6ZaL5qC56Jmf77yM5bCx5pivYmV0YSBoYXQg55qEc2UuKHN0YW5kYXJkIGVycm9yKVxuc2UgPC0gdmFyXjAuNVxuc2VcbnN1bW1hcnkobHNlKSAjc2UgPSBTdGQuIEVycm9yXG5cbiPlgZp05qqi5a6a44CCdC1yYXRpb1xuI2IgIHRoZSBiZXRhIGhhdDEgMiAzXG50cmF0IDwtIGIvc2UgI2ItMC9zZVxudHJhdFxuc3VtbWFyeShsc2UpICN0IHZhbHVlID0gdHJhdFxuXG5cbiNwdCwgcHJvYmFiaWxpdHkgb2YgdCBkaXN0cmlidXRpb25cbiMtYWJzKHRyYXQpIOaKinQtcmF0aW/lj5bntZXlsI3lgLwo5Zug54K65pyJ5Lqb5pyJ5q2j5pyJ6LKg77yM54S25b6M5YaN57Wm6LKg5YC877yM5LiN54S25pyD5Lul5bem55qE57Sv56mN5qmf546H5b6I5aSn77yM6KaB55SoMeWOu+WJquaOieOAglxuIyDkuZjku6UyIOWwseaYr+WboOeCuumbmeWwvueahOmXnOW/g++8jOaYr+WIhuW4g+eahOWFqemCiuOAglxuI2RmPW5tayDoh6rnlLHluqbvvIzmmK90IGRpc3RyaWJ1dGlvbueahOWUr+S4gOWPg+aVuOOAglxucHZ0IDwtIDIqcHQoLWFicyh0cmF0KSxkZj1ubWspXG5wdnRcbnN1bW1hcnkobHNlKSAjcHZ0ID0gUHIoPnx0fCkgXG5gYGAifQ== -->
+<pre class="r"><code>#s2 ＝ crossprod(e, e)/n-k = rss/nmk
+#s : Residual standard error
+#var : Var(beta hat)
+#se : beta hat 的se.(standard error)，有這個才能做檢定
+#trat : 做t檢定。t-rati並進行查表得到p-value
+#pvt : p-value unter the trat
+
+#求得s^2，將Var(betahat）＝segma^2*solve(crosspond(X,X))，轉換成可使用的estimator
+
+s3 &lt;- crossprod(e, e)/nmk
+class(s3)
+as.numeric(s3)
+s2 &lt;- as.numeric(rss/nmk)
+s2
+
+#開根號  s = Residual standard error
+s &lt;- s2^0.5
+s
+
+#對角線是Variance 非對角線是Covariance
+VCOV &lt;- s2*solve(crossprod(X,X))
+VCOV
+dim(VCOV)
+
+#只截取出Variance 就是beta hat 的Variance，即Var(beta hat)
+var &lt;- diag(VCOV)
+var
+
+#再開根號，就是beta hat 的se.(standard error)
+se &lt;- var^0.5
+se
+summary(lse) #se = Std. Error
+
+#做t檢定。t-ratio
+#b  the beta hat1 2 3
+trat &lt;- b/se #b-0/se
+trat
+summary(lse) #t value = trat
+
+
+#pt, probability of t distribution
+#-abs(trat) 把t-ratio取絕對值(因為有些有正有負，然後再給負值，不然會以左的累積機率很大，要用1去剪掉。
+# 乘以2 就是因為雙尾的關心，是分布的兩邊。
+#df=nmk 自由度，是t distribution的唯一參數。
+pvt &lt;- 2*pt(-abs(trat),df=nmk)
+pvt
+summary(lse) #pvt = Pr(&gt;|t|) </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>#進行假設檢定（整體而言剩下T-test*多少程度下顯著，以及F統計量檢定還沒有做） ### 合併迴歸式相關資訊</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+WYl+ippuijveS9nOihqOagvFxucmVzdWx0cyA8LSBjYmluZChiLHNlLHRyYXQscHZ0KVxuZGltKHJlc3VsdHMpXG5yZXN1bHRzXG4j54K66KGo5qC855qE6K6K5pW45Y+W5ZCN5a2XXG5jb2xuYW1lcyhyZXN1bHRzKSA8LSBjKFwiRXN0aW1hdGVcIixcIlN0ZC4gRXJyb3JcIixcInQgdmFsdWVcIixcIlByKD58dHwpXCIpXG5yb3duYW1lcyhyZXN1bHRzKSA8LSBjKFwiaW50ZXJjZXB0XCIsXCJpbmNvbWVcIixcImFnZVwiLFwia2lkc1wiKVxuI+WBmuWbm+aNqOS6lOWFpe+8jOWwj+aVuOm7nuWbm+S9jeOAglxuI+Wft+ihjDE0NCAxNDUg5YGa5LiA5LiL5YWp6ICF55qE5q+U6LyD77yM5bm+5LmO55u45ZCM44CCXG5yb3VuZChyZXN1bHRzLGRpZ2l0cz00KVxucmVzdWx0c1xuc3VtbWFyeShsc2UpXG5cbmBgYCJ9 -->
+<pre class="r"><code>#嘗試製作表格
+results &lt;- cbind(b,se,trat,pvt)
+dim(results)
+results
+#為表格的變數取名字
 colnames(results) &lt;- c(&quot;Estimate&quot;,&quot;Std. Error&quot;,&quot;t value&quot;,&quot;Pr(&gt;|t|)&quot;)
 rownames(results) &lt;- c(&quot;intercept&quot;,&quot;income&quot;,&quot;age&quot;,&quot;kids&quot;)
+#做四捨五入，小數點四位。
+#執行144 145 做一下兩者的比較，幾乎相同。
 round(results,digits=4)
-
+results
+summary(lse)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<section id="fq1f-t2q3tfbeta-hat1-2-30" class="level3">
+<h3>F檢定開始(這邊若q=1則F = t^2，但是q=3所以是不一樣的。t可以看個別係數是否顯著，那F是看beta hat1 2 3＝0)</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyMj5Ym16YCgRuaqouWumumcgOimgeeahCBSIGJldGEoaGF0KSByXG4jIyMgV2h56ZmQ5Yi25byP5pW46YePcT0zPyA6IGJldGEgaGF0MSAyIDNcbnEgPC0gbmNvbChYKS0xXG5xXG5cblxuIzE6MyA9IDEgMiAzICMwOjAgPSAwIDAgMCB1bmRlciBhcyBxPTNcbm51bGwgPC0gbWF0cml4KDA6MCxxKVxuaWttMSA8LSBkaWFnKHEpXG5udWxsXG5pa20xXG5cblIgPC0gY2JpbmQobnVsbCxpa20xKVxuUlxuXG5yIDwtIG1hdHJpeCgwOjAscSlcbnJcblxuYiAj5YW36auU6ICM6KiA5pivYmV0YSAxIDIgMyBoYXQg5Lmf5bCx5piv5Lyw6KiI5YC844CCXG5SYmV0YW1yIDwtIFIlKiViLXIgI1JiZXRhIG1pbnVzIHJcblJiZXRhbXJcblxuXG4jRiB0ZXN05YWs5byPIEbntbHoqIjph4/nmoTlgLxcbiMj77yI5Y+v5Lul55SoRue1seioiOmHj+eahOWAvOafpeihqOeci+mcgOimgeWkmuWwkeaJjeacg+aLkue1le+8jOacieaykuacieWkp+aWvOS7luOAguaIluiAheeci+WPs+err+apn+eOh++8jOaYr+WQpuacieespuWQiOimgeaLkue1leeahDAuMDXkuYvpoZ7nmoTvvIlcbkYgPC0gdChSYmV0YW1yKSUqJXNvbHZlKFIlKiUgVkNPViAlKiV0KFIpKSUqJVJiZXRhbXIvcVxuRlxuXG4jVkNPViDlsLHmmK9zXjIgKiBDMjLnmoTmpoLlv7Uo6YKj5YCL55+p6Zmj77yM5YWp6K6K5pW477yI5YyF5ZCr5oiq5pOa6aCF77yJ5Ymb5aW95bCx5Y+q5pyJc14yICogQzIyKVxuXG5zdW1tYXJ5KGxzZSkgI0Ytc3RhdGlzdGljOiAzMy43NSBvbiAzIGFuZCAxOTYgREYsICBwLXZhbHVlOiA8IDIuMmUtMTZcblxuXG4jRue1seioiOmHj+aykuacieWWrumbmeWwvuWVj+mhjOOAguWwseaYr+WPs+WwvlxucHZGIDwtIDEtcGYoRixkZjE9cSxkZjI9bm1rKVxuI+WHuuS+huaYrzAg5b6I5Y+z6YKKIOW9ouaIkOapn+eOh+W5vuS5juetieaWvDBcbnB2RlxuXG5gYGAifQ== -->
+<pre class="r"><code>###創造F檢定需要的 R beta(hat) r
+### Why限制式數量q=3? : beta hat1 2 3
 q &lt;- ncol(X)-1
 q
 
+
+#1:3 = 1 2 3 #0:0 = 0 0 0 under as q=3
 null &lt;- matrix(0:0,q)
 ikm1 &lt;- diag(q)
+null
+ikm1
+
 R &lt;- cbind(null,ikm1)
 R
 
 r &lt;- matrix(0:0,q)
 r
 
-Rbetamr &lt;- R%*%b-r
+b #具體而言是beta 1 2 3 hat 也就是估計值。
+Rbetamr &lt;- R%*%b-r #Rbeta minus r
 Rbetamr
 
+
+#F test公式 F統計量的值
+##（可以用F統計量的值查表看需要多少才會拒絕，有沒有大於他。或者看右端機率，是否有符合要拒絕的0.05之類的）
 F &lt;- t(Rbetamr)%*%solve(R%*% VCOV %*%t(R))%*%Rbetamr/q
 F
 
-pvF &lt;- 1-pf(F,df1=q,df2=nmk)
-pvF
+#VCOV 就是s^2 * C22的概念(那個矩陣，兩變數（包含截據項）剛好就只有s^2 * C22)
 
-vcov(lse)
-coefficients(lse)
-residuals(lse)
-fitted.values(lse)
-y-e
+summary(lse) #F-statistic: 33.75 on 3 and 196 DF,  p-value: &lt; 2.2e-16
+
+
+#F統計量沒有單雙尾問題。就是右尾
+pvF &lt;- 1-pf(F,df1=q,df2=nmk)
+#出來是0 很右邊 形成機率幾乎等於0
+pvF
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>#補充lse寫法</p>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueVxuXG5gYGAifQ== -->
+<pre class="r"><code>y
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgIFssMV1cbiAgWzEsXSAgOTAyXG4gIFsyLF0gIDQ5MVxuICBbMyxdIDE4NDFcbiAgWzQsXSAgNDA2XG4gIFs1LF0gICAgMFxuICBbNixdIDE4OTlcbiAgWzcsXSAgNzI0XG4gIFs4LF0gMTQwNFxuICBbOSxdIDEzNjdcbiBbMTAsXSAgNTYwXG4gWzExLF0gMTY3NlxuIFsxMixdIDEzNzZcbiBbMTMsXSAxMDU5XG4gWzE0LF0gIDkyNFxuIFsxNSxdIDEzODJcbiBbMTYsXSAgNzAwXG4gWzE3LF0gIDI1NFxuIFsxOCxdICA4MDhcbiBbMTksXSAgOTM4XG4gWzIwLF0gMTMzN1xuIFsyMSxdICA0NzFcbiBbMjIsXSAxNDI2XG4gWzIzLF0gMTI1MFxuIFsyNCxdIDEwNzdcbiBbMjUsXSAgNjYwXG4gWzI2LF0gMTA5MVxuIFsyNyxdICA0MzNcbiBbMjgsXSAxMTM1XG4gWzI5LF0gIDkxNVxuIFszMCxdIDIwODZcbiBbMzEsXSAxNDU0XG4gWzMyLF0gIDg0NFxuIFszMyxdIDEyODNcbiBbMzQsXSAgOTU5XG4gWzM1LF0gMTM4M1xuIFszNixdIDE0ODVcbiBbMzcsXSAgNjE1XG4gWzM4LF0gIDY1N1xuIFszOSxdICA3MjhcbiBbNDAsXSAgNDIxXG4gWzQxLF0gIDY0N1xuIFs0MixdICA4NzBcbiBbNDMsXSAgMjQ5XG4gWzQ0LF0gIDUzNVxuIFs0NSxdIDEyNjVcbiBbNDYsXSAxNjAxXG4gWzQ3LF0gMTUxM1xuIFs0OCxdIDExNzVcbiBbNDksXSAgNDY0XG4gWzUwLF0gMTExNVxuIFs1MSxdICA3MDFcbiBbNTIsXSAxMDM0XG4gWzUzLF0gMTgyMFxuIFs1NCxdIDExODVcbiBbNTUsXSAgICAwXG4gWzU2LF0gMTI4OFxuIFs1NyxdIDE2ODJcbiBbNTgsXSAgNzcyXG4gWzU5LF0gMTQxOVxuIFs2MCxdIDE2NzBcbiBbNjEsXSAgODQ2XG4gWzYyLF0gIDgxMVxuIFs2MyxdICAgNTlcbiBbNjQsXSAxMzExXG4gWzY1LF0gICA2MVxuIFs2NixdIDEzNDJcbiBbNjcsXSAxODYzXG4gWzY4LF0gMTYwMFxuIFs2OSxdICA4MTFcbiBbNzAsXSAgNzc5XG4gWzcxLF0gMTg0OVxuIFs3MixdIDE0MTJcbiBbNzMsXSAgOTU3XG4gWzc0LF0gIDU4M1xuIFs3NSxdICA1NzNcbiBbNzYsXSAgNzQ4XG4gWzc3LF0gIDg4MVxuIFs3OCxdIDE2OThcbiBbNzksXSAxMzIzXG4gWzgwLF0gIDQ2NVxuIFs4MSxdICA2NzBcbiBbODIsXSAgMTY5XG4gWzgzLF0gMTg4OFxuIFs4NCxdICA1OTRcbiBbODUsXSAxOTMyXG4gWzg2LF0gMTUzNFxuIFs4NyxdIDIzNTRcbiBbODgsXSAxMDQ1XG4gWzg5LF0gIDcwMlxuIFs5MCxdIDE3ODZcbiBbOTEsXSAgNzY2XG4gWzkyLF0gMTA1NVxuIFs5MyxdICAxNTVcbiBbOTQsXSAgNTA0XG4gWzk1LF0gMTY0MFxuIFs5NixdICAgOThcbiBbOTcsXSAgNDMwXG4gWzk4LF0gIDYyNFxuIFs5OSxdICAgIDBcblsxMDAsXSAxMDM0XG5bMTAxLF0gIDk1NlxuWzEwMixdIDE0NTlcblsxMDMsXSAyMTg1XG5bMTA0LF0gIDkyNlxuWzEwNSxdICAgIDBcblsxMDYsXSAgODYzXG5bMTA3LF0gIDk4MFxuWzEwOCxdICA5MzlcblsxMDksXSAgNjk2XG5bMTEwLF0gMTU4M1xuWzExMSxdIDE3NTdcblsxMTIsXSAxMDU3XG5bMTEzLF0gMTM0MVxuWzExNCxdICA4NDFcblsxMTUsXSAxMDU2XG5bMTE2LF0gIDQ4MlxuWzExNyxdIDExNTFcblsxMTgsXSAgODkwXG5bMTE5LF0gIDEwMFxuWzEyMCxdIDEyODRcblsxMjEsXSAxMTAwXG5bMTIyLF0gIDUzN1xuWzEyMyxdICA4ODFcblsxMjQsXSAxNjYyXG5bMTI1LF0gIDQ0MVxuWzEyNixdICA1MzVcblsxMjcsXSAxNjIzXG5bMTI4LF0gMTU4MFxuWzEyOSxdICA3NzNcblsxMzAsXSAxNzIyXG5bMTMxLF0gIDc5MlxuWzEzMixdIDEwMzFcblsxMzMsXSAxOTU3XG5bMTM0LF0gIDQ3OVxuWzEzNSxdIDEyMzlcblsxMzYsXSAxMTU0XG5bMTM3LF0gMTYzMFxuWzEzOCxdIDI2MDlcblsxMzksXSAxNjQ3XG5bMTQwLF0gIDYwM1xuWzE0MSxdICA3MTZcblsxNDIsXSAgOTg2XG5bMTQzLF0gIDc0N1xuWzE0NCxdICA0OTNcblsxNDUsXSAxNTgxXG5bMTQ2LF0gIDM1OFxuWzE0NyxdICA1NTJcblsxNDgsXSAxMTgzXG5bMTQ5LF0gMTIwMFxuWzE1MCxdIDI0NjRcblsxNTEsXSAgNjQ3XG5bMTUyLF0gMTEzNVxuWzE1MyxdICA0OThcblsxNTQsXSAgNTUzXG5bMTU1LF0gMTI1MFxuWzE1NixdIDEwMDdcblsxNTcsXSAgNzQyXG5bMTU4LF0gMTMxNlxuWzE1OSxdICA4NjdcblsxNjAsXSAyMzI3XG5bMTYxLF0gIDkxNFxuWzE2MixdIDE0NDRcblsxNjMsXSAgICAwXG5bMTY0LF0gMjIxMVxuWzE2NSxdICAyMDFcblsxNjYsXSAgODA2XG5bMTY3LF0gIDg2N1xuWzE2OCxdIDE3MzFcblsxNjksXSAgNDgwXG5bMTcwLF0gMTA2MFxuWzE3MSxdICA1ODZcblsxNzIsXSAgODUzXG5bMTczLF0gMTU1OFxuWzE3NCxdICA4NjRcblsxNzUsXSAxNDk2XG5bMTc2LF0gMTQ1MFxuWzE3NyxdIDE2NTRcblsxNzgsXSAxNzQwXG5bMTc5LF0gIDc3MFxuWzE4MCxdICAgIDBcblsxODEsXSAxMDkzXG5bMTgyLF0gMjA1M1xuWzE4MyxdIDI0NzRcblsxODQsXSAxODczXG5bMTg1LF0gMTAxMlxuWzE4NixdIDExMjFcblsxODcsXSAgNjc0XG5bMTg4LF0gMTA4MFxuWzE4OSxdIDE4OTNcblsxOTAsXSAxMzc0XG5bMTkxLF0gIDczNFxuWzE5MixdIDE2OTVcblsxOTMsXSAxNTUyXG5bMTk0LF0gIDI5MFxuWzE5NSxdICA4NDFcblsxOTYsXSAgMzMwXG5bMTk3LF0gMTMwMVxuWzE5OCxdICA5OTlcblsxOTksXSAxNDY3XG5bMjAwLF0gIDc2NFxuIn0= -->
+<pre><code>       [,1]
+  [1,]  902
+  [2,]  491
+  [3,] 1841
+  [4,]  406
+  [5,]    0
+  [6,] 1899
+  [7,]  724
+  [8,] 1404
+  [9,] 1367
+ [10,]  560
+ [11,] 1676
+ [12,] 1376
+ [13,] 1059
+ [14,]  924
+ [15,] 1382
+ [16,]  700
+ [17,]  254
+ [18,]  808
+ [19,]  938
+ [20,] 1337
+ [21,]  471
+ [22,] 1426
+ [23,] 1250
+ [24,] 1077
+ [25,]  660
+ [26,] 1091
+ [27,]  433
+ [28,] 1135
+ [29,]  915
+ [30,] 2086
+ [31,] 1454
+ [32,]  844
+ [33,] 1283
+ [34,]  959
+ [35,] 1383
+ [36,] 1485
+ [37,]  615
+ [38,]  657
+ [39,]  728
+ [40,]  421
+ [41,]  647
+ [42,]  870
+ [43,]  249
+ [44,]  535
+ [45,] 1265
+ [46,] 1601
+ [47,] 1513
+ [48,] 1175
+ [49,]  464
+ [50,] 1115
+ [51,]  701
+ [52,] 1034
+ [53,] 1820
+ [54,] 1185
+ [55,]    0
+ [56,] 1288
+ [57,] 1682
+ [58,]  772
+ [59,] 1419
+ [60,] 1670
+ [61,]  846
+ [62,]  811
+ [63,]   59
+ [64,] 1311
+ [65,]   61
+ [66,] 1342
+ [67,] 1863
+ [68,] 1600
+ [69,]  811
+ [70,]  779
+ [71,] 1849
+ [72,] 1412
+ [73,]  957
+ [74,]  583
+ [75,]  573
+ [76,]  748
+ [77,]  881
+ [78,] 1698
+ [79,] 1323
+ [80,]  465
+ [81,]  670
+ [82,]  169
+ [83,] 1888
+ [84,]  594
+ [85,] 1932
+ [86,] 1534
+ [87,] 2354
+ [88,] 1045
+ [89,]  702
+ [90,] 1786
+ [91,]  766
+ [92,] 1055
+ [93,]  155
+ [94,]  504
+ [95,] 1640
+ [96,]   98
+ [97,]  430
+ [98,]  624
+ [99,]    0
+[100,] 1034
+[101,]  956
+[102,] 1459
+[103,] 2185
+[104,]  926
+[105,]    0
+[106,]  863
+[107,]  980
+[108,]  939
+[109,]  696
+[110,] 1583
+[111,] 1757
+[112,] 1057
+[113,] 1341
+[114,]  841
+[115,] 1056
+[116,]  482
+[117,] 1151
+[118,]  890
+[119,]  100
+[120,] 1284
+[121,] 1100
+[122,]  537
+[123,]  881
+[124,] 1662
+[125,]  441
+[126,]  535
+[127,] 1623
+[128,] 1580
+[129,]  773
+[130,] 1722
+[131,]  792
+[132,] 1031
+[133,] 1957
+[134,]  479
+[135,] 1239
+[136,] 1154
+[137,] 1630
+[138,] 2609
+[139,] 1647
+[140,]  603
+[141,]  716
+[142,]  986
+[143,]  747
+[144,]  493
+[145,] 1581
+[146,]  358
+[147,]  552
+[148,] 1183
+[149,] 1200
+[150,] 2464
+[151,]  647
+[152,] 1135
+[153,]  498
+[154,]  553
+[155,] 1250
+[156,] 1007
+[157,]  742
+[158,] 1316
+[159,]  867
+[160,] 2327
+[161,]  914
+[162,] 1444
+[163,]    0
+[164,] 2211
+[165,]  201
+[166,]  806
+[167,]  867
+[168,] 1731
+[169,]  480
+[170,] 1060
+[171,]  586
+[172,]  853
+[173,] 1558
+[174,]  864
+[175,] 1496
+[176,] 1450
+[177,] 1654
+[178,] 1740
+[179,]  770
+[180,]    0
+[181,] 1093
+[182,] 2053
+[183,] 2474
+[184,] 1873
+[185,] 1012
+[186,] 1121
+[187,]  674
+[188,] 1080
+[189,] 1893
+[190,] 1374
+[191,]  734
+[192,] 1695
+[193,] 1552
+[194,]  290
+[195,]  841
+[196,]  330
+[197,] 1301
+[198,]  999
+[199,] 1467
+[200,]  764</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+</section>
+</section>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CgpkYXRhc2V0IDwtIHJlYWQuY3N2KCJDOi9Vc2Vycy8vRGVza3RvcC9kYXRhX2Zvcl9jbGFzcy5jc3YiLGhlYWRlcj1UUlVFKQoKc3RyKGRhdGFzZXQpCgpkYXQgPC0gZGF0YXNldAoKbWlsZXMgPC0gZGF0JE1JTEVTCmluY29tZSA8LSBkYXQkSU5DT01FCmFnZSA8LSBkYXQkQUdFCmtpZHMgPC0gZGF0JEtJRFMKYGBgCgpgYGB7cn0KbHNlIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcykKc3VtbWFyeShsc2UpCgp5IDwtIGFzLm1hdHJpeChtaWxlcykKeQpkaW0oeSkKClggPC0gY2JpbmQoMSxpbmNvbWUsYWdlLGtpZHMpClgKZGltKFgpCgpiIDwtIGNyb3NzcHJvZChzb2x2ZShjcm9zc3Byb2QoWCxYKSksY3Jvc3Nwcm9kKFgseSkpCmIKZGltKGIpCgplIDwtIHktWCUqJWIKZQpzdW1tYXJ5KGUpCgpuIDwtIG5yb3coWCkKaSA8LSBhcy5tYXRyaXgoWFssMV0pCm0wIDwtIGRpYWcobiktaSUqJXNvbHZlKGNyb3NzcHJvZChpLGkpKSUqJXQoaSkKYGBgCgpgYGB7cn0KdHNzIDwtIHQoeSklKiVtMCUqJXkKcnNzIDwtIGNyb3NzcHJvZChlLGUpCmVzcyA8LSB0c3MtcnNzCgpSMiAgPC0gZXNzL3RzcwpSMgoKayA8LSBuY29sKFgpCm5tayA8LSBuLWsKbm1rCgphZGpSMiA8LSAoMS1rKS9ubWsrKG4tMSkvbm1rKlIyCmFkalIyCgpzMiA8LSBhcy5udW1lcmljKHJzcy9ubWspCnMyCgpzIDwtIHMyXjAuNQpzCgpWQ09WIDwtIHMyKnNvbHZlKGNyb3NzcHJvZChYLFgpKQpWQ09WCgp2YXIgPC0gZGlhZyhWQ09WKQp2YXIKCnNlIDwtIHZhcl4wLjUKc2UKCnRyYXQgPC0gYi9zZQp0cmF0CgpwdnQgPC0gMipwdCgtYWJzKHRyYXQpLGRmPW5taykKcHZ0CgpgYGAKCmBgYHtyfQpyZXN1bHRzIDwtIGNiaW5kKGIsc2UsdHJhdCxwdnQpCmNvbG5hbWVzKHJlc3VsdHMpIDwtIGMoIkVzdGltYXRlIiwiU3RkLiBFcnJvciIsInQgdmFsdWUiLCJQcig+fHR8KSIpCnJvd25hbWVzKHJlc3VsdHMpIDwtIGMoImludGVyY2VwdCIsImluY29tZSIsImFnZSIsImtpZHMiKQpyb3VuZChyZXN1bHRzLGRpZ2l0cz00KQoKcSA8LSBuY29sKFgpLTEKcQoKbnVsbCA8LSBtYXRyaXgoMDowLHEpCmlrbTEgPC0gZGlhZyhxKQpSIDwtIGNiaW5kKG51bGwsaWttMSkKUgoKciA8LSBtYXRyaXgoMDowLHEpCnIKClJiZXRhbXIgPC0gUiUqJWItcgpSYmV0YW1yCgpGIDwtIHQoUmJldGFtciklKiVzb2x2ZShSJSolIFZDT1YgJSoldChSKSklKiVSYmV0YW1yL3EKRgoKcHZGIDwtIDEtcGYoRixkZjE9cSxkZjI9bm1rKQpwdkYKCnZjb3YobHNlKQpjb2VmZmljaWVudHMobHNlKQpyZXNpZHVhbHMobHNlKQpmaXR0ZWQudmFsdWVzKGxzZSkKeS1lCgoKCmBgYAoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoxMDkgMTEyIHdoeSBhPWIg5aW95YOP5YWs5byP6KGo6YGU5pyJ5LiA6bue6bue5rKS5pyJ5YWo5oeCCgoKMTQ3IHdoeSB0aGF0IGlzIHRzcy4gbm90IGVzcy4gd2UgaGF2ZSBzYW1wbGUgdGhhbiBwb3B1bGF0aW9uPyDpgJnlgIvmmK9577yM6YKj6L+05q245byP5LiK6Z2i55qE5omN5piveSBoYXQg5piv5LiN6KuW5piv5bey55+leOW4tuWFpeaxguW+l+eahOi/tOatuOe3muS4iueahHkg5oiW6ICF5piv55So5Zyo5pyq55+l55qEee+8iOaykuacieaUtumbhuWIsOeahHBvcHVsYXRpb27lhafnmoTmg4Xms4HvvIlwcmVkaWN0aW9u5LiK6Z2i44CC77yI5LiN6KaB5pCe6YyveSB5aGF0KOi/tOatuOW8j+e3muS4iueahCkKCgojIOW8leWFpeizh+aWmQpgYGB7cn0KI+imgeS/ruaUuei3r+W+kQpkYXRhc2V0IDwtIHJlYWQuY3N2KCIvVXNlcnMvY2hlbnBvbWluZy9Eb2N1bWVudHMvR2l0SHViL1F1YW50aXRhdGl2ZSBNZXRob2QvUXVhbnRpdGF0aXZlIE1ldGhvZC9kYXRhX2Zvcl9jbGFzcy5jc3YiLGhlYWRlcj1UUlVFKQojIGhlYWRlciDlj4Pmlbgg5piv6KaB6Kit5a6a5LuW55qE5pyA5LiK6Z2i55qEcm935pyJ5rKS5pyJ6KaB5ZGI54++6K6K5pW45ZCN56ix44CCKOS4jeeEtuacg+iuiuaIkFYxIFYyIFYzIOWwseaYr+iuiuaVuOeahOaEj+aAne+8jOWei+aFi+S5n+acg+iuiuaIkGZhY3RvcikKI+mAmeaYr+S4gOWAi+ingOWvn+WutuW6reaXhemBiuWPl+WIsOWTquS6m+WboOe0oOW9semfv+eahOeahOi/tOatuOW8jwojIG1pbGVzIOaXheeoi+i3nembogojIGluY29tZSDlrrbluq3mlLblhaUKIyBhZ2Ug5a626ZW35bm06b2hCiMga2lkcyDlsI/lranlgIvmlbgKIyDmqKPmnKwyMDAKCmRhdGFzZXQKYGBgCgojc3RyIHN0cnV0dXJl55qE5oSP5oCdCmBgYHtyfQpzdHIoZGF0YXNldCkKCiMg5pS55Y+m5a2Y54mp5Lu25ZCN56ix77yM5pa55L6/5LiA5LqbCmRhdCA8LSBkYXRhc2V0CgojcGlja+WHuuino+mHi+iuiuaVuOWSjOiiq+ino+mHi+iuiuaVuAptaWxlcyA8LSBkYXQkTUlMRVMKaW5jb21lIDwtIGRhdCRJTkNPTUUKYWdlIDwtIGRhdCRBR0UKa2lkcyA8LSBkYXQkS0lEUwoKY2xhc3MobWlsZXMpICNpbnRlZ2VyCgpgYGAKCmBgYAoj5YiwY29kZSA1NSDmmK/nlKhsbSBmdW5jdGlvbiDpgqPku6XkuItjb2RlNDPmmK/nlKjmi4bop6PmlrnlvI/ljrvlu7rnq4vjgIIKI1N0ZC4gRXJyb3Ig5pivdmFyaWFuY2UgY292YXJpYW5jZSBtYXRyaXjnmoTlsI3op5Lnt5rvvIxWYXJpYW5jZSBiZXRhIDEgMiAzIDQgaGF0IOmWi+agueiZnyA6IAoKVmFyKGJldGEgaGF0MSnplovmoLnomZ8gClZhcihiZXRhIGhhdDIp6ZaL5qC56JmfIApWYXIoYmV0YSBoYXQzKemWi+agueiZnwpWYXIoYmV0YSBoYXQ0KemWi+agueiZnwoKI3QtdmFsdWUgdG8gY2hlY2sgaWYgaW5jb21lIGlzIHNpZ25pZmljYW50bHkgZGlmZmVybmV0IGZyb20gemVybywgdGhlbiB3ZSB3aWxsIGhhdmUgMTQuMjAxLTAvMS44MDA9Ny44ODkuCkFsc28sIGFzIHQtdmFsdWUgaXMgNy44ODkgdGhlIGRlZ3JlZSBvZiBmcmVlZG9tIO+8nTIwMC0077yMd2Ugd2lsbCBjaGVjayB0aGUgc2hlZXQgdG8ga25vdyB0aGUgcC12YWx1ZSA9IDIuMTBlLTEzKOmdnuW4uOWPs+err++8iXdlIHdpbGwgYWJzb2x1dGVseSByZWplY3QuIAojIyDmiJbogIXkvaDlj6/ku6XlsI03Ljg4OemAsuihjOafpeihqOOAggoKIyrnmoTlpJrlr6HvvIzmmK/mjIflnKjlpJrlsJHmr5TkvovkuIvkvaDmnIPpgbjmk4fmi5LntZXll47vvJ8gCgpTaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxCgrkuInnp5EqKirooajnpLrlnKhwLXZhbHVlIDwgMC4wMDHnmoTmop3ku7bkuIvvvIzmnIPmi5LntZUo5Zug54K65Zyo5LuW5Y+z6YKK55qE5qmf546H5Y+q5pyJMi4xKjEwXi0xM++8jOS5n+WwseaYr+acg+mhr+iRl+S4je+8nTAKCiNSZXNpZHVhbCBzdGFuZGFyZCBlcnJvcih5LXkgaGF0KTogNDUyLjMgb24gMTk2IGRlZ3JlZXMgb2YgZnJlZWRvbSDmmK/mjIfoqqTlt67poIXnmoTmqJnmupblt67ngro0NTIuMwoKI011bHRpcGxlIFItc3F1YXJlZDogIDAuMzQwNiwJQWRqdXN0ZWQgUi1zcXVhcmVkOiAgMC4zMzA1IArphY3pganluqbmnIkwLjMg5Lul5q2k5qKd5Lu25L6G55yL566X55CG5oOz55qE5qih5Z6L44CCCgojRi1zdGF0aXN0aWM6IDMzLjc1IG9uIDMgYW5kIDE5NiBERiwgIHAtdmFsdWU6IDwgMi4yZS0xNgroi6XmmK/ku6VG5YiG6YWN6YCy6KGM5qqi5a6a77yM6YCZ6YKK55qE6ZmQ5Yi25qKd5Lu25pivcT0z77yM5YGH6Kit5qqi5a6a5pivSDAgOiBiZXRhMSA9IGJldGEyID0gYmV0YTMgPSAwIArmnKzouqtG5YiG6YWN5piv5Y+z56+H44CCcC12YWx1ZTogPCAyLjJlLTE2IOS5n+W+iOWwj++8jOS4gOaoo+acg+aLkue1leOAggoKIyMjIOeoi+W8j+WFp+imgeWmguS9leioreWumuWWrumbmeWwvu+8nwpgYGAKCmBgYHtyfQojbG0g5pivUuWFp+W7uueahOWHveaVuOOAguS4jeeUqOmhjeWkluS4i+i8iQoj55uu5YmN5piv6buY6KqN5pyJ5oiq5pOa6aCF55qECiPoi6XkuI3opoHmiKrmk5rpoIXvvIzmnInlhannqK7mlrnlvI/lj6/ku6XooajnpLrjgIIKI2xzZSA8LSBsbSgwK21pbGVzfmluY29tZSthZ2Ura2lkcykKI2xzZSA8LSBsbShtaWxlc35pbmNvbWUrYWdlK2tpZHMtMSkKbHNlIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcykKY2xhc3MobHNlKQpzdW1tYXJ5KGxzZSkKCmBgYAoKIyDnj77lnKjopoHnlKjmiYvlr6vnqIvlvI/vvIzlm6DngrrkvaDnmoToq5bmloflj6/og73mmK/mnInlibXmlrDnmoTvvIzlj6rlpb3lr6vnqIvlvI/lgZrlh7rkvaDmg7PopoHlgZrnmoTntZDmnpzjgILmiJbmmK/nlKjkuobmr5TovIPpgLLpmo7nmoTlh73mlbjvvIzplovnmbzogIXnmoTlj4PmlbjoqK3lrprvvIzkvaDmr5TovIPkuI3kuobop6PvvIzmnInmmYLlgJnntZDmnpzkuI3lpKroqo3lkIzlsLHmr5TovIPpm6Pns77mraPvvIzmiYvlr6vnmoRzdHJ1Y3R1cmXkuZ/mr5TovIPnqanlrprlpb3kv67mraPjgILpgqPlr6bli5nkuIrmnIDlpJrmmK/mkK3phY3nlKjvvIzkuIvkuIDpgLHmnIPku4vntLnjgIIKI+WmguaenOimgeeUqOeoi+W8j+eivOWJtemAoOeahOipse+8jOmCo+WwseimgeeboeWPr+iDveWcsOaDs+WDj+ethuiomOa1geeoi+OAggpgYGB7cn0KI+aVuOaWueacieW+iOWkmuefqemZo++8jOaJgOS7peimgei9ieaIkOefqemZo+eahOizh+aWmeWei+aFiwp5IDwtIGFzLm1hdHJpeChtaWxlcykKY2xhc3MoeSkKeQojZGltOmRpbWVuc2lvbijntq3luqYp77yM55yL55yL5pivIOWkmuWwkWJ55aSa5bCRIOWmguaenOS9oOS4jei9ieaIkOefqemZo++8jOS9oOeahGRpbeWwseacg+aYr051bGzvvIzmnKzouqttaWxlc+iuiuaVuOWwseWPquaYr2ludGVnZXIKCmRpbSh5KQpkaW0obWlsZXMpICMgTnVsbAoKI2NiaW5kIGNvbHVtbiBiaW5kCiPopoHlpJrkuIDooYxjb2x1bW7nmoTljp/lm6DmmK/ku4DpurzvvJ8oZm9yIHRoZSBpbnRlcmNlcHQpClggPC0gY2JpbmQoMSxpbmNvbWUsYWdlLGtpZHMpClgKY2xhc3MoaW5jb21lKQpjbGFzcyhYKQpkaW0oWCkKYGBgCgojIOW3sue2k+W7uueri+Wlveaoo+acrOeahOefqemZo++8jOWMheWQq+ino+mHi+iuiuaVuOiIh+mdnuino+mHi+iuiuaVuO+8jOaOpeS4i+S+huimgeioiOeul+WHukVzdGltYXRvcu+8hkVzdGltYXRl44CC5q616JC9Meebruaome+8jOaxguW+l2JldGEgaGF0LyB1IGhhdApgYGB7cn0KI2Nyb3NzcHJvZChYLHkpIOWwseaYr1h0cmFuc3BvcnQgKiB5CiNjcm9zc3Byb2QoWCxYKSDlsLHmmK9YdHJhbnNwb3J0ICogWAojc29sdmXmmK/lj43lh73mlbjnmoTmhI/mgJ0KI+acgOW+jOacgOWklumdouWGjeS4gOWAi2Nyb3NzcHJvZAojdGhpcyBpcyB0aGUgZm9ybXVsYSBvZiBgYmV0YSBoYXRgIGp1c3Qgd2UgbWVudGlvbiBhIGxvdCBpbiBjbGFzcyBiZWZvcmUKCiMjIyB3aHkgd2Ugc3RpbGwgbmVlZCBhIGNyb3NzcHJvZCBhdCB0aGUgZnJvbnQgb2YgdGhpcyBjb2RlPyAoYSA9IGIpCmEgPC0gc29sdmUoY3Jvc3Nwcm9kKFgsWCkpICUqJSBjcm9zc3Byb2QoWCx5KSAKYQpiIDwtIGNyb3NzcHJvZChzb2x2ZShjcm9zc3Byb2QoWCxYKSksY3Jvc3Nwcm9kKFgseSkpCmIKZGltKGIpICM0IGJ5IDEoayBieSAxKQoKIyrmmK/llq7ntJTnm7jkuZggJSol5piv55+p6Zmj55u45LmYCiNlIOWwseaYr2Rpc3R1cmJhbmNlIHRlcm0gaGF0ICh1IGhhdCkKI2RpbSh5KT0yMDB4MSBkaW0oWCk9MjAwKjQgZGltKGIpPTQqMQplIDwtIHktWCUqJWIKZQpzdW1tYXJ5KGUpCnN1bW1hcnkobHNlKQojbWVhbihlKT0wIOiqpOW3rumgheeahOWKoOe4veaYrzDvvIzoh6rnhLblubPlnYfkuZ/mmK8w44CC54S25b6M6YCZ5q615ZKMbHNl5LiA6ZaL5aeL55qEUmVzaWR1YWxz5piv5LiA5qij55qE44CCCmBgYAoKIyDmrrXokL0y55uu55qE5rGC5Ye66YWN6YGp5bqmUl4y77yI562G6KiYOS8yMO+8jOmghuW6j+ebuOWQjCkKYGBge3J9CiNucm93Om51bWJlciBvZiByb3cgb2YgeAojWFssMV3mmK/mjIfnrKzkuIDlgItjb2x1bW7lhajpg6jvvIxmb3Ig5oiq5pOa6aCF44CC6YKj5LuW6YO95pivMQpuIDwtIG5yb3coWCkKaSA8LSBhcy5tYXRyaXgoWFssMV0pCm4KaQpkaW0oaSkgIzIwMCB4IDEKI+aIkeWAkeimgeWOu+WJtemAoGRldmlhdGlvbiBmcm9tIG1lYW4g5LiK6Kqy5pyJ5pWZ6YGO77yM6YKj5YCLbTDvvIzorormiJB5LXliYXLnmoTmpoLlv7XjgIIKI2RpYWcobinlibXpgKAyMDAqMjAw55qESW4gdW5pdCB2ZWN0b3LvvIzliY3pnaJu55uu55qE5bCx5piv5oq95Ye65LiA5YCLMjAwCiN0KGkpIOWwseaYr2kgdHJhbnNwb3J0Cm0wIDwtIGRpYWcobiktaSUqJXNvbHZlKGNyb3NzcHJvZChpLGkpKSUqJXQoaSkKYGBgCgojIyMg5o6l5LiL5L6G566X5piv5o6i6KiO6YWN6YGp5bqm55qE6YOo5YiG77yI562G6KiYOS8yMCkKYGBge3J9Cm0wCmRpbShtMCkgIzIwMCB4IDIwMCBtMCBpcyBzeW1tZXRyaWMgYW5kIGlkZW1wb3RlbnQgCnRzcyA8LSB0KHkpJSolbTAlKiV5IApyc3MgPC0gY3Jvc3Nwcm9kKGUsZSkKZXNzIDwtIHRzcy1yc3MKClJzcXVhcmUgPC0gZXNzL3RzcwpSc3F1YXJlCiNzdW1tYXJ5KGxzZSkgTXVsdGlwbGUgUi1zcXVhcmVkOiAgMC4zNDA2IHRoZXkgYXJlIHRoZSBzYW1lCgprIDwtIG5jb2woWCkgIzQKbm1rIDwtIG4tawpubWsgIzE5NgoKI+S4iumdoueahG5ta+aYr+eCuuS6huaxgmFkanVzdGVkIFJzcXVhcmUo5LiA5qij5pivOS8yMOethuiomCkKYWRqUnNxdWFyZSA8LSAoMS1rKS9ubWsrKG4tMSkvbm1rKlJzcXVhcmUKYWRqUnNxdWFyZQojc3VtbWFyeShsc2UpIEFkanVzdGVkIFItc3F1YXJlZDogIDAuMzMwNSAKYGBgCgojIOauteiQvTPmmK/opoHmiYvli5XljrvlibXpgKDlkITlgIvmqqLlrprkuK3nmoTmnbHopb8KYGBge3J9CiNzMiDvvJ0gY3Jvc3Nwcm9kKGUsIGUpL24tayA9IHJzcy9ubWsKI3MgOiBSZXNpZHVhbCBzdGFuZGFyZCBlcnJvcgojdmFyIDogVmFyKGJldGEgaGF0KQojc2UgOiBiZXRhIGhhdCDnmoRzZS4oc3RhbmRhcmQgZXJyb3Ip77yM5pyJ6YCZ5YCL5omN6IO95YGa5qqi5a6aCiN0cmF0IDog5YGadOaqouWumuOAgnQtcmF0aeS4pumAsuihjOafpeihqOW+l+WIsHAtdmFsdWUKI3B2dCA6IHAtdmFsdWUgdW50ZXIgdGhlIHRyYXQKCiPmsYLlvpdzXjLvvIzlsIdWYXIoYmV0YWhhdO+8ie+8nXNlZ21hXjIqc29sdmUoY3Jvc3Nwb25kKFgsWCkp77yM6L2J5o+b5oiQ5Y+v5L2/55So55qEZXN0aW1hdG9yCgpzMyA8LSBjcm9zc3Byb2QoZSwgZSkvbm1rCmNsYXNzKHMzKQphcy5udW1lcmljKHMzKQpzMiA8LSBhcy5udW1lcmljKHJzcy9ubWspCnMyCgoj6ZaL5qC56JmfICBzID0gUmVzaWR1YWwgc3RhbmRhcmQgZXJyb3IKcyA8LSBzMl4wLjUKcwoKI+Wwjeinkue3muaYr1ZhcmlhbmNlIOmdnuWwjeinkue3muaYr0NvdmFyaWFuY2UKVkNPViA8LSBzMipzb2x2ZShjcm9zc3Byb2QoWCxYKSkKVkNPVgpkaW0oVkNPVikKCiPlj6rmiKrlj5blh7pWYXJpYW5jZSDlsLHmmK9iZXRhIGhhdCDnmoRWYXJpYW5jZe+8jOWNs1ZhcihiZXRhIGhhdCkKdmFyIDwtIGRpYWcoVkNPVikKdmFyCgoj5YaN6ZaL5qC56Jmf77yM5bCx5pivYmV0YSBoYXQg55qEc2UuKHN0YW5kYXJkIGVycm9yKQpzZSA8LSB2YXJeMC41CnNlCnN1bW1hcnkobHNlKSAjc2UgPSBTdGQuIEVycm9yCgoj5YGadOaqouWumuOAgnQtcmF0aW8KI2IgIHRoZSBiZXRhIGhhdDEgMiAzCnRyYXQgPC0gYi9zZSAjYi0wL3NlCnRyYXQKc3VtbWFyeShsc2UpICN0IHZhbHVlID0gdHJhdAoKCiNwdCwgcHJvYmFiaWxpdHkgb2YgdCBkaXN0cmlidXRpb24KIy1hYnModHJhdCkg5oqKdC1yYXRpb+WPlue1leWwjeWAvCjlm6DngrrmnInkupvmnInmraPmnInosqDvvIznhLblvozlho3ntabosqDlgLzvvIzkuI3nhLbmnIPku6Xlt6bnmoTntK/nqY3mqZ/njoflvojlpKfvvIzopoHnlKgx5Y675Ymq5o6J44CCCiMg5LmY5LulMiDlsLHmmK/lm6Dngrrpm5nlsL7nmoTpl5zlv4PvvIzmmK/liIbluIPnmoTlhanpgorjgIIKI2RmPW5tayDoh6rnlLHluqbvvIzmmK90IGRpc3RyaWJ1dGlvbueahOWUr+S4gOWPg+aVuOOAggpwdnQgPC0gMipwdCgtYWJzKHRyYXQpLGRmPW5taykKcHZ0CnN1bW1hcnkobHNlKSAjcHZ0ID0gUHIoPnx0fCkgCmBgYAoKCiPpgLLooYzlgYfoqK3mqqLlrprvvIjmlbTpq5TogIzoqIDliankuItULXRlc3Qq5aSa5bCR56iL5bqm5LiL6aGv6JGX77yM5Lul5Y+KRue1seioiOmHj+aqouWumumChOaykuacieWBmu+8iQojIyMg5ZCI5L216L+05q245byP55u46Zec6LOH6KiKCmBgYHtyfQoj5ZiX6Kmm6KO95L2c6KGo5qC8CnJlc3VsdHMgPC0gY2JpbmQoYixzZSx0cmF0LHB2dCkKZGltKHJlc3VsdHMpCnJlc3VsdHMKI+eCuuihqOagvOeahOiuiuaVuOWPluWQjeWtlwpjb2xuYW1lcyhyZXN1bHRzKSA8LSBjKCJFc3RpbWF0ZSIsIlN0ZC4gRXJyb3IiLCJ0IHZhbHVlIiwiUHIoPnx0fCkiKQpyb3duYW1lcyhyZXN1bHRzKSA8LSBjKCJpbnRlcmNlcHQiLCJpbmNvbWUiLCJhZ2UiLCJraWRzIikKI+WBmuWbm+aNqOS6lOWFpe+8jOWwj+aVuOm7nuWbm+S9jeOAggoj5Z+36KGMMTQ0IDE0NSDlgZrkuIDkuIvlhanogIXnmoTmr5TovIPvvIzlub7kuY7nm7jlkIzjgIIKcm91bmQocmVzdWx0cyxkaWdpdHM9NCkKcmVzdWx0cwpzdW1tYXJ5KGxzZSkKCmBgYAoKIyMjIEbmqqLlrprplovlp4so6YCZ6YKK6IulcT0x5YmHRiA9IHReMu+8jOS9huaYr3E9M+aJgOS7peaYr+S4jeS4gOaoo+eahOOAgnTlj6/ku6XnnIvlgIvliKXkv4LmlbjmmK/lkKbpoa/okZfvvIzpgqNG5piv55yLYmV0YSBoYXQxIDIgM++8nTApCmBgYHtyfQojIyPlibXpgKBG5qqi5a6a6ZyA6KaB55qEIFIgYmV0YShoYXQpIHIKIyMjIFdoeemZkOWItuW8j+aVuOmHj3E9Mz8gOiBiZXRhIGhhdDEgMiAzCnEgPC0gbmNvbChYKS0xCnEKCgojMTozID0gMSAyIDMgIzA6MCA9IDAgMCAwIHVuZGVyIGFzIHE9MwpudWxsIDwtIG1hdHJpeCgwOjAscSkKaWttMSA8LSBkaWFnKHEpCm51bGwKaWttMQoKUiA8LSBjYmluZChudWxsLGlrbTEpClIKCnIgPC0gbWF0cml4KDA6MCxxKQpyCgpiICPlhbfpq5TogIzoqIDmmK9iZXRhIDEgMiAzIGhhdCDkuZ/lsLHmmK/kvLDoqIjlgLzjgIIKUmJldGFtciA8LSBSJSolYi1yICNSYmV0YSBtaW51cyByClJiZXRhbXIKCgojRiB0ZXN05YWs5byPIEbntbHoqIjph4/nmoTlgLwKIyPvvIjlj6/ku6XnlKhG57Wx6KiI6YeP55qE5YC85p+l6KGo55yL6ZyA6KaB5aSa5bCR5omN5pyD5ouS57WV77yM5pyJ5rKS5pyJ5aSn5pa85LuW44CC5oiW6ICF55yL5Y+z56uv5qmf546H77yM5piv5ZCm5pyJ56ym5ZCI6KaB5ouS57WV55qEMC4wNeS5i+mhnueahO+8iQpGIDwtIHQoUmJldGFtciklKiVzb2x2ZShSJSolIFZDT1YgJSoldChSKSklKiVSYmV0YW1yL3EKRgoKI1ZDT1Yg5bCx5pivc14yICogQzIy55qE5qaC5b+1KOmCo+WAi+efqemZo++8jOWFqeiuiuaVuO+8iOWMheWQq+aIquaTmumghe+8ieWJm+WlveWwseWPquaciXNeMiAqIEMyMikKCnN1bW1hcnkobHNlKSAjRi1zdGF0aXN0aWM6IDMzLjc1IG9uIDMgYW5kIDE5NiBERiwgIHAtdmFsdWU6IDwgMi4yZS0xNgoKCiNG57Wx6KiI6YeP5rKS5pyJ5Zau6ZuZ5bC+5ZWP6aGM44CC5bCx5piv5Y+z5bC+CnB2RiA8LSAxLXBmKEYsZGYxPXEsZGYyPW5taykKI+WHuuS+huaYrzAg5b6I5Y+z6YKKIOW9ouaIkOapn+eOh+W5vuS5juetieaWvDAKcHZGCgpgYGAKCiPoo5zlhYVsc2Xlr6vms5UKYGBge3J9CiPku6XkuIvmmK9zdW1tYXJ5KGxzZSkg5Lul5aSW55qEaW5mb3JtYXRpb25z55qE5Ye95pW45a+r5rOVCiN2Y292LCB2YXJpYW5jZSBjb3ZhcmlhbmNlIG1hdHJpeAp2Y292KGxzZSkKVkNPVgpjb2VmZmljaWVudHMobHNlKSNjb2VmZmljaWVudHMKI+WFtuWvpuebtOaOpeaJk2xzZSBjb2VmZmljaWVudHPlt67kuI3lpJoKc3VtbWFyeShsc2UpCgojSGV0ZXJvc3RhdGljaXR5IGlzc3VlIHdpbGwgZm9jdXMgb24gcmVzaWR1YWxzIHByb2JsZW0KcmVzaWR1YWxzKGxzZSkgCiN5IGhhdCA9IGZpdHRlZC52YWx1ZXMgCiNlIOWJjemdouaJi+WLleaciXktWCUqJWIKI+mCo+WcqOaJi+Wvq+ijoemdouWwseebtOaOpeWwseWPr+S7pXktZSh1IGhhdCkgPSB5IGhhdApmaXR0ZWQudmFsdWVzKGxzZSkKCnkKeS1lCmUKCmBgYAoK</div>
 
 
 
