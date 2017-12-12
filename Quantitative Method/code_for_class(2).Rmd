@@ -1,18 +1,36 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  pdf_document:
+    latex_engine : xelatex
+  html_notebook: default
 ---
+
+異質性問題會影響到Rsquare嗎？還是只會影響到假設檢定？
+
+我的理解是不會，因為看公式＝ ESS/TSS，他內容元素若是一致性，則beta hat = beta，且n->無限大，
+Var(beta hat)=0)都可以求得出來。
+
+而且同質變異我們假設的，自然需要修正的是需要用到它的地方，因此會是到假設檢定的分母，再帶入Var(beta hat)^0.5, standard error才會用到。
 
 ```{r}
 library(lmtest)
 library(sandwich)
+rm(list = ls())
 ```
 
+```
+本週第一種 lm + coding by self
+本週第二種 all in function
+```
+
+# 第一段基本上跟上週一樣
 ```{r}
-dataset <- read.csv("C:/Users//Desktop/data_for_class.csv",header=TRUE)
+dataset <- read.csv("/Users/chenpoming/Documents/GitHub/Quantitative Method/Quantitative Method/data_for_class.csv",header=TRUE)
+
 
 dat <- dataset
-
+View(dat)
 miles <- dat$MILES
 income <- dat$INCOME
 age <- dat$AGE
@@ -20,33 +38,53 @@ kids <- dat$KIDS
 
 lse <- lm(miles~income+age+kids)
 summary(lse)
+```
 
+# 第二段上週內容也有
+```{r}
+class(miles)
 y <- as.matrix(miles)
+class(y)
 X <- cbind(1,income,age,kids)
+class(X)
 b <- crossprod(solve(crossprod(X,X)),crossprod(X,y))
-e <- y-X%*%b
+e <- y-X%*%b #取得Ui hat 這是做異質性的檢定BP White都會用到的東西
 
-esq <- e^2
+esq <- e^2 #取得Ui hat平方 這是做異質性的檢定BP White檢定，都會用到的東西
 
+# number of row
 n <- nrow(X)
+# number of column
 k <- ncol(X)
+# degree of freedom
 nmk <- n-k
 ```
 
-#####
+### BP test to test Hetero
 ```{r}
-BP <- lm(esq~income+age+kids)
+#一樣是講義的公式
+#the change in R square is the focus
+#without intercept we will get adjusted Rsquare 因為在講義中最後是由F分配導到卡方分配＝nR^2
+# H0: Homo
+
+BP <- lm(esq~income+age+kids) #這邊是有截據項的
 summary(BP)
 
-LMBP <- n*0.1451
+LMBP <- n*0.1451 
 LMBP
+#29.02就是卡方分佈檢定統計量(若在檢定統計量右邊，就會拒絕H0：Homosterticity)
 
+#或者產生p-value就可以不用查表，比較簡單
 pvchisq <- 1-pchisq(LMBP,df=3)
 pvchisq
 ```
 
-#####
+### White test to test Hetero
 ```{r}
+# 他需要每個變量的平方項以及兩兩交叉項（不用到三個交叉項）
+# White 總共會有九個變量()
+# 一樣是關注Rsquare
+
 incomesq <- income^2
 agesq <- age^2
 kidssq <- kids^2
@@ -57,74 +95,160 @@ kids_income <-kids*income
 W <- lm(esq~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
 summary(W)
 
+#最後一樣是由F統計導到卡方的nR^2（和BP很像）
 LMW <- n*0.2
 LMW
 
 pvchisq <- 1-pchisq(LMW,df=9)
 pvchisq
+# 7.598525e-06 是接近於0的，那就代表變量存在變異數異質性。然後BP White test都是拒絕的。
 ```
 
-#####
+#建立調整過的Var Beta hat (有兩種方式:White1980/WLS )
+```
+從上面知道有異質性的狀況，用不需要function的方式，做手動的方式建立異質性底下的Var(beta hat) hat 
+```
+### 本段落是White 1980 solution1 `只針對Var做調整`
 ```{r}
-Star <- array(0,dim=c(k,k))
+Star <- array(0,dim=c(k,k)) #array 陣列 #dim參數 是維度的設定，這邊要k by k 矩陣matrix差別大嗎？（差異不大，僅只於資料型態當初設計規則）
+class(Star)
 
+
+# 這邊要參考11/22的筆記一開始
+#這邊(n/nmk)是為了？ 
+#因為 White 1980是在大樣本的情況下，那目前n=200是有限樣本。修正的方式有很多種， 那Johnston有提供幾種方式，那這邊僅是一種修正方式，往正確的AsyVar靠近一些。
+#x 是筆記一開始最上面寫的X ；t(x) 是筆記中的第二個X'
 for(i in 1:n){
-x <- as.matrix(X[i,])
-iter <- (n/nmk)*esq[i]*x%*%t(x)
-Star <- Star+iter
+x <- as.matrix(X[i,]) #截取第i row 然後所有的column(而且因為有for迴圈，所以會是x1 x2 x3 x4)
+iter <- (n/nmk)*esq[i]*x%*%t(x) 
+Star <- Star+iter #iter 是k by k 矩陣
 }
+Star #=segma Ui hat 平方乘以xi 乘以xi transport，也就是最後公式中間的那段。
 
 AsyVCOV <- solve(crossprod(X,X))%*%Star%*%solve(crossprod(X,X))
-
+AsyVCOV
 Asyvar <- as.matrix(diag(AsyVCOV))
-
+Asyvar
 Asyse <- Asyvar^0.5
+Asyse #調整過後的standard error
 
-trat <- b/Asyse
+trat <- b/Asyse #b-0/Asyse = tratio
 
-pvt <- 2*pt(-abs(trat),df=nmk)
+pvt <- 2*pt(-abs(trat),df=nmk) #跟上禮拜的相同
+pvt
 
 results <- cbind(b,Asyse,trat,pvt)
+results
 colnames(results) <- c("Estimate","Std. Error","t value","Pr(>|t|)")
 rownames(results) <- c("intercept","income","age","kids")
 round(results,digits=4)
+
+#比較和lse的差別，estimate沒有變，那standard error有變
+results
+summary(lse)
+
 ```
 
-#####
+### 本段落是是WLS solution2，對segma^2，做一個加權，權重處理的概念，和White 1980不同的是他是跑整條新的迴歸式
 ```{r}
+#為什麼是除以income? 其實這是自己挑的。實務上可能還需要看挑哪一個比較適當。但是老師只略提及，然後我自己其實還沒有完全懂得WLS調整的精神XDDD
+
+#WLS是GLS的special case（只關注他的Hetero)
+#這邊miles/income是vector/vector，因此是第一個樣本值的miles/income
+#在講義中就是1/Zi^0.5 其實就是以下的內容
 miles_s <- miles/income^0.5
-intercept_s <- 1/income^0.5
+intercept_s <- 1/income^0.5 #會變成新的variable 他的每個值就會不一樣
 income_s <- income/income^0.5
 age_s <- age/income^0.5
 kids_s <- kids/income^0.5
+#會變成四個變量 一個被解釋變量，然後沒有截據項（下面lm有-1)
+#F-statistic: 299.8 on 4 and 196 DF,  p-value: < 2.2e-16 這邊注意到的是F檢定，他都會默認你是test變數是否為0 然後變數改成4個。
 
 wlse <- lm(miles_s~intercept_s+income_s+age_s+kids_s-1)
+#可以看到三者結果的std.Error 是不同的，但results(from White 1980 只有Var有變化)，但是wlse是一條新的迴歸式，因此他的Estimate 和Std.是都不一樣的。
 summary(wlse)
+results
+summary(lse)
 ```
 
-##########
+
+# 進入到純粹的function寫法
+### 用function出bp-test
 ```{r}
 BPtest <- bptest(lse)
-BPtest
+BPtest #29.015 純公式創造的
+LMBP #29.02 部分手動部分函數創造的
 ```
 
-#####
+### 一樣可以出bp-test在做Wtest
 ```{r}
+#不用寫y，R會知道你要用lse裡面的Ui hat^2
 Wtest <- bptest(lse,~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
-Wtest
+
+# 第一種做法
+W <- lm(esq~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
+summary(W)
+LMW <- n*0.2
+LMW
+
+
+Wtest #BP = 39.993
+LMW #40
 ```
 
-#####
+### 用公式求得AsyVCOV(稱為vcovHC) 做Var調整，是配合White 1980
 ```{r}
+?vcovHC #Heteroskedasticity-consistent estimation of the covariance matrix of the coefficient estimates in regression models.
+
+#vcovHC 來自package(sandwich)
 HCVCOV <- vcovHC(lse)
-HCresults <- coeftest(lse,vcov=HCVCOV)
-HCresults
+HCVCOV # function結果
+AsyVCOV # White1980手動結果
+# HCVCOV AsyVCOV
+HCresults <- coeftest(lse,vcov=HCVCOV) #coeftest也是來自library(lmtest)
+#vcov 參數，你想要使用哪一個vcov 並進行假設檢定
+HCresults #function結果
+results #手動結果
+# 兩者之間一樣是Estimate相同。 Std. Error不同。
 ```
 
-#####
+### 用公式做WLS 
 ```{r}
+#lm 有個參數weights是可以直接執行WLS
 wls <- lm(miles~income+age+kids,weights=1/income)
-summary(wls)
+summary(wls) #F-statistic:  41.9 on 3 and 196 DF,  p-value: < 2.2e-16
+#自由度只有3，那其實他沒有針對已經變成變數的intercept作出調整
+#(問題：標準R^2可是目前已經無截據項，問題比較大，手動wlse的較佳。)
+summary(wlse) #F-statistic: 299.8 on 4 and 196 DF 且無截距項
 ```
 
+```
+作業3放在網路上，下週三繳交
+程式練習一題（變量多一點）
+(a)有用function和手動。繳交程式碼以及用螢光筆將結果部分註記
+(b)ACCESS 的變數比較要多注意
+計算推導一題
+有關t F 的檢定
 
+作業4中需要做GLS的部分請用手動。
+一樣一題程式和手算
+```
+
+```
+補充：
+怎麼自己做自己要的function?
+Hahow好像有一些內容
+```
+```{r}
+myfun <- function(x){
+y <- ifelse(x<0,0,exp(x))
+return(y) 
+}
+
+myfun(x=-2)
+myfun(x=1) #= exponential
+```
+
+```
+wolframAlpha 可以做計算
+```

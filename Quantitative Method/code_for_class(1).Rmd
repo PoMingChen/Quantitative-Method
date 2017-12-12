@@ -2,7 +2,7 @@
 title: "R Notebook"
 output: html_notebook
 ---
-109 112 why a=b 好像公式表達有一點點沒有全懂
+109 112 why a=b 好像公式表達有一點點沒有全懂。 solve(X'X)再做一個transport 因為本身solve(X'X)是對稱的，所以再transport是一樣的。a b 都可以。
 
 
 147 why that is tss. not ess. we have sample than population? 這個是y，那迴歸式上面的才是y hat 是不論是已知x帶入求得的迴歸線上的y 或者是用在未知的y（沒有收集到的population內的情況）prediction上面。（不要搞錯y yhat(迴歸式線上的)

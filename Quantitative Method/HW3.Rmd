@@ -1,0 +1,151 @@
+---
+title: "HW3"
+output:
+  pdf_document:
+    latex_engine : xelatex
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#rm(list = ls())
+```
+
+# Regression model in lm function
+```{r, include = FALSE}
+data3 <- read.csv("/Users/chenpoming/Documents/GitHub/Quantitative Method/Quantitative Method/data_for_homework_3.csv")
+
+data3
+
+value <- data3$VALUE
+crime <- data3$CRIME
+nitox <- data3$NITOX
+rooms <- data3$ROOMS
+age <- data3$AGE
+dist <- data3$DIST
+access <- data3$ACCESS
+tax <- data3$TAX
+ptratio <- data3$PTRATIO
+```
+
+```{r}
+lse3 <- lm(value~crime+nitox+rooms+age+dist+access+tax+ptratio)
+summary(lse3)
+```
+
+# Regression model in hand-on style
+
+### coding for Estimate
+```{r}
+y3 <- as.matrix(value)
+
+X3 <- cbind(1,crime,nitox,rooms,age,dist,access,tax,ptratio)
+
+betahat3 <- solve(crossprod(X3,X3)) %*% crossprod(X3,y3)
+betahat3
+```
+
+### coding for Residuals
+```{r}
+u3hat <- y3 - X3%*%betahat3
+summary(u3hat)
+```
+
+### coding for R^2 & adjusted R^2
+```{r, include = FALSE}
+n <- nrow(X3)
+i <- as.matrix(X3[,1])
+n
+i
+dim(i) #506 x 1
+#我們要去創造deviation from mean 上課有教過，那個m0，變成y-ybar的概念。
+#diag(n)創造506*506的In unit vector，前面n目的就是抽出一個506
+#t(i) 就是i transport
+m0 <- diag(n)-i%*%solve(crossprod(i,i))%*%t(i)
+m0
+```
+
+```{r}
+#這邊我有個疑問是，我們手上有的y3這些樣本是y yhat?
+
+tss <- t(y3)%*%m0%*%y3
+rss <- crossprod(u3hat, u3hat)
+ess <- tss - rss
+
+R2 <- ess/tss
+R2
+
+k <- ncol(X3)
+nmk <- n-k
+nmk
+
+#AdjustedR2 <- 1-((rss/nmk)/(tss/n-1))
+#AdjustedR2 好像用另一個版本的公式會有一點落差 0.6465898
+
+Adjusttry <- (1-k)/nmk + (n-1)/nmk*R2
+Adjusttry
+```
+
+### coding for t-test (including `Var(beta hat) hat` and the se.
+```{r}
+s2 <-  crossprod(u3hat, u3hat)/nmk
+
+s2 <- as.numeric(s2)
+
+s <- s2^0.5
+s #Residual standard error
+
+VCOV <- s2*solve(crossprod(X3,X3))
+var <- diag(VCOV)
+
+se <- var^0.5
+se #Std. Error
+
+```
+
+### coding for t-test(t-ratio and p-vlaue)
+```{r, message = FALSE}
+tratio <- betahat3/se
+tratio
+
+pvt <- 2*pt(-abs(tratio), df=nmk)
+pvt
+```
+
+### combine the infos above
+```{r}
+final <- cbind(betahat3,se,tratio,pvt)
+colnames(final) <- c("Estimate","Std. Error","t value","Pr(>|t|)")
+rownames(final) <- c("intercept","crime","nitox","rooms","age","dist","access","tax","ptratio")
+final <- round(final,digits=5)
+final
+```
+
+### coding for F-test
+```{r}
+q <- ncol(X3)-1
+q #限制式
+
+#創造假設檢定的R
+colvector <- matrix(0:0,q)
+unitvector <- diag(q)
+
+R <- cbind(colvector, unitvector)
+#R 8 by 9
+
+r <- matrix(0:0,q)
+
+
+Rbetahat3mr <- R%*%betahat3-r
+Rbetahat3mr
+F3 <- t(Rbetahat3mr)%*%solve(R%*% VCOV %*%t(R))%*%Rbetahat3mr/q
+F3
+
+pvF <- 1- pf(F3, df1=q, df2=nmk)
+pvF
+```
+

@@ -1696,65 +1696,99 @@ $(document).ready(function () {
 
 
 <!-- rnb-text-begin -->
+<p>異質性問題會影響到Rsquare嗎？還是只會影響到假設檢定？</p>
+<p>我的理解是不會，因為看公式＝ ESS/TSS，他內容元素若是一致性，則beta hat = beta，且n-&gt;無限大， Var(beta hat)=0)都可以求得出來。</p>
+<p>而且同質變異我們假設的，自然需要修正的是需要用到它的地方，因此會是到假設檢定的分母，再帶入Var(beta hat)^0.5, standard error才會用到。</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShsbXRlc3QpXG5saWJyYXJ5KHNhbmR3aWNoKVxuYGBgIn0= -->
-<pre class="r"><code>library(lmtest)
-library(sandwich)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShsbXRlc3QpXG5gYGAifQ== -->
+<pre class="r"><code>library(lmtest)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiB6b29cblxuQXR0YWNoaW5nIHBhY2thZ2U6IOKAmHpvb+KAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6YmFzZeKAmTpcblxuICAgIGFzLkRhdGUsIGFzLkRhdGUubnVtZXJpY1xuIn0= -->
+<pre><code>Loading required package: zoo
+
+Attaching package: ‘zoo’
+
+The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzYW5kd2ljaClcbnJtKGxpc3QgPSBscygpKVxuYGBgIn0= -->
+<pre class="r"><code>library(sandwich)
+rm(list = ls())</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<pre><code>本週第一種 lm + coding by self
+本週第二種 all in function</code></pre>
+<section class="level1">
+<h1>第一段基本上跟上週一樣</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YXNldCA8LSByZWFkLmNzdihcIkM6L1VzZXJzLy9EZXNrdG9wL2RhdGFfZm9yX2NsYXNzLmNzdlwiLGhlYWRlcj1UUlVFKVxuXG5kYXQgPC0gZGF0YXNldFxuXG5taWxlcyA8LSBkYXQkTUlMRVNcbmluY29tZSA8LSBkYXQkSU5DT01FXG5hZ2UgPC0gZGF0JEFHRVxua2lkcyA8LSBkYXQkS0lEU1xuXG5sc2UgPC0gbG0obWlsZXN+aW5jb21lK2FnZStraWRzKVxuc3VtbWFyeShsc2UpXG5cbnkgPC0gYXMubWF0cml4KG1pbGVzKVxuWCA8LSBjYmluZCgxLGluY29tZSxhZ2Usa2lkcylcbmIgPC0gY3Jvc3Nwcm9kKHNvbHZlKGNyb3NzcHJvZChYLFgpKSxjcm9zc3Byb2QoWCx5KSlcbmUgPC0geS1YJSolYlxuXG5lc3EgPC0gZV4yXG5cbm4gPC0gbnJvdyhYKVxuayA8LSBuY29sKFgpXG5ubWsgPC0gbi1rXG5gYGAifQ== -->
-<pre class="r"><code>dataset &lt;- read.csv(&quot;C:/Users//Desktop/data_for_class.csv&quot;,header=TRUE)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YXNldCA8LSByZWFkLmNzdihcIi9Vc2Vycy9jaGVucG9taW5nL0RvY3VtZW50cy9HaXRIdWIvUXVhbnRpdGF0aXZlIE1ldGhvZC9RdWFudGl0YXRpdmUgTWV0aG9kL2RhdGFfZm9yX2NsYXNzLmNzdlwiLGhlYWRlcj1UUlVFKVxuXG5cbmRhdCA8LSBkYXRhc2V0XG5WaWV3KGRhdClcbm1pbGVzIDwtIGRhdCRNSUxFU1xuaW5jb21lIDwtIGRhdCRJTkNPTUVcbmFnZSA8LSBkYXQkQUdFXG5raWRzIDwtIGRhdCRLSURTXG5cbmxzZSA8LSBsbShtaWxlc35pbmNvbWUrYWdlK2tpZHMpXG5zdW1tYXJ5KGxzZSlcbmBgYCJ9 -->
+<pre class="r"><code>dataset &lt;- read.csv(&quot;/Users/chenpoming/Documents/GitHub/Quantitative Method/Quantitative Method/data_for_class.csv&quot;,header=TRUE)
+
 
 dat &lt;- dataset
-
+View(dat)
 miles &lt;- dat$MILES
 income &lt;- dat$INCOME
 age &lt;- dat$AGE
 kids &lt;- dat$KIDS
 
 lse &lt;- lm(miles~income+age+kids)
-summary(lse)
-
-y &lt;- as.matrix(miles)
-X &lt;- cbind(1,income,age,kids)
-b &lt;- crossprod(solve(crossprod(X,X)),crossprod(X,y))
-e &lt;- y-X%*%b
-
-esq &lt;- e^2
-
-n &lt;- nrow(X)
-k &lt;- ncol(X)
-nmk &lt;- n-k</code></pre>
+summary(lse)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<section id="section" class="level5">
-<h5></h5>
+</section>
+<section class="level1">
+<h1>第二段上週內容也有</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQlAgPC0gbG0oZXNxfmluY29tZSthZ2Ura2lkcylcbnN1bW1hcnkoQlApXG5cbkxNQlAgPC0gbiowLjE0NTFcbkxNQlBcblxucHZjaGlzcSA8LSAxLXBjaGlzcShMTUJQLGRmPTMpXG5wdmNoaXNxXG5gYGAifQ== -->
-<pre class="r"><code>BP &lt;- lm(esq~income+age+kids)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXNxIDwtIGVeMlxuXG5gYGAifQ== -->
+<pre class="r"><code>esq &lt;- e^2
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoi6Yyv6KqkOiDmib7kuI3liLDnianku7YgJ2UnXG4ifQ== -->
+<pre><code>錯誤: 找不到物件 'e'</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<section id="bp-test-to-test-hetero" class="level3">
+<h3>BP test to test Hetero</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+S4gOaoo+aYr+ism+e+qeeahOWFrOW8j1xuI3RoZSBjaGFuZ2UgaW4gUiBzcXVhcmUgaXMgdGhlIGZvY3VzXG4jd2l0aG91dCBpbnRlcmNlcHQgd2Ugd2lsbCBnZXQgYWRqdXN0ZWQgUnNxdWFyZSDlm6DngrrlnKjorJvnvqnkuK3mnIDlvozmmK/nlLFG5YiG6YWN5bCO5Yiw5Y2h5pa55YiG6YWN77ydblJeMlxuIyBIMDogSG9tb1xuXG5CUCA8LSBsbShlc3F+aW5jb21lK2FnZStraWRzKSAj6YCZ6YKK5piv5pyJ5oiq5pOa6aCF55qEXG5zdW1tYXJ5KEJQKVxuXG5MTUJQIDwtIG4qMC4xNDUxIFxuTE1CUFxuIzI5LjAy5bCx5piv5Y2h5pa55YiG5L2I5qqi5a6a57Wx6KiI6YePKOiLpeWcqOaqouWumue1seioiOmHj+WPs+mCiu+8jOWwseacg+aLkue1lUgw77yaSG9tb3N0ZXJ0aWNpdHkpXG5cbiPmiJbogIXnlKLnlJ9wLXZhbHVl5bCx5Y+v5Lul5LiN55So5p+l6KGo77yM5q+U6LyD57Ch5ZauXG5wdmNoaXNxIDwtIDEtcGNoaXNxKExNQlAsZGY9MylcbnB2Y2hpc3FcbmBgYCJ9 -->
+<pre class="r"><code>#一樣是講義的公式
+#the change in R square is the focus
+#without intercept we will get adjusted Rsquare 因為在講義中最後是由F分配導到卡方分配＝nR^2
+# H0: Homo
+
+BP &lt;- lm(esq~income+age+kids) #這邊是有截據項的
 summary(BP)
 
-LMBP &lt;- n*0.1451
+LMBP &lt;- n*0.1451 
 LMBP
+#29.02就是卡方分佈檢定統計量(若在檢定統計量右邊，就會拒絕H0：Homosterticity)
 
+#或者產生p-value就可以不用查表，比較簡單
 pvchisq &lt;- 1-pchisq(LMBP,df=3)
 pvchisq</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </section>
-<section id="section-1" class="level5">
-<h5></h5>
+<section id="white-test-to-test-hetero" class="level3">
+<h3>White test to test Hetero</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5jb21lc3EgPC0gaW5jb21lXjJcbmFnZXNxIDwtIGFnZV4yXG5raWRzc3EgPC0ga2lkc14yXG5pbmNvbWVfYWdlIDwtIGluY29tZSphZ2VcbmFnZV9raWRzIDwtIGFnZSpraWRzXG5raWRzX2luY29tZSA8LWtpZHMqaW5jb21lXG5cblcgPC0gbG0oZXNxfmluY29tZSthZ2Ura2lkcytpbmNvbWVzcSthZ2VzcStraWRzc3EraW5jb21lX2FnZSthZ2Vfa2lkcytraWRzX2luY29tZSlcbnN1bW1hcnkoVylcblxuTE1XIDwtIG4qMC4yXG5MTVdcblxucHZjaGlzcSA8LSAxLXBjaGlzcShMTVcsZGY9OSlcbnB2Y2hpc3FcbmBgYCJ9 -->
-<pre class="r"><code>incomesq &lt;- income^2
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyDku5bpnIDopoHmr4/lgIvororph4/nmoTlubPmlrnpoIXku6Xlj4rlhanlhankuqTlj4npoIXvvIjkuI3nlKjliLDkuInlgIvkuqTlj4npoIXvvIlcbiMgV2hpdGUg57i95YWx5pyD5pyJ5Lmd5YCL6K6K6YePKClcbiMg5LiA5qij5piv6Zec5rOoUnNxdWFyZVxuXG5pbmNvbWVzcSA8LSBpbmNvbWVeMlxuYWdlc3EgPC0gYWdlXjJcbmtpZHNzcSA8LSBraWRzXjJcbmluY29tZV9hZ2UgPC0gaW5jb21lKmFnZVxuYWdlX2tpZHMgPC0gYWdlKmtpZHNcbmtpZHNfaW5jb21lIDwta2lkcyppbmNvbWVcblxuVyA8LSBsbShlc3F+aW5jb21lK2FnZStraWRzK2luY29tZXNxK2FnZXNxK2tpZHNzcStpbmNvbWVfYWdlK2FnZV9raWRzK2tpZHNfaW5jb21lKVxuc3VtbWFyeShXKVxuXG4j5pyA5b6M5LiA5qij5piv55SxRue1seioiOWwjuWIsOWNoeaWueeahG5SXjLvvIjlkoxCUOW+iOWDj++8iVxuTE1XIDwtIG4qMC4yXG5MTVdcblxucHZjaGlzcSA8LSAxLXBjaGlzcShMTVcsZGY9OSlcbnB2Y2hpc3FcbiMgNy41OTg1MjVlLTA2IOaYr+aOpei/keaWvDDnmoTvvIzpgqPlsLHku6Pooajororph4/lrZjlnKjorornlbDmlbjnlbDos6rmgKfjgILnhLblvoxCUCBXaGl0ZSB0ZXN06YO95piv5ouS57WV55qE44CCXG5gYGAifQ== -->
+<pre class="r"><code># 他需要每個變量的平方項以及兩兩交叉項（不用到三個交叉項）
+# White 總共會有九個變量()
+# 一樣是關注Rsquare
+
+incomesq &lt;- income^2
 agesq &lt;- age^2
 kidssq &lt;- kids^2
 income_age &lt;- income*age
@@ -1764,111 +1798,164 @@ kids_income &lt;-kids*income
 W &lt;- lm(esq~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
 summary(W)
 
+#最後一樣是由F統計導到卡方的nR^2（和BP很像）
 LMW &lt;- n*0.2
 LMW
 
 pvchisq &lt;- 1-pchisq(LMW,df=9)
-pvchisq</code></pre>
+pvchisq
+# 7.598525e-06 是接近於0的，那就代表變量存在變異數異質性。然後BP White test都是拒絕的。</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>#建立調整過的Var Beta hat (有兩種方式:White1980/WLS )</p>
+<pre><code>從上面知道有異質性的狀況，用不需要function的方式，做手動的方式建立異質性底下的Var(beta hat) hat </code></pre>
 </section>
-<section id="section-2" class="level5">
-<h5></h5>
+<section id="white-1980-solution1-var" class="level3">
+<h3>本段落是White 1980 solution1 <code>只針對Var做調整</code></h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuU3RhciA8LSBhcnJheSgwLGRpbT1jKGssaykpXG5cbmZvcihpIGluIDE6bil7XG54IDwtIGFzLm1hdHJpeChYW2ksXSlcbml0ZXIgPC0gKG4vbm1rKSplc3FbaV0qeCUqJXQoeClcblN0YXIgPC0gU3RhcitpdGVyXG59XG5cbkFzeVZDT1YgPC0gc29sdmUoY3Jvc3Nwcm9kKFgsWCkpJSolU3RhciUqJXNvbHZlKGNyb3NzcHJvZChYLFgpKVxuXG5Bc3l2YXIgPC0gYXMubWF0cml4KGRpYWcoQXN5VkNPVikpXG5cbkFzeXNlIDwtIEFzeXZhcl4wLjVcblxudHJhdCA8LSBiL0FzeXNlXG5cbnB2dCA8LSAyKnB0KC1hYnModHJhdCksZGY9bm1rKVxuXG5yZXN1bHRzIDwtIGNiaW5kKGIsQXN5c2UsdHJhdCxwdnQpXG5jb2xuYW1lcyhyZXN1bHRzKSA8LSBjKFwiRXN0aW1hdGVcIixcIlN0ZC4gRXJyb3JcIixcInQgdmFsdWVcIixcIlByKD58dHwpXCIpXG5yb3duYW1lcyhyZXN1bHRzKSA8LSBjKFwiaW50ZXJjZXB0XCIsXCJpbmNvbWVcIixcImFnZVwiLFwia2lkc1wiKVxucm91bmQocmVzdWx0cyxkaWdpdHM9NClcbmBgYCJ9 -->
-<pre class="r"><code>Star &lt;- array(0,dim=c(k,k))
-
-for(i in 1:n){
-x &lt;- as.matrix(X[i,])
-iter &lt;- (n/nmk)*esq[i]*x%*%t(x)
-Star &lt;- Star+iter
-}
-
-AsyVCOV &lt;- solve(crossprod(X,X))%*%Star%*%solve(crossprod(X,X))
-
-Asyvar &lt;- as.matrix(diag(AsyVCOV))
-
-Asyse &lt;- Asyvar^0.5
-
-trat &lt;- b/Asyse
-
-pvt &lt;- 2*pt(-abs(trat),df=nmk)
-
-results &lt;- cbind(b,Asyse,trat,pvt)
-colnames(results) &lt;- c(&quot;Estimate&quot;,&quot;Std. Error&quot;,&quot;t value&quot;,&quot;Pr(&gt;|t|)&quot;)
-rownames(results) &lt;- c(&quot;intercept&quot;,&quot;income&quot;,&quot;age&quot;,&quot;kids&quot;)
-round(results,digits=4)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0c1xuXG5gYGAifQ== -->
+<pre class="r"><code>results
+</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciAgIHQgdmFsdWUgICAgIFByKD58dHwpXG5pbnRlcmNlcHQgLTM5MS41NDgwMSAxNDIuNjU0NzgwIC0yLjc0NDcyNCA2LjYxODk3MWUtMDNcbmluY29tZSAgICAgIDE0LjIwMTMzICAgMS45Mzg4NTcgIDcuMzI0NTg5IDYuMDgzMTkzZS0xMlxuYWdlICAgICAgICAgMTUuNzQwOTIgICAzLjk2NTczNSAgMy45NjkyMzIgMS4wMTE0MjZlLTA0XG5raWRzICAgICAgIC04MS44MjY0MiAgMjkuMTU0MzgwIC0yLjgwNjY2MCA1LjUxMTI0NGUtMDNcbiJ9 -->
+<pre><code>            Estimate Std. Error   t value     Pr(&gt;|t|)
+intercept -391.54801 142.654780 -2.744724 6.618971e-03
+income      14.20133   1.938857  7.324589 6.083193e-12
+age         15.74092   3.965735  3.969232 1.011426e-04
+kids       -81.82642  29.154380 -2.806660 5.511244e-03</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </section>
-<section id="section-3" class="level5">
-<h5></h5>
+<section id="wls-solution2segma2white-1980" class="level3">
+<h3>本段落是是WLS solution2，對segma^2，做一個加權，權重處理的概念，和White 1980不同的是他是跑整條新的迴歸式</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsZXNfcyA8LSBtaWxlcy9pbmNvbWVeMC41XG5pbnRlcmNlcHRfcyA8LSAxL2luY29tZV4wLjVcbmluY29tZV9zIDwtIGluY29tZS9pbmNvbWVeMC41XG5hZ2VfcyA8LSBhZ2UvaW5jb21lXjAuNVxua2lkc19zIDwtIGtpZHMvaW5jb21lXjAuNVxuXG53bHNlIDwtIGxtKG1pbGVzX3N+aW50ZXJjZXB0X3MraW5jb21lX3MrYWdlX3Mra2lkc19zLTEpXG5zdW1tYXJ5KHdsc2UpXG5gYGAifQ== -->
-<pre class="r"><code>miles_s &lt;- miles/income^0.5
-intercept_s &lt;- 1/income^0.5
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+eCuuS7gOm6vOaYr+mZpOS7pWluY29tZT8g5YW25a+m6YCZ5piv6Ieq5bex5oyR55qE44CC5a+m5YuZ5LiK5Y+v6IO96YKE6ZyA6KaB55yL5oyR5ZOq5LiA5YCL5q+U6LyD6YGp55W244CC5L2G5piv6ICB5bir5Y+q55Wl5o+Q5Y+K77yM54S25b6M5oiR6Ieq5bex5YW25a+m6YKE5rKS5pyJ5a6M5YWo5oeC5b6XV0xT6Kq/5pW055qE57K+56WeWERERFxuXG4jV0xT5pivR0xT55qEc3BlY2lhbCBjYXNl77yI5Y+q6Zec5rOo5LuW55qESGV0ZXJvKVxuI+mAmemCim1pbGVzL2luY29tZeaYr3ZlY3Rvci92ZWN0b3LvvIzlm6DmraTmmK/nrKzkuIDlgIvmqKPmnKzlgLznmoRtaWxlcy9pbmNvbWVcbiPlnKjorJvnvqnkuK3lsLHmmK8xL1ppXjAuNSDlhbblr6blsLHmmK/ku6XkuIvnmoTlhaflrrlcbm1pbGVzX3MgPC0gbWlsZXMvaW5jb21lXjAuNVxuaW50ZXJjZXB0X3MgPC0gMS9pbmNvbWVeMC41ICPmnIPorormiJDmlrDnmoR2YXJpYWJsZSDku5bnmoTmr4/lgIvlgLzlsLHmnIPkuI3kuIDmqKNcbmluY29tZV9zIDwtIGluY29tZS9pbmNvbWVeMC41XG5hZ2VfcyA8LSBhZ2UvaW5jb21lXjAuNVxua2lkc19zIDwtIGtpZHMvaW5jb21lXjAuNVxuI+acg+iuiuaIkOWbm+WAi+iuiumHjyDkuIDlgIvooqvop6Pph4vororph4/vvIznhLblvozmspLmnInmiKrmk5rpoIXvvIjkuIvpnaJsbeaciS0xKVxuI0Ytc3RhdGlzdGljOiAyOTkuOCBvbiA0IGFuZCAxOTYgREYsICBwLXZhbHVlOiA8IDIuMmUtMTYg6YCZ6YKK5rOo5oSP5Yiw55qE5pivRuaqouWumu+8jOS7lumDveacg+m7mOiqjeS9oOaYr3Rlc3TorormlbjmmK/lkKbngrowIOeEtuW+jOiuiuaVuOaUueaIkDTlgIvjgIJcblxud2xzZSA8LSBsbShtaWxlc19zfmludGVyY2VwdF9zK2luY29tZV9zK2FnZV9zK2tpZHNfcy0xKVxuI+WPr+S7peeci+WIsOS4ieiAhee1kOaenOeahHN0ZC5FcnJvciDmmK/kuI3lkIznmoTvvIzkvYZyZXN1bHRzKGZyb20gV2hpdGUgMTk4MCDlj6rmnIlWYXLmnInororljJYp77yM5L2G5pivd2xzZeaYr+S4gOaineaWsOeahOi/tOatuOW8j++8jOWboOatpOS7lueahEVzdGltYXRlIOWSjFN0ZC7mmK/pg73kuI3kuIDmqKPnmoTjgIJcbnN1bW1hcnkod2xzZSlcbnJlc3VsdHNcbnN1bW1hcnkobHNlKVxuYGBgIn0= -->
+<pre class="r"><code>#為什麼是除以income? 其實這是自己挑的。實務上可能還需要看挑哪一個比較適當。但是老師只略提及，然後我自己其實還沒有完全懂得WLS調整的精神XDDD
+
+#WLS是GLS的special case（只關注他的Hetero)
+#這邊miles/income是vector/vector，因此是第一個樣本值的miles/income
+#在講義中就是1/Zi^0.5 其實就是以下的內容
+miles_s &lt;- miles/income^0.5
+intercept_s &lt;- 1/income^0.5 #會變成新的variable 他的每個值就會不一樣
 income_s &lt;- income/income^0.5
 age_s &lt;- age/income^0.5
 kids_s &lt;- kids/income^0.5
+#會變成四個變量 一個被解釋變量，然後沒有截據項（下面lm有-1)
+#F-statistic: 299.8 on 4 and 196 DF,  p-value: &lt; 2.2e-16 這邊注意到的是F檢定，他都會默認你是test變數是否為0 然後變數改成4個。
 
 wlse &lt;- lm(miles_s~intercept_s+income_s+age_s+kids_s-1)
-summary(wlse)</code></pre>
+#可以看到三者結果的std.Error 是不同的，但results(from White 1980 只有Var有變化)，但是wlse是一條新的迴歸式，因此他的Estimate 和Std.是都不一樣的。
+summary(wlse)
+results
+summary(lse)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<section id="section-4" class="level10">
-<p></p>
+</section>
+</section>
+<section id="function" class="level1">
+<h1>進入到純粹的function寫法</h1>
+<section id="functionbp-test" class="level3">
+<h3>用function出bp-test</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQlB0ZXN0IDwtIGJwdGVzdChsc2UpXG5CUHRlc3RcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQlB0ZXN0IDwtIGJwdGVzdChsc2UpXG5CUHRlc3QgIzI5LjAxNSDntJTlhazlvI/libXpgKDnmoRcbkxNQlAgIzI5LjAyIOmDqOWIhuaJi+WLlemDqOWIhuWHveaVuOWJtemAoOeahFxuYGBgIn0= -->
 <pre class="r"><code>BPtest &lt;- bptest(lse)
-BPtest</code></pre>
+BPtest #29.015 純公式創造的
+LMBP #29.02 部分手動部分函數創造的</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </section>
-</section>
-<section id="section-5" class="level5">
-<h5></h5>
+<section id="bp-testwtest" class="level3">
+<h3>一樣可以出bp-test在做Wtest</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuV3Rlc3QgPC0gYnB0ZXN0KGxzZSx+aW5jb21lK2FnZStraWRzK2luY29tZXNxK2FnZXNxK2tpZHNzcStpbmNvbWVfYWdlK2FnZV9raWRzK2tpZHNfaW5jb21lKVxuV3Rlc3RcbmBgYCJ9 -->
-<pre class="r"><code>Wtest &lt;- bptest(lse,~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
-Wtest</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+S4jeeUqOWvq3nvvIxS5pyD55+l6YGT5L2g6KaB55SobHNl6KOh6Z2i55qEVWkgaGF0XjJcbld0ZXN0IDwtIGJwdGVzdChsc2UsfmluY29tZSthZ2Ura2lkcytpbmNvbWVzcSthZ2VzcStraWRzc3EraW5jb21lX2FnZSthZ2Vfa2lkcytraWRzX2luY29tZSlcblxuIyDnrKzkuIDnqK7lgZrms5VcblcgPC0gbG0oZXNxfmluY29tZSthZ2Ura2lkcytpbmNvbWVzcSthZ2VzcStraWRzc3EraW5jb21lX2FnZSthZ2Vfa2lkcytraWRzX2luY29tZSlcbnN1bW1hcnkoVylcbkxNVyA8LSBuKjAuMlxuTE1XXG5cblxuV3Rlc3QgI0JQID0gMzkuOTkzXG5MTVcgIzQwXG5gYGAifQ== -->
+<pre class="r"><code>#不用寫y，R會知道你要用lse裡面的Ui hat^2
+Wtest &lt;- bptest(lse,~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
+
+# 第一種做法
+W &lt;- lm(esq~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
+summary(W)
+LMW &lt;- n*0.2
+LMW
+
+
+Wtest #BP = 39.993
+LMW #40</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </section>
-<section id="section-6" class="level5">
-<h5></h5>
+<section id="asyvcovvcovhc-varwhite-1980" class="level3">
+<h3>用公式求得AsyVCOV(稱為vcovHC) 做Var調整，是配合White 1980</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuSENWQ09WIDwtIHZjb3ZIQyhsc2UpXG5IQ3Jlc3VsdHMgPC0gY29lZnRlc3QobHNlLHZjb3Y9SENWQ09WKVxuSENyZXN1bHRzXG5gYGAifQ== -->
-<pre class="r"><code>HCVCOV &lt;- vcovHC(lse)
-HCresults &lt;- coeftest(lse,vcov=HCVCOV)
-HCresults</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuP3Zjb3ZIQyAjSGV0ZXJvc2tlZGFzdGljaXR5LWNvbnNpc3RlbnQgZXN0aW1hdGlvbiBvZiB0aGUgY292YXJpYW5jZSBtYXRyaXggb2YgdGhlIGNvZWZmaWNpZW50IGVzdGltYXRlcyBpbiByZWdyZXNzaW9uIG1vZGVscy5cblxuI3Zjb3ZIQyDkvoboh6pwYWNrYWdlKHNhbmR3aWNoKVxuSENWQ09WIDwtIHZjb3ZIQyhsc2UpXG5IQ1ZDT1YgIyBmdW5jdGlvbue1kOaenFxuQXN5VkNPViAjIFdoaXRlMTk4MOaJi+WLlee1kOaenFxuIyBIQ1ZDT1YgQXN5VkNPVlxuSENyZXN1bHRzIDwtIGNvZWZ0ZXN0KGxzZSx2Y292PUhDVkNPVikgI2NvZWZ0ZXN05Lmf5piv5L6G6IeqbGlicmFyeShsbXRlc3QpXG4jdmNvdiDlj4PmlbjvvIzkvaDmg7PopoHkvb/nlKjlk6rkuIDlgIt2Y292IOS4pumAsuihjOWBh+ioreaqouWumlxuSENyZXN1bHRzICNmdW5jdGlvbue1kOaenFxucmVzdWx0cyAj5omL5YuV57WQ5p6cXG4jIOWFqeiAheS5i+mWk+S4gOaoo+aYr0VzdGltYXRl55u45ZCM44CCIFN0ZC4gRXJyb3LkuI3lkIzjgIJcbmBgYCJ9 -->
+<pre class="r"><code>?vcovHC #Heteroskedasticity-consistent estimation of the covariance matrix of the coefficient estimates in regression models.
+
+#vcovHC 來自package(sandwich)
+HCVCOV &lt;- vcovHC(lse)
+HCVCOV # function結果
+AsyVCOV # White1980手動結果
+# HCVCOV AsyVCOV
+HCresults &lt;- coeftest(lse,vcov=HCVCOV) #coeftest也是來自library(lmtest)
+#vcov 參數，你想要使用哪一個vcov 並進行假設檢定
+HCresults #function結果
+results #手動結果
+# 兩者之間一樣是Estimate相同。 Std. Error不同。</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </section>
-<section id="section-7" class="level5">
-<h5></h5>
+<section id="wls" class="level3">
+<h3>用公式做WLS</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2xzIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcyx3ZWlnaHRzPTEvaW5jb21lKVxuc3VtbWFyeSh3bHMpXG5gYGAifQ== -->
-<pre class="r"><code>wls &lt;- lm(miles~income+age+kids,weights=1/income)
-summary(wls)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2xtIOacieWAi+WPg+aVuHdlaWdodHPmmK/lj6/ku6Xnm7TmjqXln7fooYxXTFNcbndscyA8LSBsbShtaWxlc35pbmNvbWUrYWdlK2tpZHMsd2VpZ2h0cz0xL2luY29tZSlcbnN1bW1hcnkod2xzKSAjRi1zdGF0aXN0aWM6ICA0MS45IG9uIDMgYW5kIDE5NiBERiwgIHAtdmFsdWU6IDwgMi4yZS0xNlxuI+iHqueUseW6puWPquaciTPvvIzpgqPlhbblr6bku5bmspLmnInph53lsI3lt7LntpPorormiJDorormlbjnmoRpbnRlcmNlcHTkvZzlh7roqr/mlbRcbiMo5ZWP6aGM77ya5qiZ5rqWUl4y5Y+v5piv55uu5YmN5bey57aT54Sh5oiq5pOa6aCF77yM5ZWP6aGM5q+U6LyD5aSn77yM5omL5YuVd2xzZeeahOi8g+S9s+OAgilcbnN1bW1hcnkod2xzZSkgI0Ytc3RhdGlzdGljOiAyOTkuOCBvbiA0IGFuZCAxOTYgREYg5LiU54Sh5oiq6Led6aCFXG5gYGAifQ== -->
+<pre class="r"><code>#lm 有個參數weights是可以直接執行WLS
+wls &lt;- lm(miles~income+age+kids,weights=1/income)
+summary(wls) #F-statistic:  41.9 on 3 and 196 DF,  p-value: &lt; 2.2e-16
+#自由度只有3，那其實他沒有針對已經變成變數的intercept作出調整
+#(問題：標準R^2可是目前已經無截據項，問題比較大，手動wlse的較佳。)
+summary(wlse) #F-statistic: 299.8 on 4 and 196 DF 且無截距項</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<pre><code>作業3放在網路上，下週三繳交
+程式練習一題（變量多一點）
+(a)有用function和手動。繳交程式碼以及用螢光筆將結果部分註記
+(b)ACCESS 的變數比較要多注意
+計算推導一題
+有關t F 的檢定
+
+作業4中需要做GLS的部分請用手動。
+一樣一題程式和手算</code></pre>
+<pre><code>補充：
+怎麼自己做自己要的function?
+Hahow好像有一些內容</code></pre>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXlmdW4oeD0xKSAjPSBleHBvbmVudGlhbFxuXG5gYGAifQ== -->
+<pre class="r"><code>myfun(x=1) #= exponential
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDIuNzE4MjgyXG4ifQ== -->
+<pre><code>[1] 2.718282</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<pre><code>wolframAlpha 可以做計算</code></pre>
+<!-- rnb-text-end -->
+</section>
 </section>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkobG10ZXN0KQpsaWJyYXJ5KHNhbmR3aWNoKQpgYGAKCmBgYHtyfQpkYXRhc2V0IDwtIHJlYWQuY3N2KCJDOi9Vc2Vycy8vRGVza3RvcC9kYXRhX2Zvcl9jbGFzcy5jc3YiLGhlYWRlcj1UUlVFKQoKZGF0IDwtIGRhdGFzZXQKCm1pbGVzIDwtIGRhdCRNSUxFUwppbmNvbWUgPC0gZGF0JElOQ09NRQphZ2UgPC0gZGF0JEFHRQpraWRzIDwtIGRhdCRLSURTCgpsc2UgPC0gbG0obWlsZXN+aW5jb21lK2FnZStraWRzKQpzdW1tYXJ5KGxzZSkKCnkgPC0gYXMubWF0cml4KG1pbGVzKQpYIDwtIGNiaW5kKDEsaW5jb21lLGFnZSxraWRzKQpiIDwtIGNyb3NzcHJvZChzb2x2ZShjcm9zc3Byb2QoWCxYKSksY3Jvc3Nwcm9kKFgseSkpCmUgPC0geS1YJSolYgoKZXNxIDwtIGVeMgoKbiA8LSBucm93KFgpCmsgPC0gbmNvbChYKQpubWsgPC0gbi1rCmBgYAoKIyMjIyMKYGBge3J9CkJQIDwtIGxtKGVzcX5pbmNvbWUrYWdlK2tpZHMpCnN1bW1hcnkoQlApCgpMTUJQIDwtIG4qMC4xNDUxCkxNQlAKCnB2Y2hpc3EgPC0gMS1wY2hpc3EoTE1CUCxkZj0zKQpwdmNoaXNxCmBgYAoKIyMjIyMKYGBge3J9CmluY29tZXNxIDwtIGluY29tZV4yCmFnZXNxIDwtIGFnZV4yCmtpZHNzcSA8LSBraWRzXjIKaW5jb21lX2FnZSA8LSBpbmNvbWUqYWdlCmFnZV9raWRzIDwtIGFnZSpraWRzCmtpZHNfaW5jb21lIDwta2lkcyppbmNvbWUKClcgPC0gbG0oZXNxfmluY29tZSthZ2Ura2lkcytpbmNvbWVzcSthZ2VzcStraWRzc3EraW5jb21lX2FnZSthZ2Vfa2lkcytraWRzX2luY29tZSkKc3VtbWFyeShXKQoKTE1XIDwtIG4qMC4yCkxNVwoKcHZjaGlzcSA8LSAxLXBjaGlzcShMTVcsZGY9OSkKcHZjaGlzcQpgYGAKCiMjIyMjCmBgYHtyfQpTdGFyIDwtIGFycmF5KDAsZGltPWMoayxrKSkKCmZvcihpIGluIDE6bil7CnggPC0gYXMubWF0cml4KFhbaSxdKQppdGVyIDwtIChuL25taykqZXNxW2ldKnglKiV0KHgpClN0YXIgPC0gU3RhcitpdGVyCn0KCkFzeVZDT1YgPC0gc29sdmUoY3Jvc3Nwcm9kKFgsWCkpJSolU3RhciUqJXNvbHZlKGNyb3NzcHJvZChYLFgpKQoKQXN5dmFyIDwtIGFzLm1hdHJpeChkaWFnKEFzeVZDT1YpKQoKQXN5c2UgPC0gQXN5dmFyXjAuNQoKdHJhdCA8LSBiL0FzeXNlCgpwdnQgPC0gMipwdCgtYWJzKHRyYXQpLGRmPW5taykKCnJlc3VsdHMgPC0gY2JpbmQoYixBc3lzZSx0cmF0LHB2dCkKY29sbmFtZXMocmVzdWx0cykgPC0gYygiRXN0aW1hdGUiLCJTdGQuIEVycm9yIiwidCB2YWx1ZSIsIlByKD58dHwpIikKcm93bmFtZXMocmVzdWx0cykgPC0gYygiaW50ZXJjZXB0IiwiaW5jb21lIiwiYWdlIiwia2lkcyIpCnJvdW5kKHJlc3VsdHMsZGlnaXRzPTQpCmBgYAoKIyMjIyMKYGBge3J9Cm1pbGVzX3MgPC0gbWlsZXMvaW5jb21lXjAuNQppbnRlcmNlcHRfcyA8LSAxL2luY29tZV4wLjUKaW5jb21lX3MgPC0gaW5jb21lL2luY29tZV4wLjUKYWdlX3MgPC0gYWdlL2luY29tZV4wLjUKa2lkc19zIDwtIGtpZHMvaW5jb21lXjAuNQoKd2xzZSA8LSBsbShtaWxlc19zfmludGVyY2VwdF9zK2luY29tZV9zK2FnZV9zK2tpZHNfcy0xKQpzdW1tYXJ5KHdsc2UpCmBgYAoKIyMjIyMjIyMjIwpgYGB7cn0KQlB0ZXN0IDwtIGJwdGVzdChsc2UpCkJQdGVzdApgYGAKCiMjIyMjCmBgYHtyfQpXdGVzdCA8LSBicHRlc3QobHNlLH5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCld0ZXN0CmBgYAoKIyMjIyMKYGBge3J9CkhDVkNPViA8LSB2Y292SEMobHNlKQpIQ3Jlc3VsdHMgPC0gY29lZnRlc3QobHNlLHZjb3Y9SENWQ09WKQpIQ3Jlc3VsdHMKYGBgCgojIyMjIwpgYGB7cn0Kd2xzIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcyx3ZWlnaHRzPTEvaW5jb21lKQpzdW1tYXJ5KHdscykKYGBgCgoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OgogIHBkZl9kb2N1bWVudDoKICAgIGxhdGV4X2VuZ2luZSA6IHhlbGF0ZXgKICBodG1sX25vdGVib29rOiBkZWZhdWx0Ci0tLQoK55Ww6LOq5oCn5ZWP6aGM5pyD5b2x6Z+/5YiwUnNxdWFyZeWXju+8n+mChOaYr+WPquacg+W9semfv+WIsOWBh+ioreaqouWumu+8nwoK5oiR55qE55CG6Kej5piv5LiN5pyD77yM5Zug54K655yL5YWs5byP77ydIEVTUy9UU1PvvIzku5blhaflrrnlhYPntKDoi6XmmK/kuIDoh7TmgKfvvIzliYdiZXRhIGhhdCA9IGJldGHvvIzkuJRuLT7nhKHpmZDlpKfvvIwKVmFyKGJldGEgaGF0KT0wKemDveWPr+S7peaxguW+l+WHuuS+huOAggoK6ICM5LiU5ZCM6LOq6K6K55Ww5oiR5YCR5YGH6Kit55qE77yM6Ieq54S26ZyA6KaB5L+u5q2j55qE5piv6ZyA6KaB55So5Yiw5a6D55qE5Zyw5pa577yM5Zug5q2k5pyD5piv5Yiw5YGH6Kit5qqi5a6a55qE5YiG5q+N77yM5YaN5bi25YWlVmFyKGJldGEgaGF0KV4wLjUsIHN0YW5kYXJkIGVycm9y5omN5pyD55So5Yiw44CCCgpgYGB7cn0KbGlicmFyeShsbXRlc3QpCmxpYnJhcnkoc2FuZHdpY2gpCnJtKGxpc3QgPSBscygpKQpgYGAKCmBgYArmnKzpgLHnrKzkuIDnqK4gbG0gKyBjb2RpbmcgYnkgc2VsZgrmnKzpgLHnrKzkuoznqK4gYWxsIGluIGZ1bmN0aW9uCmBgYAoKIyDnrKzkuIDmrrXln7rmnKzkuIrot5/kuIrpgLHkuIDmqKMKYGBge3J9CmRhdGFzZXQgPC0gcmVhZC5jc3YoIi9Vc2Vycy9jaGVucG9taW5nL0RvY3VtZW50cy9HaXRIdWIvUXVhbnRpdGF0aXZlIE1ldGhvZC9RdWFudGl0YXRpdmUgTWV0aG9kL2RhdGFfZm9yX2NsYXNzLmNzdiIsaGVhZGVyPVRSVUUpCgoKZGF0IDwtIGRhdGFzZXQKVmlldyhkYXQpCm1pbGVzIDwtIGRhdCRNSUxFUwppbmNvbWUgPC0gZGF0JElOQ09NRQphZ2UgPC0gZGF0JEFHRQpraWRzIDwtIGRhdCRLSURTCgpsc2UgPC0gbG0obWlsZXN+aW5jb21lK2FnZStraWRzKQpzdW1tYXJ5KGxzZSkKYGBgCgojIOesrOS6jOauteS4iumAseWFp+WuueS5n+aciQpgYGB7cn0KY2xhc3MobWlsZXMpCnkgPC0gYXMubWF0cml4KG1pbGVzKQpjbGFzcyh5KQpYIDwtIGNiaW5kKDEsaW5jb21lLGFnZSxraWRzKQpjbGFzcyhYKQpiIDwtIGNyb3NzcHJvZChzb2x2ZShjcm9zc3Byb2QoWCxYKSksY3Jvc3Nwcm9kKFgseSkpCmUgPC0geS1YJSolYiAj5Y+W5b6XVWkgaGF0IOmAmeaYr+WBmueVsOizquaAp+eahOaqouWumkJQIFdoaXRl6YO95pyD55So5Yiw55qE5p2x6KW/Cgplc3EgPC0gZV4yICPlj5blvpdVaSBoYXTlubPmlrkg6YCZ5piv5YGa55Ww6LOq5oCn55qE5qqi5a6aQlAgV2hpdGXmqqLlrprvvIzpg73mnIPnlKjliLDnmoTmnbHopb8KCiMgbnVtYmVyIG9mIHJvdwpuIDwtIG5yb3coWCkKIyBudW1iZXIgb2YgY29sdW1uCmsgPC0gbmNvbChYKQojIGRlZ3JlZSBvZiBmcmVlZG9tCm5tayA8LSBuLWsKYGBgCgojIyMgQlAgdGVzdCB0byB0ZXN0IEhldGVybwpgYGB7cn0KI+S4gOaoo+aYr+ism+e+qeeahOWFrOW8jwojdGhlIGNoYW5nZSBpbiBSIHNxdWFyZSBpcyB0aGUgZm9jdXMKI3dpdGhvdXQgaW50ZXJjZXB0IHdlIHdpbGwgZ2V0IGFkanVzdGVkIFJzcXVhcmUg5Zug54K65Zyo6Kyb576p5Lit5pyA5b6M5piv55SxRuWIhumFjeWwjuWIsOWNoeaWueWIhumFje+8nW5SXjIKIyBIMDogSG9tbwoKQlAgPC0gbG0oZXNxfmluY29tZSthZ2Ura2lkcykgI+mAmemCiuaYr+acieaIquaTmumgheeahApzdW1tYXJ5KEJQKQoKTE1CUCA8LSBuKjAuMTQ1MSAKTE1CUAojMjkuMDLlsLHmmK/ljaHmlrnliIbkvYjmqqLlrprntbHoqIjph48o6Iul5Zyo5qqi5a6a57Wx6KiI6YeP5Y+z6YKK77yM5bCx5pyD5ouS57WVSDDvvJpIb21vc3RlcnRpY2l0eSkKCiPmiJbogIXnlKLnlJ9wLXZhbHVl5bCx5Y+v5Lul5LiN55So5p+l6KGo77yM5q+U6LyD57Ch5ZauCnB2Y2hpc3EgPC0gMS1wY2hpc3EoTE1CUCxkZj0zKQpwdmNoaXNxCmBgYAoKIyMjIFdoaXRlIHRlc3QgdG8gdGVzdCBIZXRlcm8KYGBge3J9CiMg5LuW6ZyA6KaB5q+P5YCL6K6K6YeP55qE5bmz5pa56aCF5Lul5Y+K5YWp5YWp5Lqk5Y+J6aCF77yI5LiN55So5Yiw5LiJ5YCL5Lqk5Y+J6aCF77yJCiMgV2hpdGUg57i95YWx5pyD5pyJ5Lmd5YCL6K6K6YePKCkKIyDkuIDmqKPmmK/pl5zms6hSc3F1YXJlCgppbmNvbWVzcSA8LSBpbmNvbWVeMgphZ2VzcSA8LSBhZ2VeMgpraWRzc3EgPC0ga2lkc14yCmluY29tZV9hZ2UgPC0gaW5jb21lKmFnZQphZ2Vfa2lkcyA8LSBhZ2Uqa2lkcwpraWRzX2luY29tZSA8LWtpZHMqaW5jb21lCgpXIDwtIGxtKGVzcX5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCnN1bW1hcnkoVykKCiPmnIDlvozkuIDmqKPmmK/nlLFG57Wx6KiI5bCO5Yiw5Y2h5pa555qEblJeMu+8iOWSjEJQ5b6I5YOP77yJCkxNVyA8LSBuKjAuMgpMTVcKCnB2Y2hpc3EgPC0gMS1wY2hpc3EoTE1XLGRmPTkpCnB2Y2hpc3EKIyA3LjU5ODUyNWUtMDYg5piv5o6l6L+R5pa8MOeahO+8jOmCo+WwseS7o+ihqOiuiumHj+WtmOWcqOiuiueVsOaVuOeVsOizquaAp+OAgueEtuW+jEJQIFdoaXRlIHRlc3Tpg73mmK/mi5LntZXnmoTjgIIKYGBgCgoj5bu656uL6Kq/5pW06YGO55qEVmFyIEJldGEgaGF0ICjmnInlhannqK7mlrnlvI86V2hpdGUxOTgwL1dMUyApCmBgYArlvp7kuIrpnaLnn6XpgZPmnInnlbDos6rmgKfnmoTni4Dms4HvvIznlKjkuI3pnIDopoFmdW5jdGlvbueahOaWueW8j++8jOWBmuaJi+WLleeahOaWueW8j+W7uueri+eVsOizquaAp+W6leS4i+eahFZhcihiZXRhIGhhdCkgaGF0IApgYGAKIyMjIOacrOauteiQveaYr1doaXRlIDE5ODAgc29sdXRpb24xIGDlj6rph53lsI1WYXLlgZroqr/mlbRgCmBgYHtyfQpTdGFyIDwtIGFycmF5KDAsZGltPWMoayxrKSkgI2FycmF5IOmZo+WIlyAjZGlt5Y+D5pW4IOaYr+e2reW6pueahOioreWumu+8jOmAmemCiuimgWsgYnkgayDnn6npmaNtYXRyaXjlt67liKXlpKfll47vvJ/vvIjlt67nlbDkuI3lpKfvvIzlg4Xlj6rmlrzos4fmlpnlnovmhYvnlbbliJ3oqK3oqIjopo/liYfvvIkKY2xhc3MoU3RhcikKCgojIOmAmemCiuimgeWPg+iAgzExLzIy55qE562G6KiY5LiA6ZaL5aeLCiPpgJnpgooobi9ubWsp5piv54K65LqG77yfIAoj5Zug54K6IFdoaXRlIDE5ODDmmK/lnKjlpKfmqKPmnKznmoTmg4Xms4HkuIvvvIzpgqPnm67liY1uPTIwMOaYr+aciemZkOaoo+acrOOAguS/ruato+eahOaWueW8j+acieW+iOWkmueoru+8jCDpgqNKb2huc3RvbuacieaPkOS+m+W5vueoruaWueW8j++8jOmCo+mAmemCiuWDheaYr+S4gOeoruS/ruato+aWueW8j++8jOW+gOato+eiuueahEFzeVZhcumdoOi/keS4gOS6m+OAggojeCDmmK/nrYboqJjkuIDplovlp4vmnIDkuIrpnaLlr6vnmoRYIO+8m3QoeCkg5piv562G6KiY5Lit55qE56ys5LqM5YCLWCcKZm9yKGkgaW4gMTpuKXsKeCA8LSBhcy5tYXRyaXgoWFtpLF0pICPmiKrlj5bnrKxpIHJvdyDnhLblvozmiYDmnInnmoRjb2x1bW4o6ICM5LiU5Zug54K65pyJZm9y6L+05ZyI77yM5omA5Lul5pyD5piveDEgeDIgeDMgeDQpCml0ZXIgPC0gKG4vbm1rKSplc3FbaV0qeCUqJXQoeCkgClN0YXIgPC0gU3RhcitpdGVyICNpdGVyIOaYr2sgYnkgayDnn6npmaMKfQpTdGFyICM9c2VnbWEgVWkgaGF0IOW5s+aWueS5mOS7pXhpIOS5mOS7pXhpIHRyYW5zcG9ydO+8jOS5n+WwseaYr+acgOW+jOWFrOW8j+S4remWk+eahOmCo+auteOAggoKQXN5VkNPViA8LSBzb2x2ZShjcm9zc3Byb2QoWCxYKSklKiVTdGFyJSolc29sdmUoY3Jvc3Nwcm9kKFgsWCkpCkFzeVZDT1YKQXN5dmFyIDwtIGFzLm1hdHJpeChkaWFnKEFzeVZDT1YpKQpBc3l2YXIKQXN5c2UgPC0gQXN5dmFyXjAuNQpBc3lzZSAj6Kq/5pW06YGO5b6M55qEc3RhbmRhcmQgZXJyb3IKCnRyYXQgPC0gYi9Bc3lzZSAjYi0wL0FzeXNlID0gdHJhdGlvCgpwdnQgPC0gMipwdCgtYWJzKHRyYXQpLGRmPW5taykgI+i3n+S4iuemruaLnOeahOebuOWQjApwdnQKCnJlc3VsdHMgPC0gY2JpbmQoYixBc3lzZSx0cmF0LHB2dCkKcmVzdWx0cwpjb2xuYW1lcyhyZXN1bHRzKSA8LSBjKCJFc3RpbWF0ZSIsIlN0ZC4gRXJyb3IiLCJ0IHZhbHVlIiwiUHIoPnx0fCkiKQpyb3duYW1lcyhyZXN1bHRzKSA8LSBjKCJpbnRlcmNlcHQiLCJpbmNvbWUiLCJhZ2UiLCJraWRzIikKcm91bmQocmVzdWx0cyxkaWdpdHM9NCkKCiPmr5TovIPlkoxsc2XnmoTlt67liKXvvIxlc3RpbWF0Zeaykuacieiuiu+8jOmCo3N0YW5kYXJkIGVycm9y5pyJ6K6KCnJlc3VsdHMKc3VtbWFyeShsc2UpCgpgYGAKCiMjIyDmnKzmrrXokL3mmK/mmK9XTFMgc29sdXRpb24y77yM5bCNc2VnbWFeMu+8jOWBmuS4gOWAi+WKoOasiu+8jOasiumHjeiZleeQhueahOamguW/te+8jOWSjFdoaXRlIDE5ODDkuI3lkIznmoTmmK/ku5bmmK/ot5HmlbTmop3mlrDnmoTov7TmrbjlvI8KYGBge3J9CiPngrrku4DpurzmmK/pmaTku6VpbmNvbWU/IOWFtuWvpumAmeaYr+iHquW3seaMkeeahOOAguWvpuWLmeS4iuWPr+iDvemChOmcgOimgeeci+aMkeWTquS4gOWAi+avlOi8g+mBqeeVtuOAguS9huaYr+iAgeW4q+WPqueVpeaPkOWPiu+8jOeEtuW+jOaIkeiHquW3seWFtuWvpumChOaykuacieWujOWFqOaHguW+l1dMU+iqv+aVtOeahOeyvuelnlhEREQKCiNXTFPmmK9HTFPnmoRzcGVjaWFsIGNhc2XvvIjlj6rpl5zms6jku5bnmoRIZXRlcm8pCiPpgJnpgoptaWxlcy9pbmNvbWXmmK92ZWN0b3IvdmVjdG9y77yM5Zug5q2k5piv56ys5LiA5YCL5qij5pys5YC855qEbWlsZXMvaW5jb21lCiPlnKjorJvnvqnkuK3lsLHmmK8xL1ppXjAuNSDlhbblr6blsLHmmK/ku6XkuIvnmoTlhaflrrkKbWlsZXNfcyA8LSBtaWxlcy9pbmNvbWVeMC41CmludGVyY2VwdF9zIDwtIDEvaW5jb21lXjAuNSAj5pyD6K6K5oiQ5paw55qEdmFyaWFibGUg5LuW55qE5q+P5YCL5YC85bCx5pyD5LiN5LiA5qijCmluY29tZV9zIDwtIGluY29tZS9pbmNvbWVeMC41CmFnZV9zIDwtIGFnZS9pbmNvbWVeMC41CmtpZHNfcyA8LSBraWRzL2luY29tZV4wLjUKI+acg+iuiuaIkOWbm+WAi+iuiumHjyDkuIDlgIvooqvop6Pph4vororph4/vvIznhLblvozmspLmnInmiKrmk5rpoIXvvIjkuIvpnaJsbeaciS0xKQojRi1zdGF0aXN0aWM6IDI5OS44IG9uIDQgYW5kIDE5NiBERiwgIHAtdmFsdWU6IDwgMi4yZS0xNiDpgJnpgorms6jmhI/liLDnmoTmmK9G5qqi5a6a77yM5LuW6YO95pyD6buY6KqN5L2g5pivdGVzdOiuiuaVuOaYr+WQpueCujAg54S25b6M6K6K5pW45pS55oiQNOWAi+OAggoKd2xzZSA8LSBsbShtaWxlc19zfmludGVyY2VwdF9zK2luY29tZV9zK2FnZV9zK2tpZHNfcy0xKQoj5Y+v5Lul55yL5Yiw5LiJ6ICF57WQ5p6c55qEc3RkLkVycm9yIOaYr+S4jeWQjOeahO+8jOS9hnJlc3VsdHMoZnJvbSBXaGl0ZSAxOTgwIOWPquaciVZhcuacieiuiuWMlinvvIzkvYbmmK93bHNl5piv5LiA5qKd5paw55qE6L+05q245byP77yM5Zug5q2k5LuW55qERXN0aW1hdGUg5ZKMU3RkLuaYr+mDveS4jeS4gOaoo+eahOOAggpzdW1tYXJ5KHdsc2UpCnJlc3VsdHMKc3VtbWFyeShsc2UpCmBgYAoKCiMg6YCy5YWl5Yiw57SU57K555qEZnVuY3Rpb27lr6vms5UKIyMjIOeUqGZ1bmN0aW9u5Ye6YnAtdGVzdApgYGB7cn0KQlB0ZXN0IDwtIGJwdGVzdChsc2UpCkJQdGVzdCAjMjkuMDE1IOe0lOWFrOW8j+WJtemAoOeahApMTUJQICMyOS4wMiDpg6jliIbmiYvli5Xpg6jliIblh73mlbjlibXpgKDnmoQKYGBgCgojIyMg5LiA5qij5Y+v5Lul5Ye6YnAtdGVzdOWcqOWBmld0ZXN0CmBgYHtyfQoj5LiN55So5a+ree+8jFLmnIPnn6XpgZPkvaDopoHnlKhsc2Xoo6HpnaLnmoRVaSBoYXReMgpXdGVzdCA8LSBicHRlc3QobHNlLH5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCgojIOesrOS4gOeoruWBmuazlQpXIDwtIGxtKGVzcX5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCnN1bW1hcnkoVykKTE1XIDwtIG4qMC4yCkxNVwoKCld0ZXN0ICNCUCA9IDM5Ljk5MwpMTVcgIzQwCmBgYAoKIyMjIOeUqOWFrOW8j+axguW+l0FzeVZDT1Yo56ix54K6dmNvdkhDKSDlgZpWYXLoqr/mlbTvvIzmmK/phY3lkIhXaGl0ZSAxOTgwCmBgYHtyfQo/dmNvdkhDICNIZXRlcm9za2VkYXN0aWNpdHktY29uc2lzdGVudCBlc3RpbWF0aW9uIG9mIHRoZSBjb3ZhcmlhbmNlIG1hdHJpeCBvZiB0aGUgY29lZmZpY2llbnQgZXN0aW1hdGVzIGluIHJlZ3Jlc3Npb24gbW9kZWxzLgoKI3Zjb3ZIQyDkvoboh6pwYWNrYWdlKHNhbmR3aWNoKQpIQ1ZDT1YgPC0gdmNvdkhDKGxzZSkKSENWQ09WICMgZnVuY3Rpb27ntZDmnpwKQXN5VkNPViAjIFdoaXRlMTk4MOaJi+WLlee1kOaenAojIEhDVkNPViBBc3lWQ09WCkhDcmVzdWx0cyA8LSBjb2VmdGVzdChsc2UsdmNvdj1IQ1ZDT1YpICNjb2VmdGVzdOS5n+aYr+S+huiHqmxpYnJhcnkobG10ZXN0KQojdmNvdiDlj4PmlbjvvIzkvaDmg7PopoHkvb/nlKjlk6rkuIDlgIt2Y292IOS4pumAsuihjOWBh+ioreaqouWumgpIQ3Jlc3VsdHMgI2Z1bmN0aW9u57WQ5p6cCnJlc3VsdHMgI+aJi+WLlee1kOaenAojIOWFqeiAheS5i+mWk+S4gOaoo+aYr0VzdGltYXRl55u45ZCM44CCIFN0ZC4gRXJyb3LkuI3lkIzjgIIKYGBgCgojIyMg55So5YWs5byP5YGaV0xTIApgYGB7cn0KI2xtIOacieWAi+WPg+aVuHdlaWdodHPmmK/lj6/ku6Xnm7TmjqXln7fooYxXTFMKd2xzIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcyx3ZWlnaHRzPTEvaW5jb21lKQpzdW1tYXJ5KHdscykgI0Ytc3RhdGlzdGljOiAgNDEuOSBvbiAzIGFuZCAxOTYgREYsICBwLXZhbHVlOiA8IDIuMmUtMTYKI+iHqueUseW6puWPquaciTPvvIzpgqPlhbblr6bku5bmspLmnInph53lsI3lt7LntpPorormiJDorormlbjnmoRpbnRlcmNlcHTkvZzlh7roqr/mlbQKIyjllY/poYzvvJrmqJnmupZSXjLlj6/mmK/nm67liY3lt7LntpPnhKHmiKrmk5rpoIXvvIzllY/poYzmr5TovIPlpKfvvIzmiYvli5V3bHNl55qE6LyD5L2z44CCKQpzdW1tYXJ5KHdsc2UpICNGLXN0YXRpc3RpYzogMjk5Ljggb24gNCBhbmQgMTk2IERGIOS4lOeEoeaIqui3nemghQpgYGAKCmBgYArkvZzmpa0z5pS+5Zyo57ay6Lev5LiK77yM5LiL6YCx5LiJ57mz5LqkCueoi+W8j+e3tOe/kuS4gOmhjO+8iOiuiumHj+WkmuS4gOm7nu+8iQooYSnmnInnlKhmdW5jdGlvbuWSjOaJi+WLleOAgue5s+S6pOeoi+W8j+eivOS7peWPiueUqOieouWFieethuWwh+e1kOaenOmDqOWIhuiou+iomAooYilBQ0NFU1Mg55qE6K6K5pW45q+U6LyD6KaB5aSa5rOo5oSPCuioiOeul+aOqOWwjuS4gOmhjArmnInpl5x0IEYg55qE5qqi5a6aCgrkvZzmpa005Lit6ZyA6KaB5YGaR0xT55qE6YOo5YiG6KuL55So5omL5YuV44CCCuS4gOaoo+S4gOmhjOeoi+W8j+WSjOaJi+eulwpgYGAKCmBgYAroo5zlhYXvvJoK5oCO6bq86Ieq5bex5YGa6Ieq5bex6KaB55qEZnVuY3Rpb24/CkhhaG935aW95YOP5pyJ5LiA5Lqb5YWn5a65CmBgYApgYGB7cn0KbXlmdW4gPC0gZnVuY3Rpb24oeCl7CnkgPC0gaWZlbHNlKHg8MCwwLGV4cCh4KSkKcmV0dXJuKHkpIAp9CgpteWZ1bih4PS0yKQpteWZ1bih4PTEpICM9IGV4cG9uZW50aWFsCmBgYAoKYGBgCndvbGZyYW1BbHBoYSDlj6/ku6XlgZroqIjnrpcKYGBgCg==</div>
 
 
 
