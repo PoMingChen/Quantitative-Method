@@ -80,6 +80,8 @@ R2 <- ess/tss
 R2
 
 k <- ncol(X3)
+k
+X3
 nmk <- n-k
 nmk
 

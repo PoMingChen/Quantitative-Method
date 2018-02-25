@@ -1,0 +1,122 @@
+---
+title: "HW4.Rmd"
+output: 
+  pdf_document:
+    latex_engine : xelatex
+  word_document: default
+  html_document: default
+---
+
+## (a) show the results from the function lm()
+```{r}
+dataset4 <- read.csv("./data_for_homework_4.csv",header=TRUE)
+
+percapitaEE <- dataset4$EE/dataset4$P
+percapitaGDP <- dataset4$GDP/dataset4$P
+
+
+lse4 <- lm(percapitaEE~percapitaGDP)
+summary(lse4)
+```
+
+## (b) Do the BP-test & White-test using the bptest()
+##### H0 : Homoscedasticity is true
+```{r include=FALSE, message=FALSE}
+y4 <- as.matrix(percapitaEE)
+
+X4 <- cbind(1, percapitaGDP)
+
+b4 <- crossprod(solve(crossprod(X4,X4)),crossprod(X4,y4))
+b4
+lse4
+
+e4 <- y4-X4%*%b4
+esq4 <- e4^2
+esq4
+
+X4
+n4 <- nrow(X4)
+n4
+k4 <- ncol(X4)
+
+df <- n4-k4
+df
+```
+
+##### BP-test
+```{r include=FALSE}
+library(lmtest)
+```
+
+```{r}
+BPtest4 <- bptest(lse4)
+BPtest4
+#p-value = 0.006701 < 5% then we will reject H0 and there is Hetero.
+
+### 純手動做BPtest
+#BP4 <- lm(esq4~percapitaGDP) 
+#summary(BP4)
+#LMBP4 <- 0.1609*n4 #5.4706
+#pvchisq4 <- 1-pchisq(LMBP4,df=1)
+#pvchisq4
+# pvchisq4=0.01933899 <5%  then we will reject H0 and there is Hetero.
+```
+
+##### White-test
+```{r}
+percapitaGDPsquare <- percapitaGDP^2
+Wtest4 <- bptest(lse4,~percapitaGDP+percapitaGDPsquare)
+Wtest4
+
+# Wtest4=0.006869 < 5% then we will reject H0 and there is Hetero.
+```
+
+## (c) White's heteroscedasticity-consistent standard errors (sol1)
+```{r}
+library(lmtest)
+library(sandwich)
+
+HCVCOV <- vcovHC(lse4)
+HCresults4 <- coeftest(lse4, vcov=HCVCOV)
+HCresults4
+summary(lse4)
+# beta2hat are the same and standard error is different.
+```
+
+## (d) WLS (sol2)
+```{r}
+percapitaEE_star <- percapitaEE/percapitaGDP^0.5
+intercept_star <- 1/percapitaGDP^0.5
+percapitaGDP_star <- percapitaGDP^0.5
+
+wlse4 <- lm(percapitaEE_star~intercept_star+percapitaGDP_star-1)
+summary(wlse4) #standard error of betahat2 = 0.004412
+HCresults4 #standard error of betahat2 = 0.0066033
+summary(lse4) #standard error of betahat2 = 0.005179 
+
+# the wlse's standard error of betahat2 is the smallest.
+```
+
+## (e) F-test on 5% level in adjusted regression model
+```{r}
+# We expect to not reject the H0:Homo after the WLS adjustment
+
+wlse_residual <- as.matrix(residuals(wlse4))
+wlse4_esq <- wlse_residual^2
+
+
+lm(wlse4_esq~intercept_star+percapitaGDP_star) -> adjusted_Heterotest
+summary(adjusted_Heterotest)
+```
+
+##### under(e)-BPtest again
+```{r}
+# Multiple R-squared:  0.05016
+
+adjusted_BP <- 0.05016*n4 #1.70544
+adjusted_BP_pvchisq <- 1-pchisq(adjusted_BP, df=2) #df=2 because intercept_star & percapitaGDP_star
+adjusted_BP_pvchisq #0.4262539 > 5% not rejected H0: Homo
+```
+
+
+

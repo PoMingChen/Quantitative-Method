@@ -46,18 +46,23 @@ class(miles)
 y <- as.matrix(miles)
 class(y)
 X <- cbind(1,income,age,kids)
+X
 class(X)
 b <- crossprod(solve(crossprod(X,X)),crossprod(X,y))
+b
 e <- y-X%*%b #取得Ui hat 這是做異質性的檢定BP White都會用到的東西
 
 esq <- e^2 #取得Ui hat平方 這是做異質性的檢定BP White檢定，都會用到的東西
-
+esq
+class(esq)
 # number of row
 n <- nrow(X)
+n
 # number of column
 k <- ncol(X)
 # degree of freedom
 nmk <- n-k
+nmk
 ```
 
 ### BP test to test Hetero
