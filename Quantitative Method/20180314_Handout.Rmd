@@ -1,0 +1,73 @@
+---
+title: "20180314_Handout"
+author: "陳柏銘"
+date: "2018/3/14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup}
+library("AER")
+library("ggplot2")
+library("dplyr")
+library("knitr")
+```
+
+```{r get_dataframe}
+data("Journals")
+str(Journals)
+View(Journals)
+Journals
+```
+
+```{r}
+Journals %>% mutate(citeprice=price/citations) -> journals
+#journals
+summary(journals) #用來看資料特徵
+
+#price，圖書館訂閱某期刊的價格
+#citations，某期刊被引用的次數
+#citeprice，期刊引用單價
+```
+
+### 因果問句
+```{r}
+# 引用單價citeprice，如何影響訂閱subs，進到一個類似x影響y，需求的概念
+# -0.42是correlation
+#
+library(psych)
+# journals %>% 
+#   select(citeprice,subs) %>%
+#   pairs.panels()
+
+# 更理想的寫法，畢竟select這個函數一定有人用過，而且隸屬於兩個以上的套件
+journals %>% 
+dplyr::select(citeprice,subs) %>%
+pairs.panels()
+```
+
+```{r 取log}
+journals %>% 
+  dplyr::select(citeprice,subs) %>%
+  dplyr::mutate_all(log) %>% #取log使他較接近常態分配，OLS迴歸斜率也較清楚。
+  pairs.panels()
+```
+
+```{r }
+# 判斷變數是否為數值類別，先建立函數功能。
+is_numeric<-function(x) all(is.numeric(x))
+# 計算數數與citeprice的相關係數，先建立函數功能，那要另外建立，是因為有一個citeprice這個變數，我想要先訂下來。
+cor_citeprice<-function(x) cor(x,journals$citeprice)
+
+journals %>%  
+  select_if(is_numeric) %>%
+  summarise_all(cor_citeprice) %>% #summarise是接近敘述統計量的意思
+  kable() #kable讓印的表變得比較好看
+
+
+#回去寫：佐證foundingyear和subs的立足點不同的佐證。correlation
+```
+
