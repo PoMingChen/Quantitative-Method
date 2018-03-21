@@ -18,8 +18,8 @@ library("knitr")
 
 ```{r get_dataframe}
 data("Journals")
-str(Journals)
-View(Journals)
+#str(Journals) 
+#View(Journals)
 Journals
 ```
 
@@ -45,7 +45,7 @@ library(psych)
 
 # 更理想的寫法，畢竟select這個函數一定有人用過，而且隸屬於兩個以上的套件
 journals %>% 
-dplyr::select(citeprice,subs) %>%
+dplyr::select(citeprice,subs) %>% #select: extract column by name
 pairs.panels()
 ```
 
@@ -56,7 +56,7 @@ journals %>%
   pairs.panels()
 ```
 
-```{r }
+```{r 計算其他變數與citeprice的相關係數}
 # 判斷變數是否為數值類別，先建立函數功能。
 is_numeric<-function(x) all(is.numeric(x))
 # 計算數數與citeprice的相關係數，先建立函數功能，那要另外建立，是因為有一個citeprice這個變數，我想要先訂下來。
@@ -69,5 +69,21 @@ journals %>%
 
 
 #回去寫：佐證foundingyear和subs的立足點不同的佐證。correlation
+```
+
+```{r 計算foundingyear和subs的相關係數}
+
+cor_subs <- function(x){
+  cor(x,journals$subs)
+}
+
+journals %>%
+  select_if(is_numeric) %>% 
+  summarise_all(cor_subs) 
+
+#cor(foundingyear, subs) = -0.4073721
+#cor(foundingyear, citeprice) = 0.3102098
+#cor(citeprice, subs) = -0.4195314
+
 ```
 
