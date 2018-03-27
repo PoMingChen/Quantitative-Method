@@ -84,6 +84,8 @@ journals %>%
   select_if(is_numeric) %>% 
   summarise_all(cor_subs) 
 
+journals %>% select(foundingyear, subs) %>% pairs.panels()
+
 #cor(foundingyear, subs) = -0.4073721
 #cor(foundingyear, citeprice) = 0.3102098
 #cor(citeprice, subs) = -0.4195314
@@ -102,6 +104,7 @@ journals %>%
 ```
 
 ```{r 模型比較}
+library(dplyr)
 journals %>% 
   lm(log(subs)~log(citeprice),data=.) -> model_1
 journals %>%
@@ -111,13 +114,14 @@ model_2
 
 ```
 
-```{r}
+```{r 模型比較}
 library(sandwich) #for standard error(就是standard error公式的一個形態，兩端相同，只有中間不同。)
 library(lmtest)
 library(stargazer) 
 
-#使用vcovHC函數來計算HC1型的異質變異
+#使用vcovHC函數來計算HC1型的異質變異，這邊在古典假設成立下，variance-covariance matrix的
 #（即橫斷面資料且符合隨機抽樣下，的線性迴歸模型）
+#coeftest, Inference for Estimated Coefficients，那就是會用到假設檢定的公式。(beta_hat-beta)/se.。自然就需要variance-covariance matrix
 coeftest(model_1, vcov. = vcovHC, type="HC1") -> model_1_coeftest 
 coeftest(model_2, vcov. = vcovHC, type="HC1") -> model_2_coeftest
 # vcov. = vcovHC, type="HC1" 是固定的，就是因為他是橫斷面且符合隨機抽樣的類型。他的非對角線都是0，那HC1、HC2是不同的資料型態。遇到就會比較知道。
@@ -125,6 +129,8 @@ coeftest(model_2, vcov. = vcovHC, type="HC1") -> model_2_coeftest
 model_1_coeftest
 model_2_coeftest
 
+
+#進行模型比較
 stargazer(model_1, model_2, 
           se=list(model_1_coeftest[,"Std. Error"], model_2_coeftest[,2]),
           type="text",
@@ -136,5 +142,6 @@ stargazer(model_1, model_2,
 
 #查coeftest的help
 #查stargazer的help
+##The stargazer command produces LaTeX code, HTML code and ASCII text for well-formatted tables that hold regression analysis results from several models side-by-side. It can also output summary statistics and data frame content. stargazer supports a large number model objects from a variety of packages.
 ```
 
