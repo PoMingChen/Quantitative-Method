@@ -1,0 +1,191 @@
+---
+title: "作業2"
+params:
+  group: 4
+  id: [410373092, 310356001]
+  name: ["陳柏銘","蔡沛吟"]
+output:
+  html_notebook:
+    df_print: paged
+---
+請依狀況更改上面的name,id及group（分別代表組員姓名，學號及組號），但請「勿」更改下面姓名、學號、組號三行的設定。  
+
+***
+
+姓名：`r params$name`  
+學號：`r params$id`  
+組號：`r params$group`  
+
+***
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning=F,message=F)
+```
+
+# 勞動市場
+
+執行以下程式引入勞動市場資料labordata，資料說明請見連結[Cornwell and Rupert Returns to Schooling Data, 595 Individuals, 7 Years.](http://people.stern.nyu.edu/wgreene/Econometrics/PanelDataSets.htm)
+
+```{r}
+library(readr)
+labordata <- read_csv("http://people.stern.nyu.edu/wgreene/Econometrics/cornwell&rupert.csv")
+# EXP = work experience 
+# WKS = weeks worked
+# OCC = occupation, 1 if blue collar, 
+# IND = 1 if manufacturing industry
+# SOUTH = 1 if resides in south
+# SMSA = 1 if resides in a city (SMSA)
+# MS = 1 if married
+# FEM = 1 if female
+# UNION = 1 if wage set by unioin contract
+# ED = years of education
+# BLK = 1 if individual is black
+# LWAGE = log of wage
+```
+
+## 勞動供給
+
+### (1)
+將labordata只留下第7年的資料
+
+```{r}
+
+library(dplyr)
+library(magrittr)
+labordata %>% filter(YEAR==7)
+```
+
+### (2) 
+我們想要估計薪資對工時的影響（即勞動供給），考慮如下的勞動供給函數
+$$wks_{i}=\beta_0+\beta_1 lwage_{i}+\epsilon_i$$
+
+請使用plot()畫出橫軸為每週工時（WKS）與縱軸為取對數後薪資（LWAGE, 後往直接稱呼「薪資」）的離散圖。
+```{r}
+plot(labordata$WKS, labordata$LWAGE, xlab = "WKS", ylab = "LWAGE")
+plot(labordata$LWAGE, labordata$WKS, xlab = "LWAGE", ylab = "WKS")
+```
+
+### (3)
+我們擔心「勞工屬於工會」這個變數(union, 為1若屬於工會, 反之為0)遺漏的話會造成勞動供給的工資係數估計偏誤。請用文字故事說明為什麼會有這層擔心？[記得要有兩個面向故事] 這擔心應該會高估或低估工資係數？
+[請不要使用任何程式或數字計算，單純文字故事邏輯]
+
+```
+擔心「勞工屬於公會」這個變數遺漏的話會造成工資係數的估計偏誤，也就是選擇偏誤中的遺漏變數偏誤。理由是因為，「是否隸屬公會」與「薪資」「每週工時」皆有關聯，也就是他會同時影響「薪資」「每週工時」。有隸屬公會的勞工理論上受到工會的照顧，具有薪資相關的保障，同時工會會監督資方是否有造成勞工過勞的狀況。
+
+忽視「是否隸屬工會」這個變數，可能會造成工資係數被低估。理由是因為，在控制「是否隸屬工會」這個變數下，勞工可以專心工作，比較不需要去擔心基本工作權益等等。面對「薪水增加」這個誘因的反應，能夠更真實呈現。而薪水基本上都是一個人是否願意工作的主要考量，係數理應提升。
+```
+
+### (4)
+在不做迴歸下，請用union分組計算lwage與wks的平均，並用數字結果來支持你在(c)小題的擔心。
+
+```{r}
+# 我有點不太懂要用union，取連集要怎麼做到。
+# 我的方式不曉得對不對！？
+labordata %>% filter(UNION == 1) %>% summarise(mean1 = mean(LWAGE)) #6.681653	
+labordata %>% filter(UNION == 0) %>% summarise(mean1 = mean(LWAGE)) #6.67331	
+```
+
+### (5)
+我們最後考慮如下的複迴歸勞動供給函數
+$$wks_{i}=\beta_0+\beta_1 lwage_{i} + \beta_2 ed_{i} +\beta_3 union_{i} +\beta_4 fem_{i}+\epsilon_{i}$$
+請用『純文字說明』(不要寫程式，不要算任何數字)：為什麼要再放教育水準及性別二個控制變數？
+
+```
+結構式是「是否當薪資越高，投入勞動意願會越高」。勞工更願意工作，每週工時越高，因此勞動供給會越高。
+
+先討論需要放入教育水準的原因。
+
+教育水準越高的人，理論上起薪越高且升遷機會較多，意思是教育水準和薪水有關聯。同時，教育水準越高的人，可能自我實驗的意願和能力較高，可能積極投入創業，幾乎是工作狂；也有可能效率工作，其餘都在享受人生。總之，教育水準與每週工時也有相關。「教育程度」會同時影響效應變數與被解釋變數，若不控制，工資的係數會有偏誤，甚至可能變成在估計「教育程度對每週工時（投入勞動）的影響力」。
+
+再來是需要放入性別的原因。
+
+女性在職場上較容易存在「天花板」的狀況，因此性別會影響工資（雖然有點遺憾）。同時也被賦予較多照顧家庭的責任，因此性別也會影響每週工時（要照顧家庭就不太可能每週工作100hr以上），「性別」會同時影響效應變數與被解釋變數，若不控制，工資的係數會有偏誤，甚至可能變成在估計「性別對每週工時（投入勞動）的影響力」。
+```
+
+### (6)
+同時OLS估計簡單迴歸和複迴歸下的勞動供給，並用stargarzer呈現估計結果（請設定type="html"）。
+
+```{r}
+library(sandwich)
+library(lmtest)
+library(stargazer)
+lm1 <- labordata %>% lm(formula = WKS ~ LWAGE)
+lm2 <- labordata %>% lm(formula = WKS ~ LWAGE + ED + UNION + FEM)
+stargazer(lm1, lm2, type = "text")
+# stargazer(lm1, lm2, type = "html")
+```
+
+### (7)
+複迴歸模型估計下，LWAGE的係數要如何詮譯？顯不顯著？
+
+```
+在簡單迴歸模型中，係數是0.651（p-value < 0.001) 個別檢定是顯著的。
+在複迴歸模型中，係數是0.733（p-value < 0.001) 個別檢定是顯著的。
+
+LWAGE的詮釋是「每當工資變動（增加）1%，每週工時會增加多少小時」，在複回歸底下是0.733小時，約45分鐘。
+```
+
+### (8)
+找出一個使複迴歸模型在控制變數下依然不符合條件性獨立的故事（必需牽扯到labordata資料不會有的變數，所以只能純文字故事）。
+
+```
+還可能不符合條件性獨立的原因，可能是沒有控制「稅率」具體而言可能是企業經營所得稅，簡稱營所稅。營所稅會與工資有關聯是因為當企業被課重稅，勢必沒有太多資源能夠應用在人事費用上面，可能CEO與基層員工薪資倍數較低，兩者應為負相關。
+
+營所稅與每週工時會有相關是因為，營所稅高的國家多半是社會主義國家，對於人民福利與基本權益照顧較前衛，而且比較到位，因此對於每週工時限制，兩者可能為負相關。
+
+因此若不控制營所稅，可能估計到工資參數會有偏誤，甚至估計到的參數反而是「樣本背後的母體，其工作環境，資本主義色彩的程度」反而不是觀察到勞動者面對薪資誘因的反應
+```
+
+## 內生性偏誤
+在(2)小題，圖形看不出明顯正斜率的勞動供給線，一個主要原因是薪資與工時是勞動供需決定的結果，因此任何影響勞動供給的因素都會影響薪資，也就是供給線的誤差項不論你放多少的變數，最後誤差項還是會改變供給線，也因此一定會影響薪資——誤差項一定會和薪資變數相關。使用複迴歸不管加多少控制變數永遠不會得到薪資係數的一致性估計，這樣的狀況我們稱為內生性偏誤（endogeneity bias）。
+
+然而內生性偏誤卻是相當容易使用工具變數解決，解決方式就是從勞動「需求」函數下手——任何影響勞動需求線的因素都會是合理的工具變數。
+
+### (9)
+在勞動市場中，產業別不同其對勞動力的需求也不一樣。另外，不同地點的勞動需求狀況也不同。使用文字邏輯說明「產業別」、勞動者「居住地」可能是合理工具變數的理由。
+
+```
+
+```
+
+### (10)
+使用工具變數法及產業別（ind）當工具變數，估計複迴歸模型下的$\beta_1$係數，並進行工具變數合理性的相關檢定。
+
+```{r}
+
+```
+
+### (11) 
+使用工具變數法, 同時使用ind及smsa當工具變數，估計複迴歸模型下的$\beta_1$係數，並進行工具變數合理性的相關檢定。
+
+```{r}
+
+```
+
+### (12)
+將簡單迴歸、複迴歸、一個工具變數、二個工具變數的四種估算結果（含應有的檢定），用stargazer產生「一張」報表同時呈現（請設定type="html"）。
+
+```{r}
+
+```
+
+
+# 文章閱讀
+以下問題請依《經濟學人》文章來回答：
+[Forcing employers to reveal their gender pay gaps is making them think](https://www.economist.com/news/britain/21739993-despite-its-flaws-new-obligation-could-spark-change-employment-practices-forcing)
+
+## 效應結構式
+
+### (13)
+文章問的因果效應問句是什麼？（盡量一言以敝之）
+
+```
+
+```
+
+### (14)
+找出文章中所列舉可造成OVB（omitted variable bias）的應控制變數，並說明它會造成OVB的「兩」面向原因（缺一不可）。
+
+```
+
+```

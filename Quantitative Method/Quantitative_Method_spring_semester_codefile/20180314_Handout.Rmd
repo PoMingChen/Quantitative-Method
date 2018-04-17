@@ -145,3 +145,8 @@ stargazer(model_1, model_2,
 ##The stargazer command produces LaTeX code, HTML code and ASCII text for well-formatted tables that hold regression analysis results from several models side-by-side. It can also output summary statistics and data frame content. stargazer supports a large number model objects from a variety of packages.
 ```
 
+### 第三章 IV變數
+```{r}
+
+```
+
