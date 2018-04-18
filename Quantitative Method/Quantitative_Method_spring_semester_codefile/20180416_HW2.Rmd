@@ -180,12 +180,55 @@ LWAGE的詮釋是「每當工資變動（增加）1%，每週工時會增加多�
 文章問的因果效應問句是什麼？（盡量一言以敝之）
 
 ```
+「性別」是否會影響「勞動者在職場上的長期發展機會」
 
+What companies really need to find out is whether they are hiring equitably, paying equitably and are offering equitable opportunities to advance.”
 ```
 
 ### (14)
 找出文章中所列舉可造成OVB（omitted variable bias）的應控制變數，並說明它會造成OVB的「兩」面向原因（缺一不可）。
 
 ```
+the new report is not about the pay discrimination in same job. It is about the problem that fail to promote enough women (or in a equal way)
 
+1. 不同工作職稱（the different roles of employees)
+
+在這份報導中，CEO和行政秘書是一起比較的，同理也是跟業務經理一起比。
+
+「不同工作職稱」和「勞動者在職場上的長期發展機會」有關聯，因為CEO人脈與專業經歷是比較廣的，擁有較多資源可以運用，甚至機會會自己找上門。而行政職的秘書比較算是小螺絲釘，需要努力讓別人看見才會有機會。
+
+「不同工作職稱」與「性別」有關係，理由是因為男性與女性，基於演化而根深蒂固的基因，男性普遍較有追求冒險衝刺的精神，女性則是較具有細心、耐心的特質。因此不同的的工作職稱（內容）有些是男性天生就比較容易適應良好，可能像業務，因此他變成業務經理。有些女性天生就比較容易上手，像是人資或者心理諮商輔導，因此他變成人資長(CHO)。
+
+所以「不同工作職稱（the different roles of employees)」需要被列為應控制變數，以避免估計偏誤，甚至反而在測量「擔任什麼樣的職位對長期的發展機會較多」
+
+2. 所屬產業環境 (Industry)
+
+在這份報導中提到航空業女性空服員（cabin crew）佔了69%，薪水平均25000英鎊。而機艙駕駛有94%是男性，平均薪水92400英鎊。
+這需要考量到產業特性以及產業環境，不能單純說這有pay discrimination
+
+「所屬產業環境」和「性別」會有關聯，因為有些高危險產業，基本上比較不會有女性願意投入。
+
+「所屬產業環境」也和「勞動者在職場上的長期發展機會」有關聯，產業大環境的榮枯會影響勞動者在這個產業的發展是無庸置疑的，舉裡來說，一個高危險產業（好比台電修電工），隨著機器人技術的成熟，可能之後都是機器人來做維修，自然修電工就會失業。
+
+因此需要將「所屬產業環境（Industry）」納入控制，不然嚴重的話，反而會是在觀察「哪個產業的前景較佳，長期發展機會較多」
+
+3. 養育小孩個數（childbearing)
+
+報導中提到男性和女性在到了適合養育小孩的年齡階段，薪水會開始產生落差，到了50歲可能高達16%。又被稱為"motherhood penalty"。畢竟母親經過懷孕到分娩，對於小孩子的牽絆和情感，相對於父親，是很可能比較高的。
+
+「養育孩子個數」與「性別」會產生關聯，理由是基於演化而根深蒂固的基因，男性會傾向以提高子嗣的個數來提高繁衍後代的成功率，女性則是傾向把單一子嗣照顧好來提高繁衍後代的成功率。
+
+「養育孩子個數」與「勞動者在職場上的長期發展機會」會產生關聯，是因為若有了孩子，就比較不容易接受外派的工作，面對一些職場機會必須要捨棄。但是也可能有了孩子，定居在某個地區後，上司覺得他比較穩定不會跑走，願意投入資源栽培他，反而步步高升。
+兩者有關聯，但是強度與正負相關可能要case by case。
+
+因此需要將「養育小孩個數（childbearing)」納入控制，否則嚴重的話，反而會是在觀察「養育孩子對勞動者長期發展的機會影響」
+（此變數本身為dummy variable : 0 1 2 3 4  代表有養育幾個孩子）
+
+e.g. McKinsey
+1. the different roles of employees
+The data do not adjust for employees’ different roles, so chief executives are compared directly with secretaries.
+2. Industry
+Airlines have reported some of the widest pay gaps, yet are unlikely to have unequal pay, because collective bargaining tends to determine salaries in the industry. Of easyJet’s pilots, 94% are men (average salary: £92,400) whereas 69% of cabin crew are women (earning an average of £24,800). The airline industry does not have a pay-discrimination problem so much as a recruitment problem.
+3. childbearing
+Men’s and women’s salaries start diverging from the childbearing years. This “motherhood penalty” is often followed by the “good-daughter penalty”, when elderly parents require care and daughters prove more conscientious than sons. The median pay gap is only 2% among full-time workers in their 30s, yet jumps to 14% in their 40s and 16% in their 50s, according to the Office for National Statistics.
 ```
