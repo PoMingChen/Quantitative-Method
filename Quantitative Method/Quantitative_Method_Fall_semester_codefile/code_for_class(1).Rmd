@@ -11,7 +11,7 @@ output: html_notebook
 # 引入資料
 ```{r}
 #要修改路徑
-dataset <- read.csv("/Users/chenpoming/Documents/GitHub/Quantitative Method/Quantitative Method/data_for_class.csv",header=TRUE)
+dataset <- read.csv("./data_for_class.csv",header=TRUE)
 # header 參數 是要設定他的最上面的row有沒有要呈現變數名稱。(不然會變成V1 V2 V3 就是變數的意思，型態也會變成factor)
 #這是一個觀察家庭旅遊受到哪些因素影響的的迴歸式
 # miles 旅程距離
@@ -37,6 +37,8 @@ age <- dat$AGE
 kids <- dat$KIDS
 
 class(miles) #integer
+
+miles
 
 ```
 
@@ -212,11 +214,12 @@ summary(lse) #t value = trat
 #-abs(trat) 把t-ratio取絕對值(因為有些有正有負，然後再給負值，不然會以左的累積機率很大，要用1去剪掉。
 # 乘以2 就是因為雙尾的關心，是分布的兩邊。
 #df=nmk 自由度，是t distribution的唯一參數。
+
+#pt, Density, distribution function
 pvt <- 2*pt(-abs(trat),df=nmk)
 pvt
 summary(lse) #pvt = Pr(>|t|) 
 ```
-
 
 #進行假設檢定（整體而言剩下T-test*多少程度下顯著，以及F統計量檢定還沒有做）
 ### 合併迴歸式相關資訊
@@ -266,7 +269,7 @@ Rbetamr
 F <- t(Rbetamr)%*%solve(R%*% VCOV %*%t(R))%*%Rbetamr/q
 F
 
-#VCOV 就是s^2 * C22的概念(那個矩陣，兩變數（包含截據項）剛好就只有s^2 * C22)
+#VCOV 就是s^2 * C22的概念(那個矩陣，兩變數（包含截據項）剛好就只有s^2 * C22) 
 
 summary(lse) #F-statistic: 33.75 on 3 and 196 DF,  p-value: < 2.2e-16
 

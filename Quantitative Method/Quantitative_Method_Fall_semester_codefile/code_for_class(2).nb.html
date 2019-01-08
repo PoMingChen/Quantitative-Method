@@ -74,7 +74,7 @@ display: none;
 padding: 0 4px 0 4px;
 }
 .pagedtable .even {
-background-color: #fcfcfc;
+background-color: rgba(140, 140, 140, 0.1);
 }
 .pagedtable-padding-col {
 display: none;
@@ -1620,8 +1620,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -1654,9 +1660,70 @@ button.code-folding-btn:focus {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
 });
 </script>
 
@@ -1670,7 +1737,6 @@ $(document).ready(function () {
   window.initializeCodeFolding("show" === "show");
 });
 </script>
-
 
 
 
@@ -1710,13 +1776,19 @@ rm(list = ls())</code></pre>
 <!-- rnb-text-begin -->
 <pre><code>本週第一種 lm + coding by self
 本週第二種 all in function</code></pre>
-<section class="level1">
+<div class="section level1">
 <h1>第一段基本上跟上週一樣</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShsc2UpXG5cbmBgYCJ9 -->
-<pre class="r"><code>summary(lse)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YXNldCA8LSByZWFkLmNzdihcIi4vZGF0YV9mb3JfY2xhc3MuY3N2XCIsaGVhZGVyPVRSVUUpXG5kYXQgPC0gZGF0YXNldFxubWlsZXMgPC0gZGF0JE1JTEVTXG5pbmNvbWUgPC0gZGF0JElOQ09NRVxuYWdlIDwtIGRhdCRBR0VcbmtpZHMgPC0gZGF0JEtJRFNcbmxzZSA8LSBsbShtaWxlc35pbmNvbWUrYWdlK2tpZHMpXG5zdW1tYXJ5KGxzZSlcbmBgYCJ9 -->
+<pre class="r"><code>dataset &lt;- read.csv(&quot;./data_for_class.csv&quot;,header=TRUE)
+dat &lt;- dataset
+miles &lt;- dat$MILES
+income &lt;- dat$INCOME
+age &lt;- dat$AGE
+kids &lt;- dat$KIDS
+lse &lt;- lm(miles~income+age+kids)
+summary(lse)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IG1pbGVzIH4gaW5jb21lICsgYWdlICsga2lkcylcblxuUmVzaWR1YWxzOlxuICAgICBNaW4gICAgICAgMVEgICBNZWRpYW4gICAgICAgM1EgICAgICBNYXggXG4tMTE5OC4xNCAgLTI5NS4zMSAgICAxNy45OCAgIDI4Ny41NCAgMTU0OS40MSBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciB0IHZhbHVlIFByKD58dHwpICAgIFxuKEludGVyY2VwdCkgLTM5MS41NDggICAgMTY5Ljc3NSAgLTIuMzA2ICAgMC4wMjIxICogIFxuaW5jb21lICAgICAgICAxNC4yMDEgICAgICAxLjgwMCAgIDcuODg5IDIuMTBlLTEzICoqKlxuYWdlICAgICAgICAgICAxNS43NDEgICAgICAzLjc1NyAgIDQuMTg5IDQuMjNlLTA1ICoqKlxua2lkcyAgICAgICAgIC04MS44MjYgICAgIDI3LjEzMCAgLTMuMDE2ICAgMC4wMDI5ICoqIFxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cblJlc2lkdWFsIHN0YW5kYXJkIGVycm9yOiA0NTIuMyBvbiAxOTYgZGVncmVlcyBvZiBmcmVlZG9tXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAwLjM0MDYsXHRBZGp1c3RlZCBSLXNxdWFyZWQ6ICAwLjMzMDUgXG5GLXN0YXRpc3RpYzogMzMuNzUgb24gMyBhbmQgMTk2IERGLCAgcC12YWx1ZTogPCAyLjJlLTE2XG4ifQ== -->
 <pre><code>
@@ -1742,95 +1814,662 @@ F-statistic: 33.75 on 3 and 196 DF,  p-value: &lt; 2.2e-16</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</section>
-<section class="level1">
+</div>
+<div class="section level1">
 <h1>第二段上週內容也有</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxublxuXG5gYGAifQ== -->
-<pre class="r"><code>n
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3MobWlsZXMpXG5gYGAifQ== -->
+<pre class="r"><code>class(miles)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiaW50ZWdlclwiXG4ifQ== -->
+<pre><code>[1] &quot;integer&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueSA8LSBhcy5tYXRyaXgobWlsZXMpXG5jbGFzcyh5KVxuYGBgIn0= -->
+<pre class="r"><code>y &lt;- as.matrix(miles)
+class(y)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwibWF0cml4XCJcbiJ9 -->
+<pre><code>[1] &quot;matrix&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuWCA8LSBjYmluZCgxLGluY29tZSxhZ2Usa2lkcylcblhcbmBgYCJ9 -->
+<pre class="r"><code>X &lt;- cbind(1,income,age,kids)
+X</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgaW5jb21lIGFnZSBraWRzXG4gIFsxLF0gMSAgICAgNDEgIDI2ICAgIDBcbiAgWzIsXSAxICAgICAzMSAgMzggICAgM1xuICBbMyxdIDEgICAgIDg3ICA0MCAgICAyXG4gIFs0LF0gMSAgICAgNTQgIDQ4ICAgIDRcbiAgWzUsXSAxICAgICA3NyAgNDMgICAgNFxuICBbNixdIDEgICAgIDcwICA1NSAgICAyXG4gIFs3LF0gMSAgICAgNDMgIDI0ICAgIDBcbiAgWzgsXSAxICAgICA0MCAgMzkgICAgMFxuICBbOSxdIDEgICAgIDY5ICA1NSAgICAyXG4gWzEwLF0gMSAgICAgMzggIDI5ICAgIDJcbiBbMTEsXSAxICAgICA4OSAgNDIgICAgM1xuIFsxMixdIDEgICAgIDY1ICA1MCAgICAzXG4gWzEzLF0gMSAgICAgNjkgIDQ1ICAgIDNcbiBbMTQsXSAxICAgICA2OCAgNDIgICAgMFxuIFsxNSxdIDEgICAgIDU5ICA1OSAgICAzXG4gWzE2LF0gMSAgICAgNzAgIDU0ICAgIDNcbiBbMTcsXSAxICAgICA0NyAgMzIgICAgMlxuIFsxOCxdIDEgICAgIDYwICA0NiAgICAzXG4gWzE5LF0gMSAgICAgODAgIDMyICAgIDFcbiBbMjAsXSAxICAgICA1NCAgNDYgICAgMlxuIFsyMSxdIDEgICAgIDk4ICAzNiAgICAzXG4gWzIyLF0gMSAgICAgODQgIDI2ICAgIDBcbiBbMjMsXSAxICAgICA4MCAgNDAgICAgNFxuIFsyNCxdIDEgICAgIDU3ICA1MSAgICAzXG4gWzI1LF0gMSAgICAgMjcgIDQ5ICAgIDBcbiBbMjYsXSAxICAgICA4MCAgNDEgICAgM1xuIFsyNyxdIDEgICAgIDQ4ICA1MCAgICAyXG4gWzI4LF0gMSAgICAgNTEgIDQ4ICAgIDJcbiBbMjksXSAxICAgICA3OCAgNTkgICAgM1xuIFszMCxdIDEgICAgIDg1ICA0MyAgICAxXG4gWzMxLF0gMSAgICAgNzEgIDMzICAgIDJcbiBbMzIsXSAxICAgICA1NiAgMzIgICAgMlxuIFszMyxdIDEgICAgIDUwICA0MiAgICAzXG4gWzM0LF0gMSAgICAgNzkgIDUyICAgIDJcbiBbMzUsXSAxICAgICA2MiAgMzMgICAgMVxuIFszNixdIDEgICAgIDYyICA0NSAgICAwXG4gWzM3LF0gMSAgICAgNDkgIDUzICAgIDRcbiBbMzgsXSAxICAgICA1NyAgMjYgICAgMVxuIFszOSxdIDEgICAgIDY2ICA0NyAgICAxXG4gWzQwLF0gMSAgICAgNTkgIDQzICAgIDJcbiBbNDEsXSAxICAgICA0NCAgMjMgICAgMFxuIFs0MixdIDEgICAgIDUzICA1OCAgICAyXG4gWzQzLF0gMSAgICAgODggIDQyICAgIDFcbiBbNDQsXSAxICAgICA3MiAgMzggICAgMVxuIFs0NSxdIDEgICAgIDU2ICAzMyAgICAxXG4gWzQ2LF0gMSAgICAgODAgIDQ1ICAgIDRcbiBbNDcsXSAxICAgICA4MiAgMzAgICAgMlxuIFs0OCxdIDEgICAgIDQ1ICA1NiAgICAzXG4gWzQ5LF0gMSAgICAgNDEgIDM3ICAgIDNcbiBbNTAsXSAxICAgICA0NCAgNTUgICAgMlxuIFs1MSxdIDEgICAgIDU1ICAzNSAgICAyXG4gWzUyLF0gMSAgICAgNjYgIDQ1ICAgIDNcbiBbNTMsXSAxICAgICA5MSAgNDggICAgMFxuIFs1NCxdIDEgICAgIDgxICA0MSAgICAyXG4gWzU1LF0gMSAgICAgNzEgIDI5ICAgIDBcbiBbNTYsXSAxICAgICA2MCAgMzIgICAgMVxuIFs1NyxdIDEgICAgIDc4ICA0NCAgICAwXG4gWzU4LF0gMSAgICAxMDEgIDQxICAgIDNcbiBbNTksXSAxICAgICA5MiAgNTggICAgM1xuIFs2MCxdIDEgICAgIDY5ICA0OCAgICAyXG4gWzYxLF0gMSAgICAgNjMgIDUyICAgIDJcbiBbNjIsXSAxICAgICA4MyAgMzcgICAgMFxuIFs2MyxdIDEgICAgIDM0ICAzMiAgICAzXG4gWzY0LF0gMSAgICAgNjEgIDQ5ICAgIDJcbiBbNjUsXSAxICAgICA0NCAgMjYgICAgMVxuIFs2NixdIDEgICAgIDcwICAzMiAgICAxXG4gWzY3LF0gMSAgICAgNjUgIDQ0ICAgIDRcbiBbNjgsXSAxICAgICA2MiAgNDcgICAgMVxuIFs2OSxdIDEgICAgIDQwICA0OCAgICAzXG4gWzcwLF0gMSAgICAgNDkgIDQzICAgIDFcbiBbNzEsXSAxICAgICA4NCAgNTEgICAgMVxuIFs3MixdIDEgICAgIDY5ICA0NiAgICAwXG4gWzczLF0gMSAgICAgNTEgIDQzICAgIDBcbiBbNzQsXSAxICAgICAzMiAgNDIgICAgM1xuIFs3NSxdIDEgICAgIDUxICA0OSAgICAwXG4gWzc2LF0gMSAgICAgNDAgIDM2ICAgIDFcbiBbNzcsXSAxICAgICA2MSAgNTQgICAgMlxuIFs3OCxdIDEgICAgIDkyICA1NCAgICAzXG4gWzc5LF0gMSAgICAgNzIgIDUyICAgIDBcbiBbODAsXSAxICAgICA0NCAgMzggICAgMFxuIFs4MSxdIDEgICAgIDUxICAzNyAgICAwXG4gWzgyLF0gMSAgICAgNTEgIDMwICAgIDBcbiBbODMsXSAxICAgICA3MiAgNDIgICAgMVxuIFs4NCxdIDEgICAgIDgyICAzNyAgICAyXG4gWzg1LF0gMSAgICAgOTUgIDQ4ICAgIDBcbiBbODYsXSAxICAgICA0NSAgNDQgICAgMFxuIFs4NyxdIDEgICAgIDg2ICAzOCAgICAxXG4gWzg4LF0gMSAgICAgNzUgIDUwICAgIDBcbiBbODksXSAxICAgICA1MyAgMzQgICAgMlxuIFs5MCxdIDEgICAgIDc4ICAzMCAgICAwXG4gWzkxLF0gMSAgICAgMzQgIDM1ICAgIDFcbiBbOTIsXSAxICAgICA1MiAgNDAgICAgMVxuIFs5MyxdIDEgICAgIDU5ICAzOSAgICAzXG4gWzk0LF0gMSAgICAgNTEgIDMxICAgIDBcbiBbOTUsXSAxICAgICA3OSAgNDkgICAgMFxuIFs5NixdIDEgICAgIDI4ICAzNiAgICA0XG4gWzk3LF0gMSAgICAgNTcgIDI4ICAgIDFcbiBbOTgsXSAxICAgICA0OSAgMzMgICAgM1xuIFs5OSxdIDEgICAgIDY3ICAzOCAgICAzXG5bMTAwLF0gMSAgICAgNTIgIDM0ICAgIDBcblsxMDEsXSAxICAgICA4MSAgNDYgICAgMVxuWzEwMixdIDEgICAgIDgyICA1NCAgICAzXG5bMTAzLF0gMSAgICAgNzYgIDU1ICAgIDNcblsxMDQsXSAxICAgICA0NCAgNTYgICAgMlxuWzEwNSxdIDEgICAgIDY3ICAzNSAgICAxXG5bMTA2LF0gMSAgICAgNTAgIDM2ICAgIDJcblsxMDcsXSAxICAgICA2MiAgNDIgICAgM1xuWzEwOCxdIDEgICAgIDQzICA1MiAgICAwXG5bMTA5LF0gMSAgICAgODYgIDUyICAgIDNcblsxMTAsXSAxICAgICA1MSAgNTMgICAgMVxuWzExMSxdIDEgICAgIDcxICA0MiAgICAwXG5bMTEyLF0gMSAgICAgODkgIDU4ICAgIDJcblsxMTMsXSAxICAgICA3NCAgNTIgICAgMlxuWzExNCxdIDEgICAgIDU2ICA0MiAgICAxXG5bMTE1LF0gMSAgICAgNjEgIDQ5ICAgIDBcblsxMTYsXSAxICAgICA2MyAgNDIgICAgMVxuWzExNyxdIDEgICAgIDU3ICA1MSAgICAwXG5bMTE4LF0gMSAgICAgNTYgIDQ5ICAgIDBcblsxMTksXSAxICAgICAzOSAgNDAgICAgM1xuWzEyMCxdIDEgICAgIDk5ICAyMyAgICAwXG5bMTIxLF0gMSAgICAgNTQgIDUyICAgIDJcblsxMjIsXSAxICAgICA1NSAgMzMgICAgMFxuWzEyMyxdIDEgICAgIDYyICAyOSAgICAwXG5bMTI0LF0gMSAgICAgNzYgIDQ4ICAgIDBcblsxMjUsXSAxICAgICAyMiAgMzggICAgMVxuWzEyNixdIDEgICAgIDkwICA1NyAgICAyXG5bMTI3LF0gMSAgICAgODUgIDUwICAgIDFcblsxMjgsXSAxICAgICA4MiAgNTcgICAgMlxuWzEyOSxdIDEgICAgIDUzICAzMSAgICAxXG5bMTMwLF0gMSAgICAgNjcgIDM5ICAgIDBcblsxMzEsXSAxICAgICA1MiAgMjMgICAgMFxuWzEzMixdIDEgICAgIDczICA0MSAgICAzXG5bMTMzLF0gMSAgICAgNzMgIDM0ICAgIDJcblsxMzQsXSAxICAgICA0OSAgMzUgICAgMlxuWzEzNSxdIDEgICAgIDc4ICA1NSAgICAzXG5bMTM2LF0gMSAgICAgNjUgIDQ1ICAgIDFcblsxMzcsXSAxICAgICA5NyAgNTEgICAgM1xuWzEzOCxdIDEgICAgIDg0ICAzMiAgICAzXG5bMTM5LF0gMSAgICAgNjcgIDUwICAgIDNcblsxNDAsXSAxICAgICA2OSAgMzEgICAgMlxuWzE0MSxdIDEgICAgIDUxICA1MyAgICAzXG5bMTQyLF0gMSAgICAgNzkgIDQ4ICAgIDJcblsxNDMsXSAxICAgICA2MCAgNDYgICAgNFxuWzE0NCxdIDEgICAgIDUwICAzNyAgICAwXG5bMTQ1LF0gMSAgICAgNTkgIDUyICAgIDBcblsxNDYsXSAxICAgICA5NSAgMzEgICAgMVxuWzE0NyxdIDEgICAgIDUyICA1NSAgICAzXG5bMTQ4LF0gMSAgICAgNDkgIDU5ICAgIDNcblsxNDksXSAxICAgICA1OCAgMjQgICAgMFxuWzE1MCxdIDEgICAgMTE5ICAzOCAgICAzXG5bMTUxLF0gMSAgICAgNjMgIDU0ICAgIDJcblsxNTIsXSAxICAgICA2OSAgNTQgICAgM1xuWzE1MyxdIDEgICAgIDYwICAzMSAgICAyXG5bMTU0LF0gMSAgICAgMjUgIDQ5ICAgIDFcblsxNTUsXSAxICAgICA1OSAgNDUgICAgM1xuWzE1NixdIDEgICAgIDQ4ICA0MiAgICAzXG5bMTU3LF0gMSAgICAgNjEgIDUxICAgIDBcblsxNTgsXSAxICAgICA1OSAgMzQgICAgM1xuWzE1OSxdIDEgICAgIDQyICAzNSAgICAyXG5bMTYwLF0gMSAgICAgODUgIDQyICAgIDFcblsxNjEsXSAxICAgICA0MyAgMzMgICAgMFxuWzE2MixdIDEgICAgIDUxICA0NyAgICAyXG5bMTYzLF0gMSAgICAgODQgIDQ2ICAgIDRcblsxNjQsXSAxICAgIDEwMCAgNTIgICAgMFxuWzE2NSxdIDEgICAgIDE5ICAyNiAgICAxXG5bMTY2LF0gMSAgICAgNDYgIDUwICAgIDJcblsxNjcsXSAxICAgICAzOSAgNDEgICAgNFxuWzE2OCxdIDEgICAgIDYyICAzMiAgICAxXG5bMTY5LF0gMSAgICAgMzEgIDI4ICAgIDBcblsxNzAsXSAxICAgICAzOCAgNTYgICAgNFxuWzE3MSxdIDEgICAgIDUxICAzNiAgICAzXG5bMTcyLF0gMSAgICAgNzQgIDM0ICAgIDBcblsxNzMsXSAxICAgIDEwMSAgNTMgICAgM1xuWzE3NCxdIDEgICAgIDc0ICA1MiAgICAyXG5bMTc1LF0gMSAgICAgOTMgIDQzICAgIDFcblsxNzYsXSAxICAgICA3NCAgNTcgICAgNFxuWzE3NyxdIDEgICAgMTAxICA1MCAgICAzXG5bMTc4LF0gMSAgICAgNjggIDUxICAgIDFcblsxNzksXSAxICAgICA0OCAgMzIgICAgMFxuWzE4MCxdIDEgICAgIDUzICAzMCAgICAxXG5bMTgxLF0gMSAgICAgNjggIDQ5ICAgIDNcblsxODIsXSAxICAgIDEwMyAgNDYgICAgMFxuWzE4MyxdIDEgICAgIDgyICA1NSAgICAxXG5bMTg0LF0gMSAgICAgOTYgIDUwICAgIDJcblsxODUsXSAxICAgICA1NSAgMjcgICAgMVxuWzE4NixdIDEgICAgIDg2ICA1MSAgICAwXG5bMTg3LF0gMSAgICAgNTYgIDQ2ICAgIDJcblsxODgsXSAxICAgICA2MiAgMzYgICAgMVxuWzE4OSxdIDEgICAgIDkyICA1MyAgICAyXG5bMTkwLF0gMSAgICAgNjYgIDUwICAgIDFcblsxOTEsXSAxICAgICA4MyAgNDcgICAgM1xuWzE5MixdIDEgICAgIDg3ICA0MSAgICAxXG5bMTkzLF0gMSAgICAgNTMgIDUwICAgIDJcblsxOTQsXSAxICAgICA1MSAgMjQgICAgMFxuWzE5NSxdIDEgICAgIDU2ICA1MSAgICAyXG5bMTk2LF0gMSAgICAgNTIgIDM1ICAgIDFcblsxOTcsXSAxICAgICA2OSAgNTUgICAgMlxuWzE5OCxdIDEgICAgIDUxICA1NCAgICAzXG5bMTk5LF0gMSAgICAgNjMgIDM4ICAgIDBcblsyMDAsXSAxICAgICAzOSAgMjggICAgMFxuIn0= -->
+<pre><code>         income age kids
+  [1,] 1     41  26    0
+  [2,] 1     31  38    3
+  [3,] 1     87  40    2
+  [4,] 1     54  48    4
+  [5,] 1     77  43    4
+  [6,] 1     70  55    2
+  [7,] 1     43  24    0
+  [8,] 1     40  39    0
+  [9,] 1     69  55    2
+ [10,] 1     38  29    2
+ [11,] 1     89  42    3
+ [12,] 1     65  50    3
+ [13,] 1     69  45    3
+ [14,] 1     68  42    0
+ [15,] 1     59  59    3
+ [16,] 1     70  54    3
+ [17,] 1     47  32    2
+ [18,] 1     60  46    3
+ [19,] 1     80  32    1
+ [20,] 1     54  46    2
+ [21,] 1     98  36    3
+ [22,] 1     84  26    0
+ [23,] 1     80  40    4
+ [24,] 1     57  51    3
+ [25,] 1     27  49    0
+ [26,] 1     80  41    3
+ [27,] 1     48  50    2
+ [28,] 1     51  48    2
+ [29,] 1     78  59    3
+ [30,] 1     85  43    1
+ [31,] 1     71  33    2
+ [32,] 1     56  32    2
+ [33,] 1     50  42    3
+ [34,] 1     79  52    2
+ [35,] 1     62  33    1
+ [36,] 1     62  45    0
+ [37,] 1     49  53    4
+ [38,] 1     57  26    1
+ [39,] 1     66  47    1
+ [40,] 1     59  43    2
+ [41,] 1     44  23    0
+ [42,] 1     53  58    2
+ [43,] 1     88  42    1
+ [44,] 1     72  38    1
+ [45,] 1     56  33    1
+ [46,] 1     80  45    4
+ [47,] 1     82  30    2
+ [48,] 1     45  56    3
+ [49,] 1     41  37    3
+ [50,] 1     44  55    2
+ [51,] 1     55  35    2
+ [52,] 1     66  45    3
+ [53,] 1     91  48    0
+ [54,] 1     81  41    2
+ [55,] 1     71  29    0
+ [56,] 1     60  32    1
+ [57,] 1     78  44    0
+ [58,] 1    101  41    3
+ [59,] 1     92  58    3
+ [60,] 1     69  48    2
+ [61,] 1     63  52    2
+ [62,] 1     83  37    0
+ [63,] 1     34  32    3
+ [64,] 1     61  49    2
+ [65,] 1     44  26    1
+ [66,] 1     70  32    1
+ [67,] 1     65  44    4
+ [68,] 1     62  47    1
+ [69,] 1     40  48    3
+ [70,] 1     49  43    1
+ [71,] 1     84  51    1
+ [72,] 1     69  46    0
+ [73,] 1     51  43    0
+ [74,] 1     32  42    3
+ [75,] 1     51  49    0
+ [76,] 1     40  36    1
+ [77,] 1     61  54    2
+ [78,] 1     92  54    3
+ [79,] 1     72  52    0
+ [80,] 1     44  38    0
+ [81,] 1     51  37    0
+ [82,] 1     51  30    0
+ [83,] 1     72  42    1
+ [84,] 1     82  37    2
+ [85,] 1     95  48    0
+ [86,] 1     45  44    0
+ [87,] 1     86  38    1
+ [88,] 1     75  50    0
+ [89,] 1     53  34    2
+ [90,] 1     78  30    0
+ [91,] 1     34  35    1
+ [92,] 1     52  40    1
+ [93,] 1     59  39    3
+ [94,] 1     51  31    0
+ [95,] 1     79  49    0
+ [96,] 1     28  36    4
+ [97,] 1     57  28    1
+ [98,] 1     49  33    3
+ [99,] 1     67  38    3
+[100,] 1     52  34    0
+[101,] 1     81  46    1
+[102,] 1     82  54    3
+[103,] 1     76  55    3
+[104,] 1     44  56    2
+[105,] 1     67  35    1
+[106,] 1     50  36    2
+[107,] 1     62  42    3
+[108,] 1     43  52    0
+[109,] 1     86  52    3
+[110,] 1     51  53    1
+[111,] 1     71  42    0
+[112,] 1     89  58    2
+[113,] 1     74  52    2
+[114,] 1     56  42    1
+[115,] 1     61  49    0
+[116,] 1     63  42    1
+[117,] 1     57  51    0
+[118,] 1     56  49    0
+[119,] 1     39  40    3
+[120,] 1     99  23    0
+[121,] 1     54  52    2
+[122,] 1     55  33    0
+[123,] 1     62  29    0
+[124,] 1     76  48    0
+[125,] 1     22  38    1
+[126,] 1     90  57    2
+[127,] 1     85  50    1
+[128,] 1     82  57    2
+[129,] 1     53  31    1
+[130,] 1     67  39    0
+[131,] 1     52  23    0
+[132,] 1     73  41    3
+[133,] 1     73  34    2
+[134,] 1     49  35    2
+[135,] 1     78  55    3
+[136,] 1     65  45    1
+[137,] 1     97  51    3
+[138,] 1     84  32    3
+[139,] 1     67  50    3
+[140,] 1     69  31    2
+[141,] 1     51  53    3
+[142,] 1     79  48    2
+[143,] 1     60  46    4
+[144,] 1     50  37    0
+[145,] 1     59  52    0
+[146,] 1     95  31    1
+[147,] 1     52  55    3
+[148,] 1     49  59    3
+[149,] 1     58  24    0
+[150,] 1    119  38    3
+[151,] 1     63  54    2
+[152,] 1     69  54    3
+[153,] 1     60  31    2
+[154,] 1     25  49    1
+[155,] 1     59  45    3
+[156,] 1     48  42    3
+[157,] 1     61  51    0
+[158,] 1     59  34    3
+[159,] 1     42  35    2
+[160,] 1     85  42    1
+[161,] 1     43  33    0
+[162,] 1     51  47    2
+[163,] 1     84  46    4
+[164,] 1    100  52    0
+[165,] 1     19  26    1
+[166,] 1     46  50    2
+[167,] 1     39  41    4
+[168,] 1     62  32    1
+[169,] 1     31  28    0
+[170,] 1     38  56    4
+[171,] 1     51  36    3
+[172,] 1     74  34    0
+[173,] 1    101  53    3
+[174,] 1     74  52    2
+[175,] 1     93  43    1
+[176,] 1     74  57    4
+[177,] 1    101  50    3
+[178,] 1     68  51    1
+[179,] 1     48  32    0
+[180,] 1     53  30    1
+[181,] 1     68  49    3
+[182,] 1    103  46    0
+[183,] 1     82  55    1
+[184,] 1     96  50    2
+[185,] 1     55  27    1
+[186,] 1     86  51    0
+[187,] 1     56  46    2
+[188,] 1     62  36    1
+[189,] 1     92  53    2
+[190,] 1     66  50    1
+[191,] 1     83  47    3
+[192,] 1     87  41    1
+[193,] 1     53  50    2
+[194,] 1     51  24    0
+[195,] 1     56  51    2
+[196,] 1     52  35    1
+[197,] 1     69  55    2
+[198,] 1     51  54    3
+[199,] 1     63  38    0
+[200,] 1     39  28    0</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3MoWClcbmBgYCJ9 -->
+<pre class="r"><code>class(X)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwibWF0cml4XCJcbiJ9 -->
+<pre><code>[1] &quot;matrix&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYiA8LSBjcm9zc3Byb2Qoc29sdmUoY3Jvc3Nwcm9kKFgsWCkpLGNyb3NzcHJvZChYLHkpKVxuYlxuYGBgIn0= -->
+<pre class="r"><code>b &lt;- crossprod(solve(crossprod(X,X)),crossprod(X,y))
+b</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgIFssMV1cbiAgICAgICAtMzkxLjU0ODAxXG5pbmNvbWUgICAxNC4yMDEzM1xuYWdlICAgICAgMTUuNzQwOTJcbmtpZHMgICAgLTgxLjgyNjQyXG4ifQ== -->
+<pre><code>             [,1]
+       -391.54801
+income   14.20133
+age      15.74092
+kids    -81.82642</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3RoZSBiZXRhIGhhdCBvZiBpbmNvbWUgYWdlIGtpZHMuXG5lIDwtIHktWCUqJWIgI+WPluW+l1VpIGhhdCDpgJnmmK/lgZrnlbDos6rmgKfnmoTmqqLlrppCUCBXaGl0ZemDveacg+eUqOWIsOeahOadseilv1xuZXNxIDwtIGVeMiAj5Y+W5b6XVWkgaGF05bmz5pa5IOmAmeaYr+WBmueVsOizquaAp+eahOaqouWumkJQIFdoaXRl5qqi5a6a77yM6YO95pyD55So5Yiw55qE5p2x6KW/XG5lc3FcbmBgYCJ9 -->
+<pre class="r"><code>#the beta hat of income age kids.
+e &lt;- y-X%*%b #取得Ui hat 這是做異質性的檢定BP White都會用到的東西
+esq &lt;- e^2 #取得Ui hat平方 這是做異質性的檢定BP White檢定，都會用到的東西
+esq</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICAgWywxXVxuICBbMSxdIDkuMTIyMTY5ZSswNFxuICBbMixdIDguMDMzNjgwZSswM1xuICBbMyxdIDIuODIwMTE4ZSswNVxuICBbNCxdIDEuNTgwNzIwZSswNVxuICBbNSxdIDEuMTA1NjcxZSswNlxuICBbNixdIDMuNTMyNTk4ZSswNVxuICBbNyxdIDEuNjE1NjU2ZSswNFxuICBbOCxdIDMuNzY1MDMzZSswNVxuICBbOSxdIDUuODYxMTI1ZSswM1xuIFsxMCxdIDEuNDE3NjA4ZSswNFxuIFsxMSxdIDEuNTA1MzYwZSswNVxuIFsxMixdIDkuMTc0NDk5ZSswNFxuIFsxMyxdIDYuMDc0MDg5ZSswMVxuIFsxNCxdIDkuNjg4MzczZSswNFxuIFsxNSxdIDYuMzcyMjk1ZSswNFxuIFsxNixdIDIuNTcxMjYxZSswNVxuIFsxNyxdIDEuMzEwMjMzZSswNVxuIFsxOCxdIDEuNzE5NjQ2ZSswNFxuIFsxOSxdIDUuMjE4NTY4ZSswNFxuIFsyMCxdIDEuNjA5OTg2ZSswNVxuIFsyMSxdIDcuMjMxNDA2ZSswNVxuIFsyMixdIDQuNjM4NTA3ZSswNFxuIFsyMyxdIDQuMTI1MzY4ZSswNFxuIFsyNCxdIDEuMDM1NTkzZSswNFxuIFsyNSxdIDEuMDY0ODg2ZSswNFxuIFsyNixdIDIuODU3Njg2ZSswM1xuIFsyNyxdIDIuMzA4ODkzZSswNVxuIFsyOCxdIDQuNDI1NDg5ZSswNFxuIFsyOSxdIDIuMzQ2MzQ5ZSswNVxuIFszMCxdIDQuNTYxNjY5ZSswNVxuIFszMSxdIDIuMzE3OTk1ZSswNVxuIFszMixdIDEuMDA0MzM2ZSswNFxuIFszMyxdIDMuMDEyMjczZSswNVxuIFszNCxdIDEuODE2NzQyZSswNVxuIFszNSxdIDIuMDgzMzg2ZSswNVxuIFszNixdIDguMjc4NDk0ZSswNFxuIFszNyxdIDMuODUyNjEwZSswNFxuIFszOCxdIDcuODA4NDg0ZSswM1xuIFszOSxdIDIuMjYzMjU3ZSswNVxuIFs0MCxdIDIuOTAwMjI3ZSswNVxuIFs0MSxdIDIuNjY3NTIyZSswM1xuIFs0MixdIDUuNzgxMzA1ZSswNFxuIFs0MyxdIDEuNDEyNDQxZSswNlxuIFs0NCxdIDMuNzQ4ODI4ZSswNVxuIFs0NSxdIDEuNzk0Nzg3ZSswNVxuIFs0NixdIDIuMjYwMTAzZSswNVxuIFs0NyxdIDEuODYxNjEwZSswNVxuIFs0OCxdIDguNDk1Nzk2ZSswNFxuIFs0OSxdIDQuMDUwMjU1ZSswM1xuIFs1MCxdIDMuMjI1MzA1ZSswNFxuIFs1MSxdIDUuNzQ2Mzc3ZSswM1xuIFs1MixdIDYuNDUwNDA0ZSswMlxuIFs1MyxdIDIuNjc4NTM0ZSswNFxuIFs1NCxdIDMuMDc4NTk1ZSswM1xuIFs1NSxdIDEuMTUxODMwZSswNlxuIFs1NixdIDEuNjQ0OTkwZSswNVxuIFs1NyxdIDcuNDY2MTkxZSswNFxuIFs1OCxdIDQuNDk4MTg4ZSswNVxuIFs1OSxdIDIuNjcyMjEzZSswNFxuIFs2MCxdIDIuMzk4NDk2ZSswNVxuIFs2MSxdIDkuNzM1MTAxZSswNFxuIFs2MixdIDMuMTIwMDgxZSswNVxuIFs2MyxdIDguNDQwNjMyZSswNFxuIFs2NCxdIDUuMjI2NDQ1ZSswNFxuIFs2NSxdIDIuNDk3NDg0ZSswNVxuIFs2NixdIDEuMDA4NTE2ZSswNVxuIFs2NyxdIDkuMzM0Nzc0ZSswNVxuIFs2OCxdIDIuMDUyNzA5ZSswNVxuIFs2OSxdIDEuNTQ3Nzc0ZSswNFxuIFs3MCxdIDEuNDQ4NDI4ZSswNFxuIFs3MSxdIDEuMDY3MTY3ZSswNVxuIFs3MixdIDkuOTE0ODc1ZSswM1xuIFs3MyxdIDIuNzY0NjMxZSswM1xuIFs3NCxdIDEuMDkxMzEwZSswNFxuIFs3NSxdIDIuODE5ODc5ZSswNVxuIFs3NixdIDcuNTA3ODQyZSswM1xuIFs3NyxdIDcuODQ1MDY0ZSswNFxuIFs3OCxdIDMuMTg2MDM0ZSswNFxuIFs3OSxdIDEuNTk5NjIwZSswNFxuIFs4MCxdIDEuMzQyOTcyZSswNVxuIFs4MSxdIDYuMDA5MDc4ZSswNFxuIFs4MixdIDQuMDQ0Mjk1ZSswNVxuIFs4MyxdIDQuNTkzNTgwZSswNVxuIFs4NCxdIDMuNTcyNzI1ZSswNVxuIFs4NSxdIDQuNzg5ODM2ZSswNFxuIFs4NixdIDMuNTI3MDIyZSswNVxuIFs4NyxdIDEuMDE1ODcyZSswNlxuIFs4OCxdIDEuNzI3MjE5ZSswNVxuIFs4OSxdIDkuNDAxMTM0ZSswMlxuIFs5MCxdIDMuNTcxNDUyZSswNVxuIFs5MSxdIDQuMjI3MDAyZSswNFxuIFs5MixdIDIuNTY4NTg2ZSswNFxuIFs5MyxdIDQuMzUyNjY3ZSswNVxuIFs5NCxdIDEuMDAyOTE3ZSswNVxuIFs5NSxdIDEuOTEzNzIyZSswNFxuIFs5NixdIDIuMTc0MzU1ZSswNFxuIFs5NyxdIDEuMjAzMDMyZSswNVxuIFs5OCxdIDIuMDg5NTMzZSswM1xuIFs5OSxdIDguMzI4NzAyZSswNVxuWzEwMCxdIDIuMzA2OTczZSswNFxuWzEwMSxdIDEuOTgwMzkzZSswNVxuWzEwMixdIDYuNjQzNTUyZSswM1xuWzEwMyxdIDcuNjkwODUzZSswNVxuWzEwNCxdIDYuMzI1MDIyZSswMlxuWzEwNSxdIDEuMDU4OTM4ZSswNlxuWzEwNixdIDIuMDAxMTE4ZSswNFxuWzEwNyxdIDUuNjg5MDQ0ZSswM1xuWzEwOCxdIDkuNzI5MzM3ZSswM1xuWzEwOSxdIDQuOTk1ODgyZSswNVxuWzExMCxdIDIuNDc4NDIxZSswNVxuWzExMSxdIDIuMjk1Njk5ZSswNVxuWzExMixdIDMuMTg4NzY1ZSswNVxuWzExMyxdIDcuMTY4NTE3ZSswMlxuWzExNCxdIDIuMDE2OTQyZSswNFxuWzExNSxdIDMuNjExNDY4ZSswNFxuWzExNixdIDMuNjA1MTQzZSswNVxuWzExNyxdIDQuODYwMjAyZSswM1xuWzExOCxdIDguMTI0MzIyZSswNFxuWzExOSxdIDEuOTkzMjgxZSswNVxuWzEyMCxdIDguNTQyNDM1ZSswM1xuWzEyMSxdIDQuODcyMTQ3ZSswM1xuWzEyMixdIDEuMzgzNjYwZSswNVxuWzEyMyxdIDQuMTUwMTI4ZSswM1xuWzEyNCxdIDQuNzgyMTk0ZSswNFxuWzEyNSxdIDEuNDM2MzgyZSswMVxuWzEyNixdIDEuMTc3NTU1ZSswNlxuWzEyNyxdIDEuMDQ0Nzg3ZSswNFxuWzEyOCxdIDUuMzk2MTk1ZSswM1xuWzEyOSxdIDMuMjg5MTIwZSswMVxuWzEzMCxdIDMuMDA0ODIyZSswNVxuWzEzMSxdIDYuODk1MjA5ZSswM1xuWzEzMixdIDEuOTczNDYyZSswMlxuWzEzMyxdIDguODQxODY4ZSswNVxuWzEzNCxdIDQuNTE5NzQyZSswNFxuWzEzNSxdIDkuNDkyMTM4ZSswM1xuWzEzNixdIDEuNjQzMzc3ZSswMVxuWzEzNyxdIDcuNTE4NzU1ZSswM1xuWzEzOCxdIDIuNDAwNjU4ZSswNlxuWzEzOSxdIDIuOTc1NjEyZSswNVxuWzE0MCxdIDkuNTg4OTIxZSswNFxuWzE0MSxdIDQuMjIzNDI1ZSswNFxuWzE0MixdIDEuMTMwNzY4ZSswNVxuWzE0MyxdIDEuMjE2ODA0ZSswNFxuWzE0NCxdIDEuNjY0MDkyZSswNVxuWzE0NSxdIDkuOTk0NTI5ZSswNFxuWzE0NixdIDEuMDExNDc1ZSswNlxuWzE0NyxdIDEuNzIzODUyZSswNVxuWzE0OCxdIDMuODE5OTY4ZSswNFxuWzE0OSxdIDEuNTIxNjkwZSswNVxuWzE1MCxdIDYuNjA4MjgyZSswNVxuWzE1MSxdIDIuOTQyOTg4ZSswNVxuWzE1MixdIDMuMzQ5NDc4ZSswM1xuWzE1MyxdIDguMjI4MTY4ZSswNFxuWzE1NCxdIDkuOTkyODQyZSswM1xuWzE1NSxdIDEuMTYxNDk0ZSswNVxuWzE1NixdIDkuMDc0ODIwZSswNFxuWzE1NyxdIDIuODY3ODIyZSswNVxuWzE1OCxdIDMuMzYzNTAzZSswNVxuWzE1OSxdIDcuNTUyMTkwZSswNFxuWzE2MCxdIDguNjg4ODkyZSswNVxuWzE2MSxdIDMuMDc3OTI1ZSswNFxuWzE2MixdIDIuODYzNDIxZSswNVxuWzE2MyxdIDEuNDM1NTQyZSswNlxuWzE2NCxdIDEuMzI0MTM0ZSswNVxuWzE2NSxdIDIuMjIzMDcxZSswMVxuWzE2NixdIDYuMjU3ODczZSswM1xuWzE2NyxdIDEuNDk0Nzc5ZSswNVxuWzE2OCxdIDYuNzI2OTg4ZSswNVxuWzE2OSxdIDguOTA5ODgzZSswMVxuWzE3MCxdIDEuMjc5NTczZSswNVxuWzE3MSxdIDQuNjEyMzE2ZSswM1xuWzE3MixdIDEuMTY2NTEwZSswNVxuWzE3MyxdIDUuNDEzNDkxZSswM1xuWzE3NCxdIDIuMDI3MDM0ZSswNVxuWzE3NSxdIDcuOTU3Njc4ZSswMlxuWzE3NixdIDQuODcxODM0ZSswNFxuWzE3NyxdIDQuODUwNjEzZSswM1xuWzE3OCxdIDEuOTc5MzMwZSswNVxuWzE3OSxdIDUuNjc2NTg3ZSswMlxuWzE4MCxdIDUuNjQ3ODgzZSswNVxuWzE4MSxdIDQuODU2MzA0ZSswMVxuWzE4MixdIDYuNjQyMzc4ZSswNFxuWzE4MyxdIDguNDEwOTg1ZSswNVxuWzE4NCxdIDcuNzE4NzYyZSswNFxuWzE4NSxdIDcuODAwNjMyZSswNFxuWzE4NixdIDIuNjE2ODczZSswNVxuWzE4NyxdIDguNDE5MDcxZSswNFxuWzE4OCxdIDEuMTI4MjM2ZSswNFxuWzE4OSxdIDkuNDUwMDM5ZSswNFxuWzE5MCxdIDEuNTEzODg5ZSswNFxuWzE5MSxdIDIuOTk3NjM4ZSswNVxuWzE5MixdIDguMjY0NTAzZSswNFxuWzE5MyxdIDMuMjIwMzgwZSswNVxuWzE5NCxdIDEuNzY4MjIxZSswNVxuWzE5NSxdIDQuMDc0Nzg2ZSswNFxuWzE5NixdIDIuMzYyMjI1ZSswNVxuWzE5NyxdIDEuMTE0NzEwZSswMlxuWzE5OCxdIDMuODEyOTgwZSswM1xuWzE5OSxdIDEuMzM3NDMwZSswNVxuWzIwMCxdIDIuNTkwNDk0ZSswNFxuIn0= -->
+<pre><code>               [,1]
+  [1,] 9.122169e+04
+  [2,] 8.033680e+03
+  [3,] 2.820118e+05
+  [4,] 1.580720e+05
+  [5,] 1.105671e+06
+  [6,] 3.532598e+05
+  [7,] 1.615656e+04
+  [8,] 3.765033e+05
+  [9,] 5.861125e+03
+ [10,] 1.417608e+04
+ [11,] 1.505360e+05
+ [12,] 9.174499e+04
+ [13,] 6.074089e+01
+ [14,] 9.688373e+04
+ [15,] 6.372295e+04
+ [16,] 2.571261e+05
+ [17,] 1.310233e+05
+ [18,] 1.719646e+04
+ [19,] 5.218568e+04
+ [20,] 1.609986e+05
+ [21,] 7.231406e+05
+ [22,] 4.638507e+04
+ [23,] 4.125368e+04
+ [24,] 1.035593e+04
+ [25,] 1.064886e+04
+ [26,] 2.857686e+03
+ [27,] 2.308893e+05
+ [28,] 4.425489e+04
+ [29,] 2.346349e+05
+ [30,] 4.561669e+05
+ [31,] 2.317995e+05
+ [32,] 1.004336e+04
+ [33,] 3.012273e+05
+ [34,] 1.816742e+05
+ [35,] 2.083386e+05
+ [36,] 8.278494e+04
+ [37,] 3.852610e+04
+ [38,] 7.808484e+03
+ [39,] 2.263257e+05
+ [40,] 2.900227e+05
+ [41,] 2.667522e+03
+ [42,] 5.781305e+04
+ [43,] 1.412441e+06
+ [44,] 3.748828e+05
+ [45,] 1.794787e+05
+ [46,] 2.260103e+05
+ [47,] 1.861610e+05
+ [48,] 8.495796e+04
+ [49,] 4.050255e+03
+ [50,] 3.225305e+04
+ [51,] 5.746377e+03
+ [52,] 6.450404e+02
+ [53,] 2.678534e+04
+ [54,] 3.078595e+03
+ [55,] 1.151830e+06
+ [56,] 1.644990e+05
+ [57,] 7.466191e+04
+ [58,] 4.498188e+05
+ [59,] 2.672213e+04
+ [60,] 2.398496e+05
+ [61,] 9.735101e+04
+ [62,] 3.120081e+05
+ [63,] 8.440632e+04
+ [64,] 5.226445e+04
+ [65,] 2.497484e+05
+ [66,] 1.008516e+05
+ [67,] 9.334774e+05
+ [68,] 2.052709e+05
+ [69,] 1.547774e+04
+ [70,] 1.448428e+04
+ [71,] 1.067167e+05
+ [72,] 9.914875e+03
+ [73,] 2.764631e+03
+ [74,] 1.091310e+04
+ [75,] 2.819879e+05
+ [76,] 7.507842e+03
+ [77,] 7.845064e+04
+ [78,] 3.186034e+04
+ [79,] 1.599620e+04
+ [80,] 1.342972e+05
+ [81,] 6.009078e+04
+ [82,] 4.044295e+05
+ [83,] 4.593580e+05
+ [84,] 3.572725e+05
+ [85,] 4.789836e+04
+ [86,] 3.527022e+05
+ [87,] 1.015872e+06
+ [88,] 1.727219e+05
+ [89,] 9.401134e+02
+ [90,] 3.571452e+05
+ [91,] 4.227002e+04
+ [92,] 2.568586e+04
+ [93,] 4.352667e+05
+ [94,] 1.002917e+05
+ [95,] 1.913722e+04
+ [96,] 2.174355e+04
+ [97,] 1.203032e+05
+ [98,] 2.089533e+03
+ [99,] 8.328702e+05
+[100,] 2.306973e+04
+[101,] 1.980393e+05
+[102,] 6.643552e+03
+[103,] 7.690853e+05
+[104,] 6.325022e+02
+[105,] 1.058938e+06
+[106,] 2.001118e+04
+[107,] 5.689044e+03
+[108,] 9.729337e+03
+[109,] 4.995882e+05
+[110,] 2.478421e+05
+[111,] 2.295699e+05
+[112,] 3.188765e+05
+[113,] 7.168517e+02
+[114,] 2.016942e+04
+[115,] 3.611468e+04
+[116,] 3.605143e+05
+[117,] 4.860202e+03
+[118,] 8.124322e+04
+[119,] 1.993281e+05
+[120,] 8.542435e+03
+[121,] 4.872147e+03
+[122,] 1.383660e+05
+[123,] 4.150128e+03
+[124,] 4.782194e+04
+[125,] 1.436382e+01
+[126,] 1.177555e+06
+[127,] 1.044787e+04
+[128,] 5.396195e+03
+[129,] 3.289120e+01
+[130,] 3.004822e+05
+[131,] 6.895209e+03
+[132,] 1.973462e+02
+[133,] 8.841868e+05
+[134,] 4.519742e+04
+[135,] 9.492138e+03
+[136,] 1.643377e+01
+[137,] 7.518755e+03
+[138,] 2.400658e+06
+[139,] 2.975612e+05
+[140,] 9.588921e+04
+[141,] 4.223425e+04
+[142,] 1.130768e+05
+[143,] 1.216804e+04
+[144,] 1.664092e+05
+[145,] 9.994529e+04
+[146,] 1.011475e+06
+[147,] 1.723852e+05
+[148,] 3.819968e+04
+[149,] 1.521690e+05
+[150,] 6.608282e+05
+[151,] 2.942988e+05
+[152,] 3.349478e+03
+[153,] 8.228168e+04
+[154,] 9.992842e+03
+[155,] 1.161494e+05
+[156,] 9.074820e+04
+[157,] 2.867822e+05
+[158,] 3.363503e+05
+[159,] 7.552190e+04
+[160,] 8.688892e+05
+[161,] 3.077925e+04
+[162,] 2.863421e+05
+[163,] 1.435542e+06
+[164,] 1.324134e+05
+[165,] 2.223071e+01
+[166,] 6.257873e+03
+[167,] 1.494779e+05
+[168,] 6.726988e+05
+[169,] 8.909883e+01
+[170,] 1.279573e+05
+[171,] 4.612316e+03
+[172,] 1.166510e+05
+[173,] 5.413491e+03
+[174,] 2.027034e+05
+[175,] 7.957678e+02
+[176,] 4.871834e+04
+[177,] 4.850613e+03
+[178,] 1.979330e+05
+[179,] 5.676587e+02
+[180,] 5.647883e+05
+[181,] 4.856304e+01
+[182,] 6.642378e+04
+[183,] 8.410985e+05
+[184,] 7.718762e+04
+[185,] 7.800632e+04
+[186,] 2.616873e+05
+[187,] 8.419071e+04
+[188,] 1.128236e+04
+[189,] 9.450039e+04
+[190,] 1.513889e+04
+[191,] 2.997638e+05
+[192,] 8.264503e+04
+[193,] 3.220380e+05
+[194,] 1.768221e+05
+[195,] 4.074786e+04
+[196,] 2.362225e+05
+[197,] 1.114710e+02
+[198,] 3.812980e+03
+[199,] 1.337430e+05
+[200,] 2.590494e+04</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3MoZXNxKVxuYGBgIn0= -->
+<pre class="r"><code>class(esq)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwibWF0cml4XCJcbiJ9 -->
+<pre><code>[1] &quot;matrix&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBudW1iZXIgb2Ygcm93XG5uIDwtIG5yb3coWClcbm5cbmBgYCJ9 -->
+<pre class="r"><code># number of row
+n &lt;- nrow(X)
+n</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDIwMFxuIn0= -->
 <pre><code>[1] 200</code></pre>
 <!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBudW1iZXIgb2YgY29sdW1uXG5rIDwtIG5jb2woWClcbiMgZGVncmVlIG9mIGZyZWVkb21cbm5tayA8LSBuLWtcbm5ta1xuYGBgIn0= -->
+<pre class="r"><code># number of column
+k &lt;- ncol(X)
+# degree of freedom
+nmk &lt;- n-k
+nmk</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE5NlxuIn0= -->
+<pre><code>[1] 196</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<section id="bp-test-to-test-hetero" class="level3">
+<div id="bp-test-to-test-hetero" class="section level3">
 <h3>BP test to test Hetero</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+S4gOaoo+aYr+ism+e+qeeahOWFrOW8j1xuI3RoZSBjaGFuZ2UgaW4gUiBzcXVhcmUgaXMgdGhlIGZvY3VzXG4jd2l0aG91dCBpbnRlcmNlcHQgd2Ugd2lsbCBnZXQgYWRqdXN0ZWQgUnNxdWFyZSDlm6DngrrlnKjorJvnvqnkuK3mnIDlvozmmK/nlLFG5YiG6YWN5bCO5Yiw5Y2h5pa55YiG6YWN77ydblJeMlxuIyBIMDogSG9tb1xuXG5CUCA8LSBsbShlc3F+aW5jb21lK2FnZStraWRzKSAj6YCZ6YKK5piv5pyJ5oiq5pOa6aCF55qEXG5zdW1tYXJ5KEJQKVxuXG5MTUJQIDwtIG4qMC4xNDUxIFxuTE1CUFxuIzI5LjAy5bCx5piv5Y2h5pa55YiG5L2I5qqi5a6a57Wx6KiI6YePKOiLpeWcqOaqouWumue1seioiOmHj+WPs+mCiu+8jOWwseacg+aLkue1lUgw77yaSG9tb3N0ZXJ0aWNpdHkpXG5cbiPmiJbogIXnlKLnlJ9wLXZhbHVl5bCx5Y+v5Lul5LiN55So5p+l6KGo77yM5q+U6LyD57Ch5ZauXG5wdmNoaXNxIDwtIDEtcGNoaXNxKExNQlAsZGY9MylcbnB2Y2hpc3FcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+S4gOaoo+aYr+ism+e+qeeahOWFrOW8j1xuI3RoZSBjaGFuZ2UgaW4gUiBzcXVhcmUgaXMgdGhlIGZvY3VzXG4jd2l0aG91dCBpbnRlcmNlcHQgd2Ugd2lsbCBnZXQgYWRqdXN0ZWQgUnNxdWFyZSDlm6DngrrlnKjorJvnvqnkuK3mnIDlvozmmK/nlLFG5YiG6YWN5bCO5Yiw5Y2h5pa55YiG6YWN77ydblJeMlxuIyBIMDogSG9tb1xuQlAgPC0gbG0oZXNxfmluY29tZSthZ2Ura2lkcykgI+mAmemCiuaYr+acieaIquaTmumgheeahCAj6K6TZGlzdHVyYmFuY2UgdGVybSDlsI3op6Pph4vorormlbjot5Hov7TmrbjjgIJcbnN1bW1hcnkoQlApXG5gYGAifQ== -->
 <pre class="r"><code>#一樣是講義的公式
 #the change in R square is the focus
 #without intercept we will get adjusted Rsquare 因為在講義中最後是由F分配導到卡方分配＝nR^2
 # H0: Homo
+BP &lt;- lm(esq~income+age+kids) #這邊是有截據項的 #讓disturbance term 對解釋變數跑迴歸。
+summary(BP)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IGVzcSB+IGluY29tZSArIGFnZSArIGtpZHMpXG5cblJlc2lkdWFsczpcbiAgICBNaW4gICAgICAxUSAgTWVkaWFuICAgICAgM1EgICAgIE1heCBcbi00OTYxMTQgLTE2MTMxMyAgLTUxNjgxICAgNjkzMDEgMTk0NDc2MiBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciB0IHZhbHVlIFByKD58dHwpICAgIFxuKEludGVyY2VwdCkgICAgNjQyMzUgICAgIDExMTIyNCAgIDAuNTc4ICAwLjU2NDI0ICAgIFxuaW5jb21lICAgICAgICAgIDYxOTQgICAgICAgMTE3OSAgIDUuMjUyICAzLjllLTA3ICoqKlxuYWdlICAgICAgICAgICAgLTc1MTMgICAgICAgMjQ2MiAgLTMuMDUyICAwLjAwMjU5ICoqIFxua2lkcyAgICAgICAgICAgMzcyNTYgICAgICAxNzc3MyAgIDIuMDk2ICAwLjAzNzM1ICogIFxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cblJlc2lkdWFsIHN0YW5kYXJkIGVycm9yOiAyOTYzMDAgb24gMTk2IGRlZ3JlZXMgb2YgZnJlZWRvbVxuTXVsdGlwbGUgUi1zcXVhcmVkOiAgMC4xNDUxLFx0QWRqdXN0ZWQgUi1zcXVhcmVkOiAgMC4xMzIgXG5GLXN0YXRpc3RpYzogMTEuMDkgb24gMyBhbmQgMTk2IERGLCAgcC12YWx1ZTogOS4zN2UtMDdcbiJ9 -->
+<pre><code>
+Call:
+lm(formula = esq ~ income + age + kids)
 
-BP &lt;- lm(esq~income+age+kids) #這邊是有截據項的
-summary(BP)
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-496114 -161313  -51681   69301 1944762 
 
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    64235     111224   0.578  0.56424    
+income          6194       1179   5.252  3.9e-07 ***
+age            -7513       2462  -3.052  0.00259 ** 
+kids           37256      17773   2.096  0.03735 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 296300 on 196 degrees of freedom
+Multiple R-squared:  0.1451,    Adjusted R-squared:  0.132 
+F-statistic: 11.09 on 3 and 196 DF,  p-value: 9.37e-07</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI0xNIG9mIEJQXG5MTUJQIDwtIG4qMC4xNDUxIFxuTE1CUFxuYGBgIn0= -->
+<pre class="r"><code>#LM of BP
 LMBP &lt;- n*0.1451 
-LMBP
-#29.02就是卡方分佈檢定統計量(若在檢定統計量右邊，就會拒絕H0：Homosterticity)
-
+LMBP</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDI5LjAyXG4ifQ== -->
+<pre><code>[1] 29.02</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIzI5LjAy5bCx5piv5Y2h5pa55YiG5L2I5qqi5a6a57Wx6KiI6YePKOiLpeWcqOaqouWumue1seioiOmHj+WPs+mCiu+8jOWwseacg+aLkue1lUgw77yaSG9tb3N0ZXJ0aWNpdHkpXG4j5oiW6ICF55Si55SfcC12YWx1ZeWwseWPr+S7peS4jeeUqOafpeihqO+8jOavlOi8g+ewoeWWrlxuI3BjaGlzceeahOapn+eOh+WvhuW6puWHveaVuOOAglxucHZjaGlzcSA8LSAxLXBjaGlzcShMTUJQLGRmPTMpXG5wdmNoaXNxXG5gYGAifQ== -->
+<pre class="r"><code>#29.02就是卡方分佈檢定統計量(若在檢定統計量右邊，就會拒絕H0：Homosterticity)
 #或者產生p-value就可以不用查表，比較簡單
+#pchisq的機率密度函數。
 pvchisq &lt;- 1-pchisq(LMBP,df=3)
 pvchisq</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDIuMjE3ODYzZS0wNlxuIn0= -->
+<pre><code>[1] 2.217863e-06</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3B2YWx1ZSA9IDIuMjE3ODYzZS0wNiDlgLzlvojlsI/jgILmiYDku6Xmi5LntZVIMFxuYGBgIn0= -->
+<pre class="r"><code>#pvalue = 2.217863e-06 值很小。所以拒絕H0</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</section>
-<section id="white-test-to-test-hetero" class="level3">
+</div>
+<div id="white-test-to-test-hetero" class="section level3">
 <h3>White test to test Hetero</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyDku5bpnIDopoHmr4/lgIvororph4/nmoTlubPmlrnpoIXku6Xlj4rlhanlhankuqTlj4npoIXvvIjkuI3nlKjliLDkuInlgIvkuqTlj4npoIXvvIlcbiMgV2hpdGUg57i95YWx5pyD5pyJ5Lmd5YCL6K6K6YePKClcbiMg5LiA5qij5piv6Zec5rOoUnNxdWFyZVxuXG5pbmNvbWVzcSA8LSBpbmNvbWVeMlxuYWdlc3EgPC0gYWdlXjJcbmtpZHNzcSA8LSBraWRzXjJcbmluY29tZV9hZ2UgPC0gaW5jb21lKmFnZVxuYWdlX2tpZHMgPC0gYWdlKmtpZHNcbmtpZHNfaW5jb21lIDwta2lkcyppbmNvbWVcblxuVyA8LSBsbShlc3F+aW5jb21lK2FnZStraWRzK2luY29tZXNxK2FnZXNxK2tpZHNzcStpbmNvbWVfYWdlK2FnZV9raWRzK2tpZHNfaW5jb21lKVxuc3VtbWFyeShXKVxuXG4j5pyA5b6M5LiA5qij5piv55SxRue1seioiOWwjuWIsOWNoeaWueeahG5SXjLvvIjlkoxCUOW+iOWDj++8iVxuTE1XIDwtIG4qMC4yXG5MTVdcblxucHZjaGlzcSA8LSAxLXBjaGlzcShMTVcsZGY9OSlcbnB2Y2hpc3FcbiMgNy41OTg1MjVlLTA2IOaYr+aOpei/keaWvDDnmoTvvIzpgqPlsLHku6Pooajororph4/lrZjlnKjorornlbDmlbjnlbDos6rmgKfjgILnhLblvoxCUCBXaGl0ZSB0ZXN06YO95piv5ouS57WV55qE44CCXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyDku5bpnIDopoHmr4/lgIvororph4/nmoTlubPmlrnpoIXku6Xlj4rlhanlhankuqTlj4npoIXvvIjkuI3nlKjliLDkuInlgIvkuqTlj4npoIXvvIlcbiMgV2hpdGUg57i95YWx5pyD5pyJ5Lmd5YCL6K6K6YePKCnvvJrop6Pph4vorormlbjmnKzouqsz5YCL77yL6Kej6YeL6K6K5pW45bmz5pa56aCFM+WAi++8i+ino+mHi+iuiuaVuOS6pOS5mOmghTPlgIvjgIJcbiMg5LiA5qij5piv6Zec5rOoUnNxdWFyZVxuaW5jb21lc3EgPC0gaW5jb21lXjJcbmFnZXNxIDwtIGFnZV4yXG5raWRzc3EgPC0ga2lkc14yXG5pbmNvbWVfYWdlIDwtIGluY29tZSphZ2VcbmFnZV9raWRzIDwtIGFnZSpraWRzXG5raWRzX2luY29tZSA8LWtpZHMqaW5jb21lXG5XIDwtIGxtKGVzcX5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpXG5zdW1tYXJ5KFcpXG5gYGAifQ== -->
 <pre class="r"><code># 他需要每個變量的平方項以及兩兩交叉項（不用到三個交叉項）
-# White 總共會有九個變量()
+# White 總共會有九個變量()：解釋變數本身3個＋解釋變數平方項3個＋解釋變數交乘項3個。
 # 一樣是關注Rsquare
-
 incomesq &lt;- income^2
 agesq &lt;- age^2
 kidssq &lt;- kids^2
 income_age &lt;- income*age
 age_kids &lt;- age*kids
 kids_income &lt;-kids*income
-
 W &lt;- lm(esq~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
-summary(W)
+summary(W)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IGVzcSB+IGluY29tZSArIGFnZSArIGtpZHMgKyBpbmNvbWVzcSArIGFnZXNxICsga2lkc3NxICsgXG4gICAgaW5jb21lX2FnZSArIGFnZV9raWRzICsga2lkc19pbmNvbWUpXG5cblJlc2lkdWFsczpcbiAgICBNaW4gICAgICAxUSAgTWVkaWFuICAgICAgM1EgICAgIE1heCBcbi01NzA3MDUgLTE1MDE4MiAgLTQ4NjQ0ICAgNjQ2NzQgMTY5ODEwMiBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHQgdmFsdWUgUHIoPnx0fCkgICBcbihJbnRlcmNlcHQpIC02MzA2NzguMzkgIDUyMzM4MC40MiAgLTEuMjA1ICAwLjIyOTcwICAgXG5pbmNvbWUgICAgICAgIDIxNjQ0LjY3ICAgIDc4MzEuMTcgICAyLjc2NCAgMC4wMDYyNyAqKlxuYWdlICAgICAgICAgICAgMTUyOS45OCAgIDI1MDMwLjcwICAgMC4wNjEgIDAuOTUxMzIgICBcbmtpZHMgICAgICAgICAgODE5ODUuNjYgIDExOTUwMC45MCAgIDAuNjg2ICAwLjQ5MzUxICAgXG5pbmNvbWVzcSAgICAgICAgLTQ0LjMzICAgICAgNTAuMjYgIC0wLjg4MiAgMC4zNzg5MiAgIFxuYWdlc3EgICAgICAgICAgIDIyMC43MiAgICAgMzI5LjI4ICAgMC42NzAgIDAuNTAzNDcgICBcbmtpZHNzcSAgICAgICAgMTQ0NTkuNDAgICAxNTE2NS40NyAgIDAuOTUzICAwLjM0MTU4ICAgXG5pbmNvbWVfYWdlICAgICAtMzE1LjA1ICAgICAxMzEuNTYgIC0yLjM5NSAgMC4wMTc2MCAqIFxuYWdlX2tpZHMgICAgICAtNTI2OS42NyAgICAyNzAyLjM3ICAtMS45NTAgIDAuMDUyNjUgLiBcbmtpZHNfaW5jb21lICAgIDIxMDEuMzMgICAgIDkyMy4yMyAgIDIuMjc2ICAwLjAyMzk2ICogXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuUmVzaWR1YWwgc3RhbmRhcmQgZXJyb3I6IDI5MTEwMCBvbiAxOTAgZGVncmVlcyBvZiBmcmVlZG9tXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAgIDAuMixcdEFkanVzdGVkIFItc3F1YXJlZDogIDAuMTYyMSBcbkYtc3RhdGlzdGljOiA1LjI3NyBvbiA5IGFuZCAxOTAgREYsICBwLXZhbHVlOiAyLjAyMmUtMDZcbiJ9 -->
+<pre><code>
+Call:
+lm(formula = esq ~ income + age + kids + incomesq + agesq + kidssq + 
+    income_age + age_kids + kids_income)
 
-#最後一樣是由F統計導到卡方的nR^2（和BP很像）
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-570705 -150182  -48644   64674 1698102 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept) -630678.39  523380.42  -1.205  0.22970   
+income        21644.67    7831.17   2.764  0.00627 **
+age            1529.98   25030.70   0.061  0.95132   
+kids          81985.66  119500.90   0.686  0.49351   
+incomesq        -44.33      50.26  -0.882  0.37892   
+agesq           220.72     329.28   0.670  0.50347   
+kidssq        14459.40   15165.47   0.953  0.34158   
+income_age     -315.05     131.56  -2.395  0.01760 * 
+age_kids      -5269.67    2702.37  -1.950  0.05265 . 
+kids_income    2101.33     923.23   2.276  0.02396 * 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 291100 on 190 degrees of freedom
+Multiple R-squared:    0.2, Adjusted R-squared:  0.1621 
+F-statistic: 5.277 on 9 and 190 DF,  p-value: 2.022e-06</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+acgOW+jOS4gOaoo+aYr+eUsUbntbHoqIjlsI7liLDljaHmlrnnmoRuUl4y77yI5ZKMQlDlvojlg4/vvIlcbkxNVyA8LSBuKjAuMlxuTE1XXG5gYGAifQ== -->
+<pre class="r"><code>#最後一樣是由F統計導到卡方的nR^2（和BP很像）
 LMW &lt;- n*0.2
-LMW
-
-pvchisq &lt;- 1-pchisq(LMW,df=9)
-pvchisq
-# 7.598525e-06 是接近於0的，那就代表變量存在變異數異質性。然後BP White test都是拒絕的。</code></pre>
+LMW</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQwXG4ifQ== -->
+<pre><code>[1] 40</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHZjaGlzcSA8LSAxLXBjaGlzcShMTVcsZGY9OSlcbnB2Y2hpc3FcbmBgYCJ9 -->
+<pre class="r"><code>pvchisq &lt;- 1-pchisq(LMW,df=9)
+pvchisq</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDcuNTk4NTI1ZS0wNlxuIn0= -->
+<pre><code>[1] 7.598525e-06</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyA3LjU5ODUyNWUtMDYg5piv5o6l6L+R5pa8MOeahO+8jOmCo+WwseS7o+ihqOiuiumHj+WtmOWcqOiuiueVsOaVuOeVsOizquaAp+OAgueEtuW+jEJQIFdoaXRlIHRlc3Tpg73mmK/mi5LntZXnmoTjgIJcbmBgYCJ9 -->
+<pre class="r"><code># 7.598525e-06 是接近於0的，那就代表變量存在變異數異質性。然後BP White test都是拒絕的。</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>#建立調整過的Var Beta hat (有兩種方式:White1980/WLS )</p>
+<p>#建立調整過的Var Beta hat (有兩種方式: White1980 / WLS )</p>
 <pre><code>從上面知道有異質性的狀況，用不需要function的方式，做手動的方式建立異質性底下的Var(beta hat) hat </code></pre>
-</section>
-<section id="white-1980-solution1-var" class="level3">
+</div>
+<div id="white-1980-solution1-var" class="section level3">
 <h3>本段落是White 1980 solution1 <code>只針對Var做調整</code></h3>
+<blockquote>
+<p>核心精神：想要拿到調整後的Var(beta_hat)，才能做有效率的假設檢定，但是beta_hat不變。</p>
+</blockquote>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0c1xuXG5gYGAifQ== -->
-<pre class="r"><code>results
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuU3RhciA8LSBhcnJheSgwLGRpbT1jKGssaykpICNhcnJheSDpmaPliJcgI2RpbeWPg+aVuCDmmK/ntq3luqbnmoToqK3lrprvvIzpgJnpgoropoFrIGJ5IGsg55+p6ZmjbWF0cml45beu5Yil5aSn5ZeO77yf77yI5beu55Ww5LiN5aSn77yM5YOF5Y+q5pa86LOH5paZ5Z6L5oWL55W25Yid6Kit6KiI6KaP5YmH77yJXG5jbGFzcyhTdGFyKVxuXG5TdGFyICPlu7rnq4vkuIDlgIvnqbrnmoRtYXRyaXhcblxuXG4jIOmAmemCiuimgeWPg+iAgzExLzIy55qE562G6KiY5LiA6ZaL5aeLXG4j6YCZ6YKKKG4vbm1rKeaYr+eCuuS6hu+8nyBcbiPlm6DngrogV2hpdGUgMTk4MOaYr+WcqOWkp+aoo+acrOeahOaDheazgeS4i++8jOmCo+ebruWJjW49MjAw5piv5pyJ6ZmQ5qij5pys44CC5L+u5q2j55qE5pa55byP5pyJ5b6I5aSa56iu77yMIOmCo0pvaG5zdG9u5pyJ5o+Q5L6b5bm+56iu5pa55byP77yM6YKj6YCZ6YKK5YOF5piv5LiA56iu5L+u5q2j5pa55byP77yM5b6A5q2j56K655qEQXN5VmFy6Z2g6L+R5LiA5Lqb44CCXG4jeCDmmK/nrYboqJjkuIDplovlp4vmnIDkuIrpnaLlr6vnmoRYIO+8m3QoeCkg5piv562G6KiY5Lit55qE56ys5LqM5YCLWCdcbmZvcihpIGluIDE6bil7XG54IDwtIGFzLm1hdHJpeChYW2ksXSkgI+aIquWPluesrGkgcm93IOeEtuW+jOaJgOacieeahGNvbHVtbijogIzkuJTlm6DngrrmnIlmb3Lov7TlnIjvvIzmiYDku6XmnIPmmK94MSB4MiB4MyB4NClcbml0ZXIgPC0gKG4vbm1rKSplc3FbaV0qeCUqJXQoeCkgXG5TdGFyIDwtIFN0YXIraXRlciAjaXRlciDmmK9rIGJ5IGsg55+p6ZmjXG59XG5TdGFyICM9c2VnbWEgVWkgaGF0IOW5s+aWueS5mOS7pXhpIOS5mOS7pXhpIHRyYW5zcG9ydO+8jOS5n+WwseaYr+acgOW+jOWFrOW8j+S4remWk+eahOmCo+auteOAglxuXG5Bc3lWQ09WIDwtIHNvbHZlKGNyb3NzcHJvZChYLFgpKSUqJVN0YXIlKiVzb2x2ZShjcm9zc3Byb2QoWCxYKSlcbkFzeVZDT1ZcbkFzeXZhciA8LSBhcy5tYXRyaXgoZGlhZyhBc3lWQ09WKSlcbkFzeXZhclxuQXN5c2UgPC0gQXN5dmFyXjAuNVxuQXN5c2UgI+iqv+aVtOmBjuW+jOeahHN0YW5kYXJkIGVycm9yXG5cbnRyYXQgPC0gYi9Bc3lzZSAjYi0wL0FzeXNlID0gdHJhdGlvXG5cbnB2dCA8LSAyKnB0KC1hYnModHJhdCksZGY9bm1rKSAj6Lef5LiK56au5ouc55qE55u45ZCM77yM5YGa5a6M6Kq/5pW05b6M55qE5Lyw6KiI6ZGR5a6a77yM5pyJ6aGv6JGX44CCXG5wdnRcblxucmVzdWx0cyA8LSBjYmluZChiLEFzeXNlLHRyYXQscHZ0KVxucmVzdWx0c1xuY29sbmFtZXMocmVzdWx0cykgPC0gYyhcIkVzdGltYXRlXCIsXCJTdGQuIEVycm9yXCIsXCJ0IHZhbHVlXCIsXCJQcig+fHR8KVwiKVxucm93bmFtZXMocmVzdWx0cykgPC0gYyhcImludGVyY2VwdFwiLFwiaW5jb21lXCIsXCJhZ2VcIixcImtpZHNcIilcbnJvdW5kKHJlc3VsdHMsZGlnaXRzPTQpXG5cbiPmr5TovIPlkoxsc2XnmoTlt67liKXvvIxlc3RpbWF0Zeaykuacieiuiu+8jOmCo3N0YW5kYXJkIGVycm9y5pyJ6K6KXG5yZXN1bHRzXG5zdW1tYXJ5KGxzZSlcblxuYGBgIn0= -->
+<pre class="r"><code>Star &lt;- array(0,dim=c(k,k)) #array 陣列 #dim參數 是維度的設定，這邊要k by k 矩陣matrix差別大嗎？（差異不大，僅只於資料型態當初設計規則）
+class(Star)
+
+Star #建立一個空的matrix
+
+
+# 這邊要參考11/22的筆記一開始
+#這邊(n/nmk)是為了？ 
+#因為 White 1980是在大樣本的情況下，那目前n=200是有限樣本。修正的方式有很多種， 那Johnston有提供幾種方式，那這邊僅是一種修正方式，往正確的AsyVar靠近一些。
+#x 是筆記一開始最上面寫的X ；t(x) 是筆記中的第二個X'
+for(i in 1:n){
+x &lt;- as.matrix(X[i,]) #截取第i row 然後所有的column(而且因為有for迴圈，所以會是x1 x2 x3 x4)
+iter &lt;- (n/nmk)*esq[i]*x%*%t(x) 
+Star &lt;- Star+iter #iter 是k by k 矩陣
+}
+Star #=segma Ui hat 平方乘以xi 乘以xi transport，也就是最後公式中間的那段。
+
+AsyVCOV &lt;- solve(crossprod(X,X))%*%Star%*%solve(crossprod(X,X))
+AsyVCOV
+Asyvar &lt;- as.matrix(diag(AsyVCOV))
+Asyvar
+Asyse &lt;- Asyvar^0.5
+Asyse #調整過後的standard error
+
+trat &lt;- b/Asyse #b-0/Asyse = tratio
+
+pvt &lt;- 2*pt(-abs(trat),df=nmk) #跟上禮拜的相同，做完調整後的估計鑑定，有顯著。
+pvt
+
+results &lt;- cbind(b,Asyse,trat,pvt)
+results
+colnames(results) &lt;- c(&quot;Estimate&quot;,&quot;Std. Error&quot;,&quot;t value&quot;,&quot;Pr(&gt;|t|)&quot;)
+rownames(results) &lt;- c(&quot;intercept&quot;,&quot;income&quot;,&quot;age&quot;,&quot;kids&quot;)
+round(results,digits=4)
+
+#比較和lse的差別，estimate沒有變，那standard error有變
+results
+summary(lse)
 </code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciAgIHQgdmFsdWUgICAgIFByKD58dHwpXG5pbnRlcmNlcHQgLTM5MS41NDgwMSAxNDIuNjU0NzgwIC0yLjc0NDcyNCA2LjYxODk3MWUtMDNcbmluY29tZSAgICAgIDE0LjIwMTMzICAgMS45Mzg4NTcgIDcuMzI0NTg5IDYuMDgzMTkzZS0xMlxuYWdlICAgICAgICAgMTUuNzQwOTIgICAzLjk2NTczNSAgMy45NjkyMzIgMS4wMTE0MjZlLTA0XG5raWRzICAgICAgIC04MS44MjY0MiAgMjkuMTU0MzgwIC0yLjgwNjY2MCA1LjUxMTI0NGUtMDNcbiJ9 -->
-<pre><code>            Estimate Std. Error   t value     Pr(&gt;|t|)
-intercept -391.54801 142.654780 -2.744724 6.618971e-03
-income      14.20133   1.938857  7.324589 6.083193e-12
-age         15.74092   3.965735  3.969232 1.011426e-04
-kids       -81.82642  29.154380 -2.806660 5.511244e-03</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</section>
-<section id="wls-solution2segma2white-1980" class="level3">
+</div>
+<div id="wls-solution2segma2white-1980" class="section level3">
 <h3>本段落是是WLS solution2，對segma^2，做一個加權，權重處理的概念，和White 1980不同的是他是跑整條新的迴歸式</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -1856,11 +2495,11 @@ summary(lse)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</section>
-</section>
-<section id="function" class="level1">
+</div>
+</div>
+<div id="function" class="section level1">
 <h1>進入到純粹的function寫法</h1>
-<section id="functionbp-test" class="level3">
+<div id="functionbp-test" class="section level3">
 <h3>用function出bp-test</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -1871,29 +2510,74 @@ LMBP #29.02 部分手動部分函數創造的</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</section>
-<section id="bp-testwtest" class="level3">
-<h3>一樣可以出bp-test在做Wtest</h3>
+</div>
+<div id="bp-testwtestwhite-test" class="section level3">
+<h3>一樣可以出bp-test在做Wtest(white test)</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+S4jeeUqOWvq3nvvIxS5pyD55+l6YGT5L2g6KaB55SobHNl6KOh6Z2i55qEVWkgaGF0XjJcbld0ZXN0IDwtIGJwdGVzdChsc2UsfmluY29tZSthZ2Ura2lkcytpbmNvbWVzcSthZ2VzcStraWRzc3EraW5jb21lX2FnZSthZ2Vfa2lkcytraWRzX2luY29tZSlcblxuIyDnrKzkuIDnqK7lgZrms5VcblcgPC0gbG0oZXNxfmluY29tZSthZ2Ura2lkcytpbmNvbWVzcSthZ2VzcStraWRzc3EraW5jb21lX2FnZSthZ2Vfa2lkcytraWRzX2luY29tZSlcbnN1bW1hcnkoVylcbkxNVyA8LSBuKjAuMlxuTE1XXG5cblxuV3Rlc3QgI0JQID0gMzkuOTkzXG5MTVcgIzQwXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI+S4jeeUqOWvq3nvvIxS5pyD55+l6YGT5L2g6KaB55SobHNl6KOh6Z2i55qEVWkgaGF0XjJcbld0ZXN0IDwtIGJwdGVzdChsc2UsfmluY29tZSthZ2Ura2lkcytpbmNvbWVzcSthZ2VzcStraWRzc3EraW5jb21lX2FnZSthZ2Vfa2lkcytraWRzX2luY29tZSlcbiMg56ys5LiA56iu5YGa5rOVXG5XIDwtIGxtKGVzcX5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpXG5zdW1tYXJ5KFcpXG5gYGAifQ== -->
 <pre class="r"><code>#不用寫y，R會知道你要用lse裡面的Ui hat^2
 Wtest &lt;- bptest(lse,~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
-
 # 第一種做法
 W &lt;- lm(esq~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
-summary(W)
-LMW &lt;- n*0.2
-LMW
-
-
-Wtest #BP = 39.993
-LMW #40</code></pre>
+summary(W)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IGVzcSB+IGluY29tZSArIGFnZSArIGtpZHMgKyBpbmNvbWVzcSArIGFnZXNxICsga2lkc3NxICsgXG4gICAgaW5jb21lX2FnZSArIGFnZV9raWRzICsga2lkc19pbmNvbWUpXG5cblJlc2lkdWFsczpcbiAgICBNaW4gICAgICAxUSAgTWVkaWFuICAgICAgM1EgICAgIE1heCBcbi01NzA3MDUgLTE1MDE4MiAgLTQ4NjQ0ICAgNjQ2NzQgMTY5ODEwMiBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHQgdmFsdWUgUHIoPnx0fCkgICBcbihJbnRlcmNlcHQpIC02MzA2NzguMzkgIDUyMzM4MC40MiAgLTEuMjA1ICAwLjIyOTcwICAgXG5pbmNvbWUgICAgICAgIDIxNjQ0LjY3ICAgIDc4MzEuMTcgICAyLjc2NCAgMC4wMDYyNyAqKlxuYWdlICAgICAgICAgICAgMTUyOS45OCAgIDI1MDMwLjcwICAgMC4wNjEgIDAuOTUxMzIgICBcbmtpZHMgICAgICAgICAgODE5ODUuNjYgIDExOTUwMC45MCAgIDAuNjg2ICAwLjQ5MzUxICAgXG5pbmNvbWVzcSAgICAgICAgLTQ0LjMzICAgICAgNTAuMjYgIC0wLjg4MiAgMC4zNzg5MiAgIFxuYWdlc3EgICAgICAgICAgIDIyMC43MiAgICAgMzI5LjI4ICAgMC42NzAgIDAuNTAzNDcgICBcbmtpZHNzcSAgICAgICAgMTQ0NTkuNDAgICAxNTE2NS40NyAgIDAuOTUzICAwLjM0MTU4ICAgXG5pbmNvbWVfYWdlICAgICAtMzE1LjA1ICAgICAxMzEuNTYgIC0yLjM5NSAgMC4wMTc2MCAqIFxuYWdlX2tpZHMgICAgICAtNTI2OS42NyAgICAyNzAyLjM3ICAtMS45NTAgIDAuMDUyNjUgLiBcbmtpZHNfaW5jb21lICAgIDIxMDEuMzMgICAgIDkyMy4yMyAgIDIuMjc2ICAwLjAyMzk2ICogXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuUmVzaWR1YWwgc3RhbmRhcmQgZXJyb3I6IDI5MTEwMCBvbiAxOTAgZGVncmVlcyBvZiBmcmVlZG9tXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAgIDAuMixcdEFkanVzdGVkIFItc3F1YXJlZDogIDAuMTYyMSBcbkYtc3RhdGlzdGljOiA1LjI3NyBvbiA5IGFuZCAxOTAgREYsICBwLXZhbHVlOiAyLjAyMmUtMDZcbiJ9 -->
+<pre><code>
+Call:
+lm(formula = esq ~ income + age + kids + incomesq + agesq + kidssq + 
+    income_age + age_kids + kids_income)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-570705 -150182  -48644   64674 1698102 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept) -630678.39  523380.42  -1.205  0.22970   
+income        21644.67    7831.17   2.764  0.00627 **
+age            1529.98   25030.70   0.061  0.95132   
+kids          81985.66  119500.90   0.686  0.49351   
+incomesq        -44.33      50.26  -0.882  0.37892   
+agesq           220.72     329.28   0.670  0.50347   
+kidssq        14459.40   15165.47   0.953  0.34158   
+income_age     -315.05     131.56  -2.395  0.01760 * 
+age_kids      -5269.67    2702.37  -1.950  0.05265 . 
+kids_income    2101.33     923.23   2.276  0.02396 * 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 291100 on 190 degrees of freedom
+Multiple R-squared:    0.2, Adjusted R-squared:  0.1621 
+F-statistic: 5.277 on 9 and 190 DF,  p-value: 2.022e-06</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTE1XIDwtIG4qMC4yXG5MTVdcbmBgYCJ9 -->
+<pre class="r"><code>LMW &lt;- n*0.2
+LMW</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQwXG4ifQ== -->
+<pre><code>[1] 40</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuV3Rlc3QgI0JQID0gMzkuOTkzXG5gYGAifQ== -->
+<pre class="r"><code>Wtest #BP = 39.993</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5cdHN0dWRlbnRpemVkIEJyZXVzY2gtUGFnYW4gdGVzdFxuXG5kYXRhOiAgbHNlXG5CUCA9IDM5Ljk5MywgZGYgPSA5LCBwLXZhbHVlID0gNy42MjFlLTA2XG4ifQ== -->
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  lse
+BP = 39.993, df = 9, p-value = 7.621e-06</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTE1XICM0MFxuYGBgIn0= -->
+<pre class="r"><code>LMW #40</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQwXG4ifQ== -->
+<pre><code>[1] 40</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</section>
-<section id="asyvcovvcovhc-varwhite-1980" class="level3">
+</div>
+<div id="asyvcovvcovhc-varwhite-1980" class="section level3">
 <h3>用公式求得AsyVCOV(稱為vcovHC) 做Var調整，是配合White 1980</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -1913,8 +2597,8 @@ results #手動結果
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-</section>
-<section id="wls" class="level3">
+</div>
+<div id="wls" class="section level3">
 <h3>用公式做WLS</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -1942,21 +2626,23 @@ summary(wlse) #F-statistic: 299.8 on 4 and 196 DF 且無截距項</code></pre>
 Hahow好像有一些內容</code></pre>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXlmdW4oeD0xKSAjPSBleHBvbmVudGlhbFxuXG5gYGAifQ== -->
-<pre class="r"><code>myfun(x=1) #= exponential
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXlmdW4gPC0gZnVuY3Rpb24oeCl7XG55IDwtIGlmZWxzZSh4PDAsMCxleHAoeCkpXG5yZXR1cm4oeSkgXG59XG5cbm15ZnVuKHg9LTIpXG5teWZ1bih4PTEpICM9IGV4cG9uZW50aWFsXG5gYGAifQ== -->
+<pre class="r"><code>myfun &lt;- function(x){
+y &lt;- ifelse(x&lt;0,0,exp(x))
+return(y) 
+}
+
+myfun(x=-2)
+myfun(x=1) #= exponential</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDIuNzE4MjgyXG4ifQ== -->
-<pre><code>[1] 2.718282</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <pre><code>wolframAlpha 可以做計算</code></pre>
 <!-- rnb-text-end -->
-</section>
-</section>
+</div>
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OgogIHBkZl9kb2N1bWVudDoKICAgIGxhdGV4X2VuZ2luZSA6IHhlbGF0ZXgKICBodG1sX25vdGVib29rOiBkZWZhdWx0Ci0tLQoK55Ww6LOq5oCn5ZWP6aGM5pyD5b2x6Z+/5YiwUnNxdWFyZeWXju+8n+mChOaYr+WPquacg+W9semfv+WIsOWBh+ioreaqouWumu+8nwoK5oiR55qE55CG6Kej5piv5LiN5pyD77yM5Zug54K655yL5YWs5byP77ydIEVTUy9UU1PvvIzku5blhaflrrnlhYPntKDoi6XmmK/kuIDoh7TmgKfvvIzliYdiZXRhIGhhdCA9IGJldGHvvIzkuJRuLT7nhKHpmZDlpKfvvIwKVmFyKGJldGEgaGF0KT0wKemDveWPr+S7peaxguW+l+WHuuS+huOAggoK6ICM5LiU5ZCM6LOq6K6K55Ww5oiR5YCR5YGH6Kit55qE77yM6Ieq54S26ZyA6KaB5L+u5q2j55qE5piv6ZyA6KaB55So5Yiw5a6D55qE5Zyw5pa577yM5Zug5q2k5pyD5piv5Yiw5YGH6Kit5qqi5a6a55qE5YiG5q+N77yM5YaN5bi25YWlVmFyKGJldGEgaGF0KV4wLjUsIHN0YW5kYXJkIGVycm9y5omN5pyD55So5Yiw44CCCgpgYGB7cn0KbGlicmFyeShsbXRlc3QpCmxpYnJhcnkoc2FuZHdpY2gpCnJtKGxpc3QgPSBscygpKQpgYGAKCmBgYArmnKzpgLHnrKzkuIDnqK4gbG0gKyBjb2RpbmcgYnkgc2VsZgrmnKzpgLHnrKzkuoznqK4gYWxsIGluIGZ1bmN0aW9uCmBgYAoKIyDnrKzkuIDmrrXln7rmnKzkuIrot5/kuIrpgLHkuIDmqKMKYGBge3J9CmRhdGFzZXQgPC0gcmVhZC5jc3YoIi9Vc2Vycy9jaGVucG9taW5nL0RvY3VtZW50cy9HaXRIdWIvUXVhbnRpdGF0aXZlIE1ldGhvZC9RdWFudGl0YXRpdmUgTWV0aG9kL2RhdGFfZm9yX2NsYXNzLmNzdiIsaGVhZGVyPVRSVUUpCgoKZGF0IDwtIGRhdGFzZXQKVmlldyhkYXQpCm1pbGVzIDwtIGRhdCRNSUxFUwppbmNvbWUgPC0gZGF0JElOQ09NRQphZ2UgPC0gZGF0JEFHRQpraWRzIDwtIGRhdCRLSURTCgpsc2UgPC0gbG0obWlsZXN+aW5jb21lK2FnZStraWRzKQpzdW1tYXJ5KGxzZSkKYGBgCgojIOesrOS6jOauteS4iumAseWFp+WuueS5n+aciQpgYGB7cn0KY2xhc3MobWlsZXMpCnkgPC0gYXMubWF0cml4KG1pbGVzKQpjbGFzcyh5KQpYIDwtIGNiaW5kKDEsaW5jb21lLGFnZSxraWRzKQpYCmNsYXNzKFgpCmIgPC0gY3Jvc3Nwcm9kKHNvbHZlKGNyb3NzcHJvZChYLFgpKSxjcm9zc3Byb2QoWCx5KSkKYgplIDwtIHktWCUqJWIgI+WPluW+l1VpIGhhdCDpgJnmmK/lgZrnlbDos6rmgKfnmoTmqqLlrppCUCBXaGl0ZemDveacg+eUqOWIsOeahOadseilvwoKZXNxIDwtIGVeMiAj5Y+W5b6XVWkgaGF05bmz5pa5IOmAmeaYr+WBmueVsOizquaAp+eahOaqouWumkJQIFdoaXRl5qqi5a6a77yM6YO95pyD55So5Yiw55qE5p2x6KW/CmVzcQpjbGFzcyhlc3EpCiMgbnVtYmVyIG9mIHJvdwpuIDwtIG5yb3coWCkKbgojIG51bWJlciBvZiBjb2x1bW4KayA8LSBuY29sKFgpCiMgZGVncmVlIG9mIGZyZWVkb20Kbm1rIDwtIG4tawpubWsKYGBgCgojIyMgQlAgdGVzdCB0byB0ZXN0IEhldGVybwpgYGB7cn0KI+S4gOaoo+aYr+ism+e+qeeahOWFrOW8jwojdGhlIGNoYW5nZSBpbiBSIHNxdWFyZSBpcyB0aGUgZm9jdXMKI3dpdGhvdXQgaW50ZXJjZXB0IHdlIHdpbGwgZ2V0IGFkanVzdGVkIFJzcXVhcmUg5Zug54K65Zyo6Kyb576p5Lit5pyA5b6M5piv55SxRuWIhumFjeWwjuWIsOWNoeaWueWIhumFje+8nW5SXjIKIyBIMDogSG9tbwoKQlAgPC0gbG0oZXNxfmluY29tZSthZ2Ura2lkcykgI+mAmemCiuaYr+acieaIquaTmumgheeahApzdW1tYXJ5KEJQKQoKTE1CUCA8LSBuKjAuMTQ1MSAKTE1CUAojMjkuMDLlsLHmmK/ljaHmlrnliIbkvYjmqqLlrprntbHoqIjph48o6Iul5Zyo5qqi5a6a57Wx6KiI6YeP5Y+z6YKK77yM5bCx5pyD5ouS57WVSDDvvJpIb21vc3RlcnRpY2l0eSkKCiPmiJbogIXnlKLnlJ9wLXZhbHVl5bCx5Y+v5Lul5LiN55So5p+l6KGo77yM5q+U6LyD57Ch5ZauCnB2Y2hpc3EgPC0gMS1wY2hpc3EoTE1CUCxkZj0zKQpwdmNoaXNxCmBgYAoKIyMjIFdoaXRlIHRlc3QgdG8gdGVzdCBIZXRlcm8KYGBge3J9CiMg5LuW6ZyA6KaB5q+P5YCL6K6K6YeP55qE5bmz5pa56aCF5Lul5Y+K5YWp5YWp5Lqk5Y+J6aCF77yI5LiN55So5Yiw5LiJ5YCL5Lqk5Y+J6aCF77yJCiMgV2hpdGUg57i95YWx5pyD5pyJ5Lmd5YCL6K6K6YePKCkKIyDkuIDmqKPmmK/pl5zms6hSc3F1YXJlCgppbmNvbWVzcSA8LSBpbmNvbWVeMgphZ2VzcSA8LSBhZ2VeMgpraWRzc3EgPC0ga2lkc14yCmluY29tZV9hZ2UgPC0gaW5jb21lKmFnZQphZ2Vfa2lkcyA8LSBhZ2Uqa2lkcwpraWRzX2luY29tZSA8LWtpZHMqaW5jb21lCgpXIDwtIGxtKGVzcX5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCnN1bW1hcnkoVykKCiPmnIDlvozkuIDmqKPmmK/nlLFG57Wx6KiI5bCO5Yiw5Y2h5pa555qEblJeMu+8iOWSjEJQ5b6I5YOP77yJCkxNVyA8LSBuKjAuMgpMTVcKCnB2Y2hpc3EgPC0gMS1wY2hpc3EoTE1XLGRmPTkpCnB2Y2hpc3EKIyA3LjU5ODUyNWUtMDYg5piv5o6l6L+R5pa8MOeahO+8jOmCo+WwseS7o+ihqOiuiumHj+WtmOWcqOiuiueVsOaVuOeVsOizquaAp+OAgueEtuW+jEJQIFdoaXRlIHRlc3Tpg73mmK/mi5LntZXnmoTjgIIKYGBgCgoj5bu656uL6Kq/5pW06YGO55qEVmFyIEJldGEgaGF0ICjmnInlhannqK7mlrnlvI86V2hpdGUxOTgwL1dMUyApCmBgYArlvp7kuIrpnaLnn6XpgZPmnInnlbDos6rmgKfnmoTni4Dms4HvvIznlKjkuI3pnIDopoFmdW5jdGlvbueahOaWueW8j++8jOWBmuaJi+WLleeahOaWueW8j+W7uueri+eVsOizquaAp+W6leS4i+eahFZhcihiZXRhIGhhdCkgaGF0IApgYGAKIyMjIOacrOauteiQveaYr1doaXRlIDE5ODAgc29sdXRpb24xIGDlj6rph53lsI1WYXLlgZroqr/mlbRgCmBgYHtyfQpTdGFyIDwtIGFycmF5KDAsZGltPWMoayxrKSkgI2FycmF5IOmZo+WIlyAjZGlt5Y+D5pW4IOaYr+e2reW6pueahOioreWumu+8jOmAmemCiuimgWsgYnkgayDnn6npmaNtYXRyaXjlt67liKXlpKfll47vvJ/vvIjlt67nlbDkuI3lpKfvvIzlg4Xlj6rmlrzos4fmlpnlnovmhYvnlbbliJ3oqK3oqIjopo/liYfvvIkKY2xhc3MoU3RhcikKCgojIOmAmemCiuimgeWPg+iAgzExLzIy55qE562G6KiY5LiA6ZaL5aeLCiPpgJnpgooobi9ubWsp5piv54K65LqG77yfIAoj5Zug54K6IFdoaXRlIDE5ODDmmK/lnKjlpKfmqKPmnKznmoTmg4Xms4HkuIvvvIzpgqPnm67liY1uPTIwMOaYr+aciemZkOaoo+acrOOAguS/ruato+eahOaWueW8j+acieW+iOWkmueoru+8jCDpgqNKb2huc3RvbuacieaPkOS+m+W5vueoruaWueW8j++8jOmCo+mAmemCiuWDheaYr+S4gOeoruS/ruato+aWueW8j++8jOW+gOato+eiuueahEFzeVZhcumdoOi/keS4gOS6m+OAggojeCDmmK/nrYboqJjkuIDplovlp4vmnIDkuIrpnaLlr6vnmoRYIO+8m3QoeCkg5piv562G6KiY5Lit55qE56ys5LqM5YCLWCcKZm9yKGkgaW4gMTpuKXsKeCA8LSBhcy5tYXRyaXgoWFtpLF0pICPmiKrlj5bnrKxpIHJvdyDnhLblvozmiYDmnInnmoRjb2x1bW4o6ICM5LiU5Zug54K65pyJZm9y6L+05ZyI77yM5omA5Lul5pyD5piveDEgeDIgeDMgeDQpCml0ZXIgPC0gKG4vbm1rKSplc3FbaV0qeCUqJXQoeCkgClN0YXIgPC0gU3RhcitpdGVyICNpdGVyIOaYr2sgYnkgayDnn6npmaMKfQpTdGFyICM9c2VnbWEgVWkgaGF0IOW5s+aWueS5mOS7pXhpIOS5mOS7pXhpIHRyYW5zcG9ydO+8jOS5n+WwseaYr+acgOW+jOWFrOW8j+S4remWk+eahOmCo+auteOAggoKQXN5VkNPViA8LSBzb2x2ZShjcm9zc3Byb2QoWCxYKSklKiVTdGFyJSolc29sdmUoY3Jvc3Nwcm9kKFgsWCkpCkFzeVZDT1YKQXN5dmFyIDwtIGFzLm1hdHJpeChkaWFnKEFzeVZDT1YpKQpBc3l2YXIKQXN5c2UgPC0gQXN5dmFyXjAuNQpBc3lzZSAj6Kq/5pW06YGO5b6M55qEc3RhbmRhcmQgZXJyb3IKCnRyYXQgPC0gYi9Bc3lzZSAjYi0wL0FzeXNlID0gdHJhdGlvCgpwdnQgPC0gMipwdCgtYWJzKHRyYXQpLGRmPW5taykgI+i3n+S4iuemruaLnOeahOebuOWQjApwdnQKCnJlc3VsdHMgPC0gY2JpbmQoYixBc3lzZSx0cmF0LHB2dCkKcmVzdWx0cwpjb2xuYW1lcyhyZXN1bHRzKSA8LSBjKCJFc3RpbWF0ZSIsIlN0ZC4gRXJyb3IiLCJ0IHZhbHVlIiwiUHIoPnx0fCkiKQpyb3duYW1lcyhyZXN1bHRzKSA8LSBjKCJpbnRlcmNlcHQiLCJpbmNvbWUiLCJhZ2UiLCJraWRzIikKcm91bmQocmVzdWx0cyxkaWdpdHM9NCkKCiPmr5TovIPlkoxsc2XnmoTlt67liKXvvIxlc3RpbWF0Zeaykuacieiuiu+8jOmCo3N0YW5kYXJkIGVycm9y5pyJ6K6KCnJlc3VsdHMKc3VtbWFyeShsc2UpCgpgYGAKCiMjIyDmnKzmrrXokL3mmK/mmK9XTFMgc29sdXRpb24y77yM5bCNc2VnbWFeMu+8jOWBmuS4gOWAi+WKoOasiu+8jOasiumHjeiZleeQhueahOamguW/te+8jOWSjFdoaXRlIDE5ODDkuI3lkIznmoTmmK/ku5bmmK/ot5HmlbTmop3mlrDnmoTov7TmrbjlvI8KYGBge3J9CiPngrrku4DpurzmmK/pmaTku6VpbmNvbWU/IOWFtuWvpumAmeaYr+iHquW3seaMkeeahOOAguWvpuWLmeS4iuWPr+iDvemChOmcgOimgeeci+aMkeWTquS4gOWAi+avlOi8g+mBqeeVtuOAguS9huaYr+iAgeW4q+WPqueVpeaPkOWPiu+8jOeEtuW+jOaIkeiHquW3seWFtuWvpumChOaykuacieWujOWFqOaHguW+l1dMU+iqv+aVtOeahOeyvuelnlhEREQKCiNXTFPmmK9HTFPnmoRzcGVjaWFsIGNhc2XvvIjlj6rpl5zms6jku5bnmoRIZXRlcm8pCiPpgJnpgoptaWxlcy9pbmNvbWXmmK92ZWN0b3IvdmVjdG9y77yM5Zug5q2k5piv56ys5LiA5YCL5qij5pys5YC855qEbWlsZXMvaW5jb21lCiPlnKjorJvnvqnkuK3lsLHmmK8xL1ppXjAuNSDlhbblr6blsLHmmK/ku6XkuIvnmoTlhaflrrkKbWlsZXNfcyA8LSBtaWxlcy9pbmNvbWVeMC41CmludGVyY2VwdF9zIDwtIDEvaW5jb21lXjAuNSAj5pyD6K6K5oiQ5paw55qEdmFyaWFibGUg5LuW55qE5q+P5YCL5YC85bCx5pyD5LiN5LiA5qijCmluY29tZV9zIDwtIGluY29tZS9pbmNvbWVeMC41CmFnZV9zIDwtIGFnZS9pbmNvbWVeMC41CmtpZHNfcyA8LSBraWRzL2luY29tZV4wLjUKI+acg+iuiuaIkOWbm+WAi+iuiumHjyDkuIDlgIvooqvop6Pph4vororph4/vvIznhLblvozmspLmnInmiKrmk5rpoIXvvIjkuIvpnaJsbeaciS0xKQojRi1zdGF0aXN0aWM6IDI5OS44IG9uIDQgYW5kIDE5NiBERiwgIHAtdmFsdWU6IDwgMi4yZS0xNiDpgJnpgorms6jmhI/liLDnmoTmmK9G5qqi5a6a77yM5LuW6YO95pyD6buY6KqN5L2g5pivdGVzdOiuiuaVuOaYr+WQpueCujAg54S25b6M6K6K5pW45pS55oiQNOWAi+OAggoKd2xzZSA8LSBsbShtaWxlc19zfmludGVyY2VwdF9zK2luY29tZV9zK2FnZV9zK2tpZHNfcy0xKQoj5Y+v5Lul55yL5Yiw5LiJ6ICF57WQ5p6c55qEc3RkLkVycm9yIOaYr+S4jeWQjOeahO+8jOS9hnJlc3VsdHMoZnJvbSBXaGl0ZSAxOTgwIOWPquaciVZhcuacieiuiuWMlinvvIzkvYbmmK93bHNl5piv5LiA5qKd5paw55qE6L+05q245byP77yM5Zug5q2k5LuW55qERXN0aW1hdGUg5ZKMU3RkLuaYr+mDveS4jeS4gOaoo+eahOOAggpzdW1tYXJ5KHdsc2UpCnJlc3VsdHMKc3VtbWFyeShsc2UpCmBgYAoKCiMg6YCy5YWl5Yiw57SU57K555qEZnVuY3Rpb27lr6vms5UKIyMjIOeUqGZ1bmN0aW9u5Ye6YnAtdGVzdApgYGB7cn0KQlB0ZXN0IDwtIGJwdGVzdChsc2UpCkJQdGVzdCAjMjkuMDE1IOe0lOWFrOW8j+WJtemAoOeahApMTUJQICMyOS4wMiDpg6jliIbmiYvli5Xpg6jliIblh73mlbjlibXpgKDnmoQKYGBgCgojIyMg5LiA5qij5Y+v5Lul5Ye6YnAtdGVzdOWcqOWBmld0ZXN0CmBgYHtyfQoj5LiN55So5a+ree+8jFLmnIPnn6XpgZPkvaDopoHnlKhsc2Xoo6HpnaLnmoRVaSBoYXReMgpXdGVzdCA8LSBicHRlc3QobHNlLH5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCgojIOesrOS4gOeoruWBmuazlQpXIDwtIGxtKGVzcX5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCnN1bW1hcnkoVykKTE1XIDwtIG4qMC4yCkxNVwoKCld0ZXN0ICNCUCA9IDM5Ljk5MwpMTVcgIzQwCmBgYAoKIyMjIOeUqOWFrOW8j+axguW+l0FzeVZDT1Yo56ix54K6dmNvdkhDKSDlgZpWYXLoqr/mlbTvvIzmmK/phY3lkIhXaGl0ZSAxOTgwCmBgYHtyfQo/dmNvdkhDICNIZXRlcm9za2VkYXN0aWNpdHktY29uc2lzdGVudCBlc3RpbWF0aW9uIG9mIHRoZSBjb3ZhcmlhbmNlIG1hdHJpeCBvZiB0aGUgY29lZmZpY2llbnQgZXN0aW1hdGVzIGluIHJlZ3Jlc3Npb24gbW9kZWxzLgoKI3Zjb3ZIQyDkvoboh6pwYWNrYWdlKHNhbmR3aWNoKQpIQ1ZDT1YgPC0gdmNvdkhDKGxzZSkKSENWQ09WICMgZnVuY3Rpb27ntZDmnpwKQXN5VkNPViAjIFdoaXRlMTk4MOaJi+WLlee1kOaenAojIEhDVkNPViBBc3lWQ09WCkhDcmVzdWx0cyA8LSBjb2VmdGVzdChsc2UsdmNvdj1IQ1ZDT1YpICNjb2VmdGVzdOS5n+aYr+S+huiHqmxpYnJhcnkobG10ZXN0KQojdmNvdiDlj4PmlbjvvIzkvaDmg7PopoHkvb/nlKjlk6rkuIDlgIt2Y292IOS4pumAsuihjOWBh+ioreaqouWumgpIQ3Jlc3VsdHMgI2Z1bmN0aW9u57WQ5p6cCnJlc3VsdHMgI+aJi+WLlee1kOaenAojIOWFqeiAheS5i+mWk+S4gOaoo+aYr0VzdGltYXRl55u45ZCM44CCIFN0ZC4gRXJyb3LkuI3lkIzjgIIKYGBgCgojIyMg55So5YWs5byP5YGaV0xTIApgYGB7cn0KI2xtIOacieWAi+WPg+aVuHdlaWdodHPmmK/lj6/ku6Xnm7TmjqXln7fooYxXTFMKd2xzIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcyx3ZWlnaHRzPTEvaW5jb21lKQpzdW1tYXJ5KHdscykgI0Ytc3RhdGlzdGljOiAgNDEuOSBvbiAzIGFuZCAxOTYgREYsICBwLXZhbHVlOiA8IDIuMmUtMTYKI+iHqueUseW6puWPquaciTPvvIzpgqPlhbblr6bku5bmspLmnInph53lsI3lt7LntpPorormiJDorormlbjnmoRpbnRlcmNlcHTkvZzlh7roqr/mlbQKIyjllY/poYzvvJrmqJnmupZSXjLlj6/mmK/nm67liY3lt7LntpPnhKHmiKrmk5rpoIXvvIzllY/poYzmr5TovIPlpKfvvIzmiYvli5V3bHNl55qE6LyD5L2z44CCKQpzdW1tYXJ5KHdsc2UpICNGLXN0YXRpc3RpYzogMjk5Ljggb24gNCBhbmQgMTk2IERGIOS4lOeEoeaIqui3nemghQpgYGAKCmBgYArkvZzmpa0z5pS+5Zyo57ay6Lev5LiK77yM5LiL6YCx5LiJ57mz5LqkCueoi+W8j+e3tOe/kuS4gOmhjO+8iOiuiumHj+WkmuS4gOm7nu+8iQooYSnmnInnlKhmdW5jdGlvbuWSjOaJi+WLleOAgue5s+S6pOeoi+W8j+eivOS7peWPiueUqOieouWFieethuWwh+e1kOaenOmDqOWIhuiou+iomAooYilBQ0NFU1Mg55qE6K6K5pW45q+U6LyD6KaB5aSa5rOo5oSPCuioiOeul+aOqOWwjuS4gOmhjArmnInpl5x0IEYg55qE5qqi5a6aCgrkvZzmpa005Lit6ZyA6KaB5YGaR0xT55qE6YOo5YiG6KuL55So5omL5YuV44CCCuS4gOaoo+S4gOmhjOeoi+W8j+WSjOaJi+eulwpgYGAKCmBgYAroo5zlhYXvvJoK5oCO6bq86Ieq5bex5YGa6Ieq5bex6KaB55qEZnVuY3Rpb24/CkhhaG935aW95YOP5pyJ5LiA5Lqb5YWn5a65CmBgYApgYGB7cn0KbXlmdW4gPC0gZnVuY3Rpb24oeCl7CnkgPC0gaWZlbHNlKHg8MCwwLGV4cCh4KSkKcmV0dXJuKHkpIAp9CgpteWZ1bih4PS0yKQpteWZ1bih4PTEpICM9IGV4cG9uZW50aWFsCmBgYAoKYGBgCndvbGZyYW1BbHBoYSDlj6/ku6XlgZroqIjnrpcKYGBgCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OgogIHBkZl9kb2N1bWVudDoKICAgIGxhdGV4X2VuZ2luZSA6IHhlbGF0ZXgKICBodG1sX25vdGVib29rOiBkZWZhdWx0Ci0tLQoK55Ww6LOq5oCn5ZWP6aGM5pyD5b2x6Z+/5YiwUnNxdWFyZeWXju+8n+mChOaYr+WPquacg+W9semfv+WIsOWBh+ioreaqouWumu+8nwoK5oiR55qE55CG6Kej5piv5LiN5pyD77yM5Zug54K655yL5YWs5byP77ydIEVTUy9UU1PvvIzku5blhaflrrnlhYPntKDoi6XmmK/kuIDoh7TmgKfvvIzliYdiZXRhIGhhdCA9IGJldGHvvIzkuJRuLT7nhKHpmZDlpKfvvIwKVmFyKGJldGEgaGF0KT0wKemDveWPr+S7peaxguW+l+WHuuS+huOAggoK6ICM5LiU5ZCM6LOq6K6K55Ww5oiR5YCR5YGH6Kit55qE77yM6Ieq54S26ZyA6KaB5L+u5q2j55qE5piv6ZyA6KaB55So5Yiw5a6D55qE5Zyw5pa577yM5Zug5q2k5pyD5piv5Yiw5YGH6Kit5qqi5a6a55qE5YiG5q+N77yM5YaN5bi25YWlVmFyKGJldGEgaGF0KV4wLjUsIHN0YW5kYXJkIGVycm9y5omN5pyD55So5Yiw44CCCgpgYGB7cn0KbGlicmFyeShsbXRlc3QpCmxpYnJhcnkoc2FuZHdpY2gpCnJtKGxpc3QgPSBscygpKQpgYGAKCmBgYArmnKzpgLHnrKzkuIDnqK4gbG0gKyBjb2RpbmcgYnkgc2VsZgrmnKzpgLHnrKzkuoznqK4gYWxsIGluIGZ1bmN0aW9uCmBgYAoKIyDnrKzkuIDmrrXln7rmnKzkuIrot5/kuIrpgLHkuIDmqKMKYGBge3J9CmRhdGFzZXQgPC0gcmVhZC5jc3YoIi4vZGF0YV9mb3JfY2xhc3MuY3N2IixoZWFkZXI9VFJVRSkKCmRhdCA8LSBkYXRhc2V0Cm1pbGVzIDwtIGRhdCRNSUxFUwppbmNvbWUgPC0gZGF0JElOQ09NRQphZ2UgPC0gZGF0JEFHRQpraWRzIDwtIGRhdCRLSURTCgpsc2UgPC0gbG0obWlsZXN+aW5jb21lK2FnZStraWRzKQpzdW1tYXJ5KGxzZSkKYGBgCgojIOesrOS6jOauteS4iumAseWFp+WuueS5n+aciQpgYGB7cn0KY2xhc3MobWlsZXMpCnkgPC0gYXMubWF0cml4KG1pbGVzKQpjbGFzcyh5KQpYIDwtIGNiaW5kKDEsaW5jb21lLGFnZSxraWRzKQpYCmNsYXNzKFgpCmIgPC0gY3Jvc3Nwcm9kKHNvbHZlKGNyb3NzcHJvZChYLFgpKSxjcm9zc3Byb2QoWCx5KSkKYgojdGhlIGJldGEgaGF0IG9mIGluY29tZSBhZ2Uga2lkcy4KCmUgPC0geS1YJSolYiAj5Y+W5b6XVWkgaGF0IOmAmeaYr+WBmueVsOizquaAp+eahOaqouWumkJQIFdoaXRl6YO95pyD55So5Yiw55qE5p2x6KW/Cgplc3EgPC0gZV4yICPlj5blvpdVaSBoYXTlubPmlrkg6YCZ5piv5YGa55Ww6LOq5oCn55qE5qqi5a6aQlAgV2hpdGXmqqLlrprvvIzpg73mnIPnlKjliLDnmoTmnbHopb8KZXNxCmNsYXNzKGVzcSkKIyBudW1iZXIgb2Ygcm93Cm4gPC0gbnJvdyhYKQpuCiMgbnVtYmVyIG9mIGNvbHVtbgprIDwtIG5jb2woWCkKIyBkZWdyZWUgb2YgZnJlZWRvbQpubWsgPC0gbi1rCm5tawpgYGAKCiMjIyBCUCB0ZXN0IHRvIHRlc3QgSGV0ZXJvCmBgYHtyfQoj5LiA5qij5piv6Kyb576p55qE5YWs5byPCiN0aGUgY2hhbmdlIGluIFIgc3F1YXJlIGlzIHRoZSBmb2N1cwojd2l0aG91dCBpbnRlcmNlcHQgd2Ugd2lsbCBnZXQgYWRqdXN0ZWQgUnNxdWFyZSDlm6DngrrlnKjorJvnvqnkuK3mnIDlvozmmK/nlLFG5YiG6YWN5bCO5Yiw5Y2h5pa55YiG6YWN77ydblJeMgojIEgwOiBIb21vCgpCUCA8LSBsbShlc3F+aW5jb21lK2FnZStraWRzKSAj6YCZ6YKK5piv5pyJ5oiq5pOa6aCF55qEICPorpNkaXN0dXJiYW5jZSB0ZXJtIOWwjeino+mHi+iuiuaVuOi3kei/tOatuOOAggpzdW1tYXJ5KEJQKQoKI0xNIG9mIEJQCkxNQlAgPC0gbiowLjE0NTEgCkxNQlAKIzI5LjAy5bCx5piv5Y2h5pa55YiG5L2I5qqi5a6a57Wx6KiI6YePKOiLpeWcqOaqouWumue1seioiOmHj+WPs+mCiu+8jOWwseacg+aLkue1lUgw77yaSG9tb3N0ZXJ0aWNpdHkpCgoj5oiW6ICF55Si55SfcC12YWx1ZeWwseWPr+S7peS4jeeUqOafpeihqO+8jOavlOi8g+ewoeWWrgojcGNoaXNx55qE5qmf546H5a+G5bqm5Ye95pW444CCCnB2Y2hpc3EgPC0gMS1wY2hpc3EoTE1CUCxkZj0zKQpwdmNoaXNxCgojcHZhbHVlID0gMi4yMTc4NjNlLTA2IOWAvOW+iOWwj+OAguaJgOS7peaLkue1lUgwCmBgYAoKIyMjIFdoaXRlIHRlc3QgdG8gdGVzdCBIZXRlcm8KYGBge3J9CiMg5LuW6ZyA6KaB5q+P5YCL6K6K6YeP55qE5bmz5pa56aCF5Lul5Y+K5YWp5YWp5Lqk5Y+J6aCF77yI5LiN55So5Yiw5LiJ5YCL5Lqk5Y+J6aCF77yJCiMgV2hpdGUg57i95YWx5pyD5pyJ5Lmd5YCL6K6K6YePKCnvvJrop6Pph4vorormlbjmnKzouqsz5YCL77yL6Kej6YeL6K6K5pW45bmz5pa56aCFM+WAi++8i+ino+mHi+iuiuaVuOS6pOS5mOmghTPlgIvjgIIKIyDkuIDmqKPmmK/pl5zms6hSc3F1YXJlCgppbmNvbWVzcSA8LSBpbmNvbWVeMgphZ2VzcSA8LSBhZ2VeMgpraWRzc3EgPC0ga2lkc14yCmluY29tZV9hZ2UgPC0gaW5jb21lKmFnZQphZ2Vfa2lkcyA8LSBhZ2Uqa2lkcwpraWRzX2luY29tZSA8LWtpZHMqaW5jb21lCgpXIDwtIGxtKGVzcX5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCnN1bW1hcnkoVykKCiPmnIDlvozkuIDmqKPmmK/nlLFG57Wx6KiI5bCO5Yiw5Y2h5pa555qEblJeMu+8iOWSjEJQ5b6I5YOP77yJCkxNVyA8LSBuKjAuMgpMTVcKCnB2Y2hpc3EgPC0gMS1wY2hpc3EoTE1XLGRmPTkpCnB2Y2hpc3EKIyA3LjU5ODUyNWUtMDYg5piv5o6l6L+R5pa8MOeahO+8jOmCo+WwseS7o+ihqOiuiumHj+WtmOWcqOiuiueVsOaVuOeVsOizquaAp+OAgueEtuW+jEJQIFdoaXRlIHRlc3Tpg73mmK/mi5LntZXnmoTjgIIKYGBgCgoj5bu656uL6Kq/5pW06YGO55qEVmFyIEJldGEgaGF0ICjmnInlhannqK7mlrnlvI86IFdoaXRlMTk4MCAvIFdMUyApCmBgYArlvp7kuIrpnaLnn6XpgZPmnInnlbDos6rmgKfnmoTni4Dms4HvvIznlKjkuI3pnIDopoFmdW5jdGlvbueahOaWueW8j++8jOWBmuaJi+WLleeahOaWueW8j+W7uueri+eVsOizquaAp+W6leS4i+eahFZhcihiZXRhIGhhdCkgaGF0IApgYGAKIyMjIOacrOauteiQveaYr1doaXRlIDE5ODAgc29sdXRpb24xIGDlj6rph53lsI1WYXLlgZroqr/mlbRgCj4g5qC45b+D57K+56We77ya5oOz6KaB5ou/5Yiw6Kq/5pW05b6M55qEVmFyKGJldGFfaGF0Ke+8jOaJjeiDveWBmuacieaViOeOh+eahOWBh+ioreaqouWumu+8jOS9huaYr2JldGFfaGF05LiN6K6K44CCCgpgYGB7cn0KU3RhciA8LSBhcnJheSgwLGRpbT1jKGssaykpICNhcnJheSDpmaPliJcgI2RpbeWPg+aVuCDmmK/ntq3luqbnmoToqK3lrprvvIzpgJnpgoropoFrIGJ5IGsg55+p6ZmjbWF0cml45beu5Yil5aSn5ZeO77yf77yI5beu55Ww5LiN5aSn77yM5YOF5Y+q5pa86LOH5paZ5Z6L5oWL55W25Yid6Kit6KiI6KaP5YmH77yJCmNsYXNzKFN0YXIpCgpTdGFyICPlu7rnq4vkuIDlgIvnqbrnmoRtYXRyaXgKCgojIOmAmemCiuimgeWPg+iAgzExLzIy55qE562G6KiY5LiA6ZaL5aeLCiPpgJnpgooobi9ubWsp5piv54K65LqG77yfIAoj5Zug54K6IFdoaXRlIDE5ODDmmK/lnKjlpKfmqKPmnKznmoTmg4Xms4HkuIvvvIzpgqPnm67liY1uPTIwMOaYr+aciemZkOaoo+acrOOAguS/ruato+eahOaWueW8j+acieW+iOWkmueoru+8jCDpgqNKb2huc3RvbuacieaPkOS+m+W5vueoruaWueW8j++8jOmCo+mAmemCiuWDheaYr+S4gOeoruS/ruato+aWueW8j++8jOW+gOato+eiuueahEFzeVZhcumdoOi/keS4gOS6m+OAggojeCDmmK/nrYboqJjkuIDplovlp4vmnIDkuIrpnaLlr6vnmoRYIO+8m3QoeCkg5piv562G6KiY5Lit55qE56ys5LqM5YCLWCcKZm9yKGkgaW4gMTpuKXsKeCA8LSBhcy5tYXRyaXgoWFtpLF0pICPmiKrlj5bnrKxpIHJvdyDnhLblvozmiYDmnInnmoRjb2x1bW4o6ICM5LiU5Zug54K65pyJZm9y6L+05ZyI77yM5omA5Lul5pyD5piveDEgeDIgeDMgeDQpCml0ZXIgPC0gKG4vbm1rKSplc3FbaV0qeCUqJXQoeCkgClN0YXIgPC0gU3RhcitpdGVyICNpdGVyIOaYr2sgYnkgayDnn6npmaMKfQpTdGFyICM9c2VnbWEgVWkgaGF0IOW5s+aWueS5mOS7pXhpIOS5mOS7pXhpIHRyYW5zcG9ydO+8jOS5n+WwseaYr+acgOW+jOWFrOW8j+S4remWk+eahOmCo+auteOAggoKQXN5VkNPViA8LSBzb2x2ZShjcm9zc3Byb2QoWCxYKSklKiVTdGFyJSolc29sdmUoY3Jvc3Nwcm9kKFgsWCkpCkFzeVZDT1YKQXN5dmFyIDwtIGFzLm1hdHJpeChkaWFnKEFzeVZDT1YpKQpBc3l2YXIKQXN5c2UgPC0gQXN5dmFyXjAuNQpBc3lzZSAj6Kq/5pW06YGO5b6M55qEc3RhbmRhcmQgZXJyb3IKCnRyYXQgPC0gYi9Bc3lzZSAjYi0wL0FzeXNlID0gdHJhdGlvCgpwdnQgPC0gMipwdCgtYWJzKHRyYXQpLGRmPW5taykgI+i3n+S4iuemruaLnOeahOebuOWQjO+8jOWBmuWujOiqv+aVtOW+jOeahOS8sOioiOmRkeWumu+8jOaciemhr+iRl+OAggpwdnQKCnJlc3VsdHMgPC0gY2JpbmQoYixBc3lzZSx0cmF0LHB2dCkKcmVzdWx0cwpjb2xuYW1lcyhyZXN1bHRzKSA8LSBjKCJFc3RpbWF0ZSIsIlN0ZC4gRXJyb3IiLCJ0IHZhbHVlIiwiUHIoPnx0fCkiKQpyb3duYW1lcyhyZXN1bHRzKSA8LSBjKCJpbnRlcmNlcHQiLCJpbmNvbWUiLCJhZ2UiLCJraWRzIikKcm91bmQocmVzdWx0cyxkaWdpdHM9NCkKCiPmr5TovIPlkoxsc2XnmoTlt67liKXvvIxlc3RpbWF0Zeaykuacieiuiu+8jOmCo3N0YW5kYXJkIGVycm9y5pyJ6K6KCnJlc3VsdHMKc3VtbWFyeShsc2UpCgpgYGAKCiMjIyDmnKzmrrXokL3mmK/mmK9XTFMgc29sdXRpb24y77yM5bCNc2VnbWFeMu+8jOWBmuS4gOWAi+WKoOasiu+8jOasiumHjeiZleeQhueahOamguW/te+8jOWSjFdoaXRlIDE5ODDkuI3lkIznmoTmmK/ku5bmmK/ot5HmlbTmop3mlrDnmoTov7TmrbjlvI8KYGBge3J9CiPngrrku4DpurzmmK/pmaTku6VpbmNvbWU/IOWFtuWvpumAmeaYr+iHquW3seaMkeeahOOAguWvpuWLmeS4iuWPr+iDvemChOmcgOimgeeci+aMkeWTquS4gOWAi+avlOi8g+mBqeeVtuOAguS9huaYr+iAgeW4q+WPqueVpeaPkOWPiu+8jOeEtuW+jOaIkeiHquW3seWFtuWvpumChOaykuacieWujOWFqOaHguW+l1dMU+iqv+aVtOeahOeyvuelnlhEREQKCiNXTFPmmK9HTFPnmoRzcGVjaWFsIGNhc2XvvIjlj6rpl5zms6jku5bnmoRIZXRlcm8pCiPpgJnpgoptaWxlcy9pbmNvbWXmmK92ZWN0b3IvdmVjdG9y77yM5Zug5q2k5piv56ys5LiA5YCL5qij5pys5YC855qEbWlsZXMvaW5jb21lCiPlnKjorJvnvqnkuK3lsLHmmK8xL1ppXjAuNSDlhbblr6blsLHmmK/ku6XkuIvnmoTlhaflrrkKbWlsZXNfcyA8LSBtaWxlcy9pbmNvbWVeMC41CmludGVyY2VwdF9zIDwtIDEvaW5jb21lXjAuNSAj5pyD6K6K5oiQ5paw55qEdmFyaWFibGUg5LuW55qE5q+P5YCL5YC85bCx5pyD5LiN5LiA5qijCmluY29tZV9zIDwtIGluY29tZS9pbmNvbWVeMC41CmFnZV9zIDwtIGFnZS9pbmNvbWVeMC41CmtpZHNfcyA8LSBraWRzL2luY29tZV4wLjUKI+acg+iuiuaIkOWbm+WAi+iuiumHjyDkuIDlgIvooqvop6Pph4vororph4/vvIznhLblvozmspLmnInmiKrmk5rpoIXvvIjkuIvpnaJsbeaciS0xKQojRi1zdGF0aXN0aWM6IDI5OS44IG9uIDQgYW5kIDE5NiBERiwgIHAtdmFsdWU6IDwgMi4yZS0xNiDpgJnpgorms6jmhI/liLDnmoTmmK9G5qqi5a6a77yM5LuW6YO95pyD6buY6KqN5L2g5pivdGVzdOiuiuaVuOaYr+WQpueCujAg54S25b6M6K6K5pW45pS55oiQNOWAi+OAggoKd2xzZSA8LSBsbShtaWxlc19zfmludGVyY2VwdF9zK2luY29tZV9zK2FnZV9zK2tpZHNfcy0xKQoj5Y+v5Lul55yL5Yiw5LiJ6ICF57WQ5p6c55qEc3RkLkVycm9yIOaYr+S4jeWQjOeahO+8jOS9hnJlc3VsdHMoZnJvbSBXaGl0ZSAxOTgwIOWPquaciVZhcuacieiuiuWMlinvvIzkvYbmmK93bHNl5piv5LiA5qKd5paw55qE6L+05q245byP77yM5Zug5q2k5LuW55qERXN0aW1hdGUg5ZKMU3RkLuaYr+mDveS4jeS4gOaoo+eahOOAggpzdW1tYXJ5KHdsc2UpCnJlc3VsdHMKc3VtbWFyeShsc2UpCmBgYAoKCiMg6YCy5YWl5Yiw57SU57K555qEZnVuY3Rpb27lr6vms5UKIyMjIOeUqGZ1bmN0aW9u5Ye6YnAtdGVzdApgYGB7cn0KQlB0ZXN0IDwtIGJwdGVzdChsc2UpCkJQdGVzdCAjMjkuMDE1IOe0lOWFrOW8j+WJtemAoOeahApMTUJQICMyOS4wMiDpg6jliIbmiYvli5Xpg6jliIblh73mlbjlibXpgKDnmoQKYGBgCgojIyMg5LiA5qij5Y+v5Lul5Ye6YnAtdGVzdOWcqOWBmld0ZXN0KHdoaXRlIHRlc3QpCmBgYHtyfQoj5LiN55So5a+ree+8jFLmnIPnn6XpgZPkvaDopoHnlKhsc2Xoo6HpnaLnmoRVaSBoYXReMgpXdGVzdCA8LSBicHRlc3QobHNlLH5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCgojIOesrOS4gOeoruWBmuazlQpXIDwtIGxtKGVzcX5pbmNvbWUrYWdlK2tpZHMraW5jb21lc3ErYWdlc3Era2lkc3NxK2luY29tZV9hZ2UrYWdlX2tpZHMra2lkc19pbmNvbWUpCnN1bW1hcnkoVykKTE1XIDwtIG4qMC4yCkxNVwoKCld0ZXN0ICNCUCA9IDM5Ljk5MwpMTVcgIzQwCmBgYAoKIyMjIOeUqOWFrOW8j+axguW+l0FzeVZDT1Yo56ix54K6dmNvdkhDKSDlgZpWYXLoqr/mlbTvvIzmmK/phY3lkIhXaGl0ZSAxOTgwCmBgYHtyfQo/dmNvdkhDICNIZXRlcm9za2VkYXN0aWNpdHktY29uc2lzdGVudCBlc3RpbWF0aW9uIG9mIHRoZSBjb3ZhcmlhbmNlIG1hdHJpeCBvZiB0aGUgY29lZmZpY2llbnQgZXN0aW1hdGVzIGluIHJlZ3Jlc3Npb24gbW9kZWxzLgoKI3Zjb3ZIQyDkvoboh6pwYWNrYWdlKHNhbmR3aWNoKQpIQ1ZDT1YgPC0gdmNvdkhDKGxzZSkKSENWQ09WICMgZnVuY3Rpb27ntZDmnpwKQXN5VkNPViAjIFdoaXRlMTk4MOaJi+WLlee1kOaenAojIEhDVkNPViBBc3lWQ09WCkhDcmVzdWx0cyA8LSBjb2VmdGVzdChsc2UsdmNvdj1IQ1ZDT1YpICNjb2VmdGVzdOS5n+aYr+S+huiHqmxpYnJhcnkobG10ZXN0KQojdmNvdiDlj4PmlbjvvIzkvaDmg7PopoHkvb/nlKjlk6rkuIDlgIt2Y292IOS4pumAsuihjOWBh+ioreaqouWumgpIQ3Jlc3VsdHMgI2Z1bmN0aW9u57WQ5p6cCnJlc3VsdHMgI+aJi+WLlee1kOaenAojIOWFqeiAheS5i+mWk+S4gOaoo+aYr0VzdGltYXRl55u45ZCM44CCIFN0ZC4gRXJyb3LkuI3lkIzjgIIKYGBgCgojIyMg55So5YWs5byP5YGaV0xTIApgYGB7cn0KI2xtIOacieWAi+WPg+aVuHdlaWdodHPmmK/lj6/ku6Xnm7TmjqXln7fooYxXTFMKd2xzIDwtIGxtKG1pbGVzfmluY29tZSthZ2Ura2lkcyx3ZWlnaHRzPTEvaW5jb21lKQpzdW1tYXJ5KHdscykgI0Ytc3RhdGlzdGljOiAgNDEuOSBvbiAzIGFuZCAxOTYgREYsICBwLXZhbHVlOiA8IDIuMmUtMTYKI+iHqueUseW6puWPquaciTPvvIzpgqPlhbblr6bku5bmspLmnInph53lsI3lt7LntpPorormiJDorormlbjnmoRpbnRlcmNlcHTkvZzlh7roqr/mlbQKIyjllY/poYzvvJrmqJnmupZSXjLlj6/mmK/nm67liY3lt7LntpPnhKHmiKrmk5rpoIXvvIzllY/poYzmr5TovIPlpKfvvIzmiYvli5V3bHNl55qE6LyD5L2z44CCKQpzdW1tYXJ5KHdsc2UpICNGLXN0YXRpc3RpYzogMjk5Ljggb24gNCBhbmQgMTk2IERGIOS4lOeEoeaIqui3nemghQpgYGAKCmBgYArkvZzmpa0z5pS+5Zyo57ay6Lev5LiK77yM5LiL6YCx5LiJ57mz5LqkCueoi+W8j+e3tOe/kuS4gOmhjO+8iOiuiumHj+WkmuS4gOm7nu+8iQooYSnmnInnlKhmdW5jdGlvbuWSjOaJi+WLleOAgue5s+S6pOeoi+W8j+eivOS7peWPiueUqOieouWFieethuWwh+e1kOaenOmDqOWIhuiou+iomAooYilBQ0NFU1Mg55qE6K6K5pW45q+U6LyD6KaB5aSa5rOo5oSPCuioiOeul+aOqOWwjuS4gOmhjArmnInpl5x0IEYg55qE5qqi5a6aCgrkvZzmpa005Lit6ZyA6KaB5YGaR0xT55qE6YOo5YiG6KuL55So5omL5YuV44CCCuS4gOaoo+S4gOmhjOeoi+W8j+WSjOaJi+eulwpgYGAKCmBgYAroo5zlhYXvvJoK5oCO6bq86Ieq5bex5YGa6Ieq5bex6KaB55qEZnVuY3Rpb24/CkhhaG935aW95YOP5pyJ5LiA5Lqb5YWn5a65CmBgYApgYGB7cn0KbXlmdW4gPC0gZnVuY3Rpb24oeCl7CnkgPC0gaWZlbHNlKHg8MCwwLGV4cCh4KSkKcmV0dXJuKHkpIAp9CgpteWZ1bih4PS0yKQpteWZ1bih4PTEpICM9IGV4cG9uZW50aWFsCmBgYAoKYGBgCndvbGZyYW1BbHBoYSDlj6/ku6XlgZroqIjnrpcKYGBgCg==</div>
 
 
 

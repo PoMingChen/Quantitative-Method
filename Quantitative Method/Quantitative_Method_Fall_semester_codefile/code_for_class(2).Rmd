@@ -26,11 +26,9 @@ rm(list = ls())
 
 # 第一段基本上跟上週一樣
 ```{r}
-dataset <- read.csv("/Users/chenpoming/Documents/GitHub/Quantitative Method/Quantitative Method/data_for_class.csv",header=TRUE)
-
+dataset <- read.csv("./data_for_class.csv",header=TRUE)
 
 dat <- dataset
-View(dat)
 miles <- dat$MILES
 income <- dat$INCOME
 age <- dat$AGE
@@ -50,6 +48,8 @@ X
 class(X)
 b <- crossprod(solve(crossprod(X,X)),crossprod(X,y))
 b
+#the beta hat of income age kids.
+
 e <- y-X%*%b #取得Ui hat 這是做異質性的檢定BP White都會用到的東西
 
 esq <- e^2 #取得Ui hat平方 這是做異質性的檢定BP White檢定，都會用到的東西
@@ -72,22 +72,26 @@ nmk
 #without intercept we will get adjusted Rsquare 因為在講義中最後是由F分配導到卡方分配＝nR^2
 # H0: Homo
 
-BP <- lm(esq~income+age+kids) #這邊是有截據項的
+BP <- lm(esq~income+age+kids) #這邊是有截據項的 #讓disturbance term 對解釋變數跑迴歸。
 summary(BP)
 
+#LM of BP
 LMBP <- n*0.1451 
 LMBP
 #29.02就是卡方分佈檢定統計量(若在檢定統計量右邊，就會拒絕H0：Homosterticity)
 
 #或者產生p-value就可以不用查表，比較簡單
+#pchisq的機率密度函數。
 pvchisq <- 1-pchisq(LMBP,df=3)
 pvchisq
+
+#pvalue = 2.217863e-06 值很小。所以拒絕H0
 ```
 
 ### White test to test Hetero
 ```{r}
 # 他需要每個變量的平方項以及兩兩交叉項（不用到三個交叉項）
-# White 總共會有九個變量()
+# White 總共會有九個變量()：解釋變數本身3個＋解釋變數平方項3個＋解釋變數交乘項3個。
 # 一樣是關注Rsquare
 
 incomesq <- income^2
@@ -109,14 +113,18 @@ pvchisq
 # 7.598525e-06 是接近於0的，那就代表變量存在變異數異質性。然後BP White test都是拒絕的。
 ```
 
-#建立調整過的Var Beta hat (有兩種方式:White1980/WLS )
+#建立調整過的Var Beta hat (有兩種方式: White1980 / WLS )
 ```
 從上面知道有異質性的狀況，用不需要function的方式，做手動的方式建立異質性底下的Var(beta hat) hat 
 ```
 ### 本段落是White 1980 solution1 `只針對Var做調整`
+> 核心精神：想要拿到調整後的Var(beta_hat)，才能做有效率的假設檢定，但是beta_hat不變。
+
 ```{r}
 Star <- array(0,dim=c(k,k)) #array 陣列 #dim參數 是維度的設定，這邊要k by k 矩陣matrix差別大嗎？（差異不大，僅只於資料型態當初設計規則）
 class(Star)
+
+Star #建立一個空的matrix
 
 
 # 這邊要參考11/22的筆記一開始
@@ -139,7 +147,7 @@ Asyse #調整過後的standard error
 
 trat <- b/Asyse #b-0/Asyse = tratio
 
-pvt <- 2*pt(-abs(trat),df=nmk) #跟上禮拜的相同
+pvt <- 2*pt(-abs(trat),df=nmk) #跟上禮拜的相同，做完調整後的估計鑑定，有顯著。
 pvt
 
 results <- cbind(b,Asyse,trat,pvt)
@@ -185,7 +193,7 @@ BPtest #29.015 純公式創造的
 LMBP #29.02 部分手動部分函數創造的
 ```
 
-### 一樣可以出bp-test在做Wtest
+### 一樣可以出bp-test在做Wtest(white test)
 ```{r}
 #不用寫y，R會知道你要用lse裡面的Ui hat^2
 Wtest <- bptest(lse,~income+age+kids+incomesq+agesq+kidssq+income_age+age_kids+kids_income)
